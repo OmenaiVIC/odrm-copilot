@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://odrm-copilot.local/schemas/odrm_v1.json",
+  "title": "ODRM v1 process record",
+  "description": "Canonical row contract for Oxy-Dry Reforming of Methane (ODRM) and flare-gas valorization data. Units are explicit per field; unit-free values are not permitted. Validation rejects out-of-bounds records and never clamps them.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "created_at",
+    "source",
+    "schema_version",
+    "catalyst",
+    "temperature_c",
+    "pressure_bar",
+    "ch4_o2_ratio",
+    "co2_ch4_ratio",
+    "h2o_ch4_ratio",
+    "ghsv_per_h",
+    "ch4_conversion",
+    "co2_conversion",
+    "o2_conversion",
+    "h2_yield_mol_per_mol_ch4",
+    "co_yield_mol_per_mol_ch4",
+    "h2_co_ratio",
+    "syngas_yield_mol_per_mol_ch4",
+    "ch4_slip_pct",
+    "carbon_deposition_mg_per_gcat",
+    "carbon_risk_class",
+    "balance_error_pct",
+    "quality_flag"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Primary key. Duplicate run_id values are rejected."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Provenance timestamp, UTC."
+    },
+    "source": {
+      "type": "string",
+      "enum": ["experimental", "aspen_hysys", "comsol", "synthetic", "plant"],
+      "description": "Data lineage."
+    },
+    "schema_version": {
+      "const": "v1",
+      "description": "Migration anchor. Breaking changes increment the major version."
+    },
+    "reactor_id": {
+      "type": ["string", "null"],
+      "description": "Optional reactor identifier."
+    },
+    "catalyst": {
+      "type": "string",
+      "enum": ["Ni/Al2O3", "Ni-MgO", "Rh", "Pt", "none", "other"]
+    },
+    "catalyst_loading_wt_pct": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 20,
+      "description": "Catalyst loading, wt%."
+    },
+    "temperature_c": {
+      "type": "number",
+      "minimum": 500,
+      "maximum": 1000,
+      "description": "Reaction temperature, degrees Celsius. Hard physics cap at 1000; violations are rejected."
+    },
+    "pressure_bar": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 30,
+      "description": "Reaction pressure, bar."
+    },
+    "ch4_o2_ratio": {
+      "type": "number",
+      "minimum": 1.4,
+      "maximum": 2.5,
+      "description": "Methane to oxygen molar ratio, mol/mol."
+    },
+    "co2_ch4_ratio": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1.5,
+      "description": "Carbon dioxide to methane molar ratio, mol/mol."
+    },
+    "h2o_ch4_ratio": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1.5,
+      "description": "Steam to methane molar ratio, mol/mol."
+    },
+    "ghsv_per_h": {
+      "type": "number",
+      "minimum": 1000,
+      "maximum": 100000,
+      "description": "Gas hourly space velocity, per hour."
+    },
+    "n2_dilution_mol_pct": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 50,
+      "description": "Nitrogen dilution, mol%."
+    },
+    "contact_time_ms": {
+      "type": ["number", "null"],
+      "exclusiveMinimum": 0,
+      "description": "Derived contact time, ms. Recomputed from GHSV, never trusted from input."
+    },
+    "ch4_conversion": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Methane conversion, fraction."
+    },
+    "co2_conversion": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Carbon dioxide conversion, fraction."
+    },
+    "o2_conversion": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Oxygen conversion, fraction."
+    },
+    "h2_yield_mol_per_mol_ch4": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 4,
+      "description": "Hydrogen yield, mol H2 per mol CH4 fed."
+    },
+    "co_yield_mol_per_mol_ch4": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 4,
+      "description": "Carbon monoxide yield, mol CO per mol CH4 fed."
+    },
+    "h2_co_ratio": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Derived H2/CO ratio. Guard co_yield > 0; recomputed, never trusted."
+    },
+    "syngas_yield_mol_per_mol_ch4": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 8,
+      "description": "Derived syngas yield = h2_yield + co_yield. Recomputed, never trusted."
+    },
+    "ch4_slip_pct": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Derived methane slip = (1 - ch4_conversion) * 100. Recomputed, never trusted."
+    },
+    "carbon_deposition_mg_per_gcat": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Carbon deposition, mg C per g catalyst. Safety-critical."
+    },
+    "carbon_risk_class": {
+      "type": "string",
+      "enum": ["none", "low", "moderate", "high"],
+      "description": "Derived risk class; must match RISK_THRESHOLDS."
+    },
+    "energy_input_kw": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 100000,
+      "description": "Energy input, kW. Techno-economic input."
+    },
+    "balance_error_pct": {
+      "type": "number",
+      "minimum": -2,
+      "maximum": 2,
+      "description": "Elemental C/H/O closure error, percent. Must be within +/- 2."
+    },
+    "quality_flag": {
+      "type": "string",
+      "enum": ["valid", "suspect", "rejected"],
+      "description": "Rows flagged rejected are dropped before training."
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Free-form operator notes."
+    }
+  },
+  "x-odrm": {
+    "schemaVersion": "v1",
+    "columnCount": 29,
+    "requiredColumnCount": 23,
+    "optionalColumns": [
+      "reactor_id",
+      "catalyst_loading_wt_pct",
+      "n2_dilution_mol_pct",
+      "contact_time_ms",
+      "energy_input_kw",
+      "notes"
+    ],
+    "derivedColumns": [
+      "h2_co_ratio",
+      "syngas_yield_mol_per_mol_ch4",
+      "ch4_slip_pct",
+      "carbon_risk_class"
+    ],
+    "riskThresholdsMgPerGcat": {
+      "none": [0.0, 1.0],
+      "low": [1.0, 5.0],
+      "moderate": [5.0, 20.0],
+      "high": [20.0, null]
+    },
+    "hardPhysicsBounds": {
+      "temperature_c": {
+        "max": 1000,
+        "behavior": "reject"
+      }
+    },
+    "storage": {
+      "format": "parquet",
+      "path": "data/processed/odrm/v1/",
+      "manifest": "_manifest.json"
+    }
+  }
+}
