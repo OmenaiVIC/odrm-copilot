@@ -1,0 +1,452 @@
+OXY-DRY REFORMING OF METHANE FOR SYNGAS PRODUCTION: THERMODYNAMIC STUDIES, PROCESS MODELING AND SIMULATION 
+
+    		
+      AGBU SIMON WUNUKAHOBE 
+
+
+
+
+
+
+
+
+
+July 2026
+
+OXY-DRY REFORMING OF METHANE FOR SYNGAS PRODUCTION: THERMODYNAMIC STUDIES, PROCESS MODELING AND SIMULATION 
+
+
+      
+      
+      
+      By
+      AGBU SIMON WUNUKAHOBE 
+      (PGS/24-25/2/M/9745)
+					
+
+
+
+
+RESEARCH PROJECT SUBMITTED IN PARTIAL FULFILLMENT OF THE REQUIREMENT FOR THE AWARD OF MASTERS OF ENGINEERING DEGREE IN CHEMICAL ENGINEERING
+
+
+
+
+
+DEPARTMENT OF CHEMICAL ENGINEERING FACULTY OF ENGINEERING AND ENGINEERING TECHNOLOGY ABUBAKAR TAFAWA BALEWA UNIVERSITY, BAUCHI
+
+      JULY, 2026.
+
+
+CHAPTER ONE
+1.1 Background of Study
+The global demand for clean and sustainable energy sources has intensified due to climate change, fossil fuel depletion, and environmental concerns associated with greenhouse gas emissions. Methane (CH?) is the principal component of natural gas and biogas. Despite its high energy content, about 0.48 trillion cubic foots are still flared during oil and gas production in Nigeria, contributing to greenhouse gas emissions. (Okwilagwe et al 2025). 
+Carbon dioxide (CO?), another major greenhouse gas, is continuously emitted from fossil fuel combustion and industrial activities. One promising approach to mitigating emissions while producing valuable chemicals is the catalytic conversion of CH? and CO? into synthesis gas (syngas), a mixture of hydrogen (H?) and carbon monoxide (CO). Syngas serves as a key intermediate in the manufacture of methanol, ammonia, synthetic fuels, and other petrochemicals.
+Conventional reforming technologies including steam methane reforming (SMR), dry reforming of methane (DRM), and partial oxidation of methane (POM) each suffer from limitations such as high energy demand, carbon deposition, or poor CO? utilization. Oxy-dry reforming (ODRM) combines the advantages of DRM and POM by integrating endothermic and exothermic reactions, thereby improving energy efficiency and enhancing syngas production.
+Oxy-Dry reforming (ODRM) and its attendant side reactions is a combination of exothermic and endothermic process represented by the following reactions:
+
+
+
+CH4 + CO2 ? 2CO + 2H2 (DRM)				?H0298K = 260.5 kJ/mol	(1)
+CH4 + ?(1/2) O2 ? CO + 2H2 (POM)                                            ?H0298K = -35.6 kJ/mol      	(2) 
+CH4 ? C + 2H	(MC) 					?H0298K = 75.0 kJ/mol 	(3) 
+CO2 + H2 ? CO + H2O (RWGS)				?H0298K = 41.0 kJ/mol 	(4) 
+2CO ? C + CO2 	(BDR)					?H0298K = -173.0 kJ/mol 	(5)				
+This study proposes an integrated computational investigation of ODRM using HSC Chemistry, Aspen HYSYS, and COMSOL Multiphysics.
+1.2 Problem Statement
+Although oxy-dry reforming has demonstrated considerable potential for syngas production and greenhouse gas utilization, several technical challenges remain unresolved.
+These include:
+* High operating temperatures required to achieve favourable methane conversion.
+* Carbon deposition arising from methane cracking and the Boudouard reaction, which leads to catalyst deactivation and reactor fouling.
+* Complex interactions among multiple competing reactions that affect syngas composition.
+* Limited comparative studies integrating thermodynamic equilibrium analysis and process simulation.
+* Insufficient understanding of heat and mass transfer effects on reactor temperature distribution, reactant conversion, and carbon formation.
+Most previous investigations have focused on individual aspects of the process rather than providing a comprehensive framework that integrates equilibrium analysis, process simulation, sensitivity analysis, and reactor-scale transport phenomena which has great potential for giving it commercial visibility.
+1.3 Justification
+. This research is justified on the following grounds
+1. Climate Mitigation: Oxy-dry reforming makes efficient use of carbon dioxide (CO2), a major greenhouse gas, as a reactant while converting methane into valuable syngas, contributing to carbon utilization and reducing environmental impact of fossil fuel processing. 
+2. Process innovation: Demonstrating the complementary roles of HSC Chemistry, Aspen HYSYS, and COMSOL Multiphysics.
+3. Circular economy: The process promotes utilization of methane and CO2 by converting them into syngas, which serve as a feedstock for hydrogen, methanol and Fischer-Tropsch fuels.
+4. Scientific contribution: Enhancing understanding of the influence of heat and mass transfer on reactor performance.
+5. National energy security: Resource utilization of converting two greenhouse gases (CH4 and CO2) into syngas, oxy-dry reforming supports the production of clean fuels and chemical feedstock, thereby enhancing energy diversification and reducing dependence on imported fuels promoting long-term energy security. 
+
+
+
+1.4 Aim and specific Objectives
+1.4.1 Research aim
+To investigate oxy-dry reforming of methane for syngas production through thermodynamic studies, process modelling, simulation, and multiphysics analysis.
+1.4.2 Specific Objectives:
+1. To carry out thermodynamic studies of oxy-dry reforming of methane in relation to its side reactions using HSC Chemistry.
+2. To perform the simulation and validation of oxy-dry reforming parameters using Aspen HYSYS software.
+3. To conduct a sensitivity comparison of oxy-dry reforming parameters using Aspen HYSYS and HSC Chemistry software.
+4. To investigate the effects of heat and mass transfer on temperature distribution, reactant conversion, syngas production, and carbon deposition tendencies during oxy-dry reforming of methane using COMSOL Multiphysics.
+1.5 Scope and Limitations of the Study
+1.5.1 Scope of the study
+This study focuses on the oxy-dry reforming of methane for syngas production through thermodynamic analysis and process simulation. The work will evaluate the influence of key operating parameters such as temperature, pressure, and feed composition (CH?/CO?/O? ratio) on methane conversion, carbon dioxide utilization, syngas yield, H?/CO ratio, and carbon formation tendency. Thermodynamic equilibrium analysis will be carried out using HSC Chemistry, while process modelling and simulation will be performed using Aspen HYSYS. In addition, the effects of heat and mass transfer on reactor performance, temperature distribution, reactant conversion, syngas production, and carbon deposition tendency will be investigated using COMSOL Multiphysics. The study will consider a nickel-based catalyst in a packed-bed reactor configuration based on information available in the literature. The findings are expected to provide insights into the operating conditions that favour efficient syngas production with reduced carbon deposition.
+1.5.2 Limitations of the Study
+This study is limited to simulation and thermodynamic evaluation and does not involve laboratory experiments or pilot-scale validation. The reactor model will be based on assumptions and kinetic data obtained from published literature, and the simulation results will therefore depend on the reliability of those data and modelling assumptions. Economic analysis, catalyst synthesis, catalyst characterization, and long-term catalyst stability are beyond the scope of this work. Likewise, detailed equipment design, mechanical design, and plant optimization for industrial implementation will not be considered. The results are intended to provide theoretical and process-level insights that can serve as a basis for future experimental and industrial investigations.
+
+
+
+
+
+
+      
+      CHAPTER TWO
+2.0 LITERATURE REVIEW
+2.1 Introduction 
+This chapter provides a comprehensive review of the oxy-dry reforming of methane for syngas production. The review presents the scientific and theorical background necessary to understand the reforming process, which include thermodynamic behaviour process modelling approaches, and simulation techniques employed in the recent studies. The fundamental principle governing methane reforming, the characteristics and applications of syngas, and the reforming technologies reported in literature are also examined.
+Emphasis is placed on oxy-dry reforming because of its potential to simultaneously utilize methane and carbon dioxide while producing hydrogen and carbon monoxide-rich synthesis gas used for Fischer-Tropsch processes. The thermodynamic characteristics of the process, including chemical equilibrium, reaction feasibility, and the effects of key operating parameters such as temperature, pressure, and feed composition are discussed. Moreso, the attendant side reaction that influences reactant conversion, product distribution, and carbon deposition are critically reviewed.
+The chapter further reviews catalyst development, process variables, reactor configurations, and mathematical modelling techniques used to investigate oxy-dry reforming. Existing process simulation approaches using software such as Aspen HYSYS and HSC chemistry are also examined, with specific focus on their application to thermodynamic analysis and process optimization. In conclusion, recent developments in the field are investigated to identify existing knowledge gaps and establish the basis for the present study. 
+
+2.2 Hydrogen and Syngas 
+Hydrogen as a Clean Energy Carrier: Hydrogen is considered the cornerstone of a sustainable energy future due to its clean combustion product (water) and potential use in fuel cells. Global initiatives aim to scale up hydrogen production to decarbonize hard-to-abate sectors.
+2.2.1 composition and properties 
+Synthesis gas, known as “syngas,” is a combustible gas mixture of predominantly CO, H2, and CO2 that is mainly produced by reforming or gasifying carbonaceous feedstock. Typical syngas composition varies depending on the process and feedstock: hydrogen (25-60%), carbon monoxide (20-550%), carbon dioxide (0-15%), methane (0-5%), plus water vapor and trace contaminants such as H2S, CO2, and NH3. In addition to be used in variety of chemical production processes, syngas is also commonly used as a reducing agent in Direct Reduced iron (DRI) production (Aldo et al, 2022).
+2.2.2 Industrial application of syngas 
+Syngas is the key feedstock for producing ammonia and methanol, making these industries the primary users of syngas. For ammonia production, syngas’ role is to provide hydrogen. An ammonia plant first converts the carbon monoxide (CO) in syngas into extra hydrogen (H2) using the water-gas-shift step, removes the resulting CO2, and then reacts the nearly pure H2 with nitrogen (from air) the Haber-Bosch loop to produce ammonia (NH3). Syngas is also the feedback that is converted into methanol. Most methanol plants first make syngas from natural gas through reforming or gasification of coal/biomass. Then, syngas is cleaned of sulfur and other impurities, and the H2/CO/CO2 balance is adjusted to be ready for synthesis. the conditioned syngas is compressed and passed over a copper-based catalyst where the main reaction (CO2 + 2H2 ?CH3OH; CO2 + 3H2 ? CH3OH + H2O) from crude methanol. 
+2.2.3 Importance of Syngas in the Energy Transition
+The global transition towards a low-carbon energy system has intensified the search for sustainable pathways for producing fuels and chemicals while reducing greenhouse gas emissions. In this context, synthesis gas (syngas), a mixture primarily composed of hydrogen (H?) and carbon monoxide (CO), has emerged as a key intermediate for integrating renewable energy resources with industrial processes. Unlike conventional fossil-based feedstocks, syngas can be produced from various carbon-containing resources, including natural gas, biomass, and carbon dioxide, making it a versatile platform for sustainable energy conversion.
+The significance of syngas in the energy transition lies in its ability to bridge the electricity, chemical, and transportation sectors. Renewable electricity generated from solar and wind resources can be utilized to produce syngas through processes involving carbon dioxide and water, thereby converting intermittent electrical energy into chemical energy that can be stored, transported, and subsequently transformed into synthetic fuels and value-added chemicals. This sector coupling enhances energy security, improves grid flexibility, and facilitates the large-scale integration of renewable energy into existing energy infrastructures.
+Furthermore, syngas serves as the primary feedstock for several industrial processes, including Fischer–Tropsch synthesis, methanol production, ammonia synthesis, and hydrogen generation. These processes enable the production of cleaner transportation fuels and essential industrial chemicals while promoting carbon utilization rather than direct carbon emissions. Consequently, syngas contributes to the development of circular carbon systems by recycling carbon dioxide into useful products, thereby supporting global decarbonization strategies.
+The growing interest in oxy-dry reforming of methane is closely linked to these advantages. By simultaneously utilizing methane and carbon dioxide as reactants, oxy-dry reforming provides a promising route for syngas production with improved energy efficiency and reduced greenhouse gas emissions. As a result, syngas production through advanced reforming technologies is expected to play an increasingly important role in achieving sustainable industrial development and the long-term objectives of the global energy transition.
+2.3 Conventional routes for syngas production 
+2.3.1 Steam Methane Reforming (SMR)
+Steam reforming of methane is one of the syngas generations by converting methane with water to syngas. The main reaction gives a ratio of carbon monoxide and hydrogen gas as 1 to 3, shown in Eq. (2.1). Take advantage of this high hydrogen carbon monoxide ratio; SRM technology is the most common method in the production of hydrogen gas from natural gas, which takes up 50% of the hydrogen production in the whole world (Rakhi et al 2024). Meanwhile, side reactions like the water-gas shift reaction Eq. (2.2), coke formation Eq. (2.3). These will interfere with the production of formation, especially for the coke formation, which will deactivate the catalyst.
+      CH4 + H2O ? CO + 3H2 ?H (298 K) = 206.3 kJ/mol 		(2.1)
+      CO + H2O ? CO2 + H2 					(2.2)
+      CO + H2 ? C + H2O 						(2.3)
+According to Eq. (1), the use of methane indicates it can be a beneficial way to utilize the
+greenhouse gas. However, this reaction is endothermic, indicating the need for a sustained heat supply. In other words, a large amount of fuel is required to generate heat [1, 3].
+2.3.2 Dry Reforming of Methane (DRM)
+Dry reforming of methane uses methane and carbon dioxide with the help of a catalyst to produce syngas at a ratio of 1 to 1 (Eq. (4)). There are three competing side reactions: methane decomposition (Eq. (5)), the Boudouard reaction (Eq. (6)), and the reverse water-gas shift (Eq. (7)). Both methane decomposition and the Boudouard reaction show the high possibility for coke formation, leading to deactivation of the catalyst.
+      CH4 + CO2 ? 2CO + 2H2 	?H(298 K) = 247.3 kJ/mol 	(2.4)
+      CH4 ? C + 2H2 						(2.5)
+      2CO ? C + CO2 						(2.6)
+      CO2 + H2 ? CO + H2O 					(2.7)
+The primary reaction demonstrates its significantly endothermic characteristics. This indicates a significant requirement for heat and fuel to guarantee the successful execution of this reaction. DRM employs two types of greenhouse gases carbon dioxide and methane to produce value-added syngas, demonstrating potential for carbon emission reduction and reuse. The issue of DRM development lies in the dangers associated with coke production. The selected catalysts significantly influence the rate of their deactivation. Researchers are currently focusing on building catalysts with a reduced likelihood of associated dangers, finding that nickel and nickel-based catalysts have commendable stability and catalytic performance
+2.3.4 Partial Oxidation
+Partial oxidation (POX) utilizes a hydrocarbon feedstock, typically natural gas or heavier oil fractions, to achieve incomplete combustion with a limited supply of oxygen. The goal is to control the oxidation process, primarily forming CO and H2, rather than complete combustion to CO2 and H2O. Compared to steam methane reforming, POX is faster and requires a smaller reactor, although its initial hydrogen yield per unit fuel is lower. The hot syngas is then quenched or heat-exchanged and can be routed to hydrogen production or even to specialized partial-oxidation gas turbines that co-produce power and a hydrogen-rich fuel.[7]
+The overall reaction equation is Eq. (28)
+      CH4 + ?(1/2)O2 ? CO + 2H2 				(2.8)
+2.3.5 Autothermal reforming
+Autothermal reforming (ATR) is a combination of steam reforming and partial oxidation processes to produce syngas from hydrocarbons. In other words, it is an oxygen-enhanced steam reforming. One of the advantages of ATR is that the process does not require more energy ideally because the steam reforming step consumes all the heat produced during the oxidation step. Compared to conventional steam-methane reforming (SMR), ATR typically has a smaller footprint, uses less steam, and produces a CO?-rich syngas. It also allows tuning of the H?/CO ratio for downstream uses, such as ammonia and methanol, and can be energy-efficient and stable when the system is well-designed. Because ATR produces a more CO?-rich syngas stream compared to other production routes, it integrates well with carbon capture systems, making it a preferred route for blue hydrogen production. The downside is that ATR requires pure oxygen feed, so it requires an air-separation unit (ASU), which increases capital costs and power consumption; if that power comes from emissions-intensive sources, it can offset the process benefits.[11]
+ 2.3.6 comparison among different reforming technologies 
+A horizontal comparative analysis carried out among the various reforming technology to assess their environmental impact. Although every syngas production can bring the society a more sustainable way to produce value-added products or new fuel, carbon emission happens during the production. Table 2.1 shows a summary of carbon emission from different syngas production methods. It organizes data from different literature. Different papers use variety of methods and standards to assess the environmental impact. Various literatures employ distinct calculation boundaries, including direct emissions or the entire life cycle. This paper collects data under uniform settings, categorizing diverse pathways into the same group, so facilitating horizontal comparison of pathways within that group. In each individual literature, the unit is further refined by considering downstream products, such as purified hydrogen or methanol derived from syngas. For the same method, the difference in data from different papers doesn’t indicate the distinction in environmental performance. The data for the same pathway that are examined in different papers allow comparison between different groups. Under the same unit, 0.426 kg of equiv CO2 N-1 m-3 of H2 is larger than 0.245 kg of equiv CO2 N-1 m-3 of H2 and 10 kg / kg H2 shows a greater emission than 9.8 kg / kg H2 [16-17]. Steam reforming of methane often results in higher CO2 emissions compared to the autothermal reforming method. Table 1 indicates that dry reforming exhibits reduced emissions compared to both steam reforming and bi-reforming of methane. Partial oxidation exhibits superior performance compared to dry reforming of methane regarding carbon dioxide emissions.
+
+PathwaysEnvironment impactReferenceSteam reforming of methane0.426 kg of equiv CO2 N-1 m-3 of H2[16]Autothermal reforming of methane0.245 kg of equiv CO2 N-1 m-3 of H2[16]Gasification of coal0.100 kg of equiv CO2 N-1 m-3 of H2[16]Dry reforming of methane0.19 kg CO2 per kg syngas[18]Partial oxidation of methane0.58 kg CO2 per kg syngas[18]Dry reforming of methane1.3 kg CO2 per kg syngas[18]Autothermal reforming of methane0.38 kg CO2 per kg syngas[18]Dry reforming of methane5.23 tonneCO2 /tonneMeOH[19]Steam reforming of methane1.909tonneCO2/tonneMeOH
+[19]Autothermal reforming9.8 kg / kg H2[20]Steam reforming of methane10 kg / kg H2[20]Fig.1: table 2.1 showing the emission carbon for different syngas production methods 
+2.4 Oxy-Dry reforming of methane (ODRM)
+2.3.1 Definition and Concept
+Oxy-dry reforming of methane (ODRM) is an advanced methane conversion process that integrates dry reforming and catalytic partial oxidation within a single reactor. In this process, methane reacts simultaneously with carbon dioxide and a controlled amount of oxygen to produce synthesis gas (syngas), primarily hydrogen and carbon monoxide. Unlike conventional dry reforming, the presence of oxygen introduces mildly exothermic oxidation reactions that supply part of the heat required for the strongly endothermic reforming reactions. Consequently, the process exhibits improved thermal efficiency and reduced external energy demand.
+ODRM has emerged as a promising technology because it simultaneously utilizes two greenhouse gases, CH? and CO?, converting them into valuable products. By adjusting the feed composition, particularly the O?/CH? and CO?/CH? ratios, the H?/CO ratio can be tailored for downstream applications such as Fischer–Tropsch synthesis, methanol production and hydrogen generation. Recent studies identify ODRM as a bridge between conventional reforming technologies by combining the advantages of dry reforming and partial oxidation while minimizing their individual drawbacks.
+2.4.1 Reaction Mechanism
+The chemistry of ODRM involves several simultaneous reactions. Dry reforming (CH? + CO? ? 2CO + 2H?) is the principal endothermic reaction responsible for syngas formation. Partial oxidation of methane supplies heat through exothermic oxidation, thereby sustaining the reforming reactions. Depending on operating conditions, the reverse water-gas shift reaction 
+
+may also occur, converting part of the hydrogen and carbon dioxide into carbon monoxide and water. Methane decomposition and the Boudouard reaction are undesirable because they promote carbon deposition.
+The catalyst plays a critical role in activating methane and carbon dioxide. Nickel-based catalysts remain the most widely investigated because of their high catalytic activity and relatively low cost. However, catalyst modification with promoters or suitable supports is often required to improve oxygen mobility, suppress coke formation and enhance catalyst stability during prolonged operation.
+2.4.2 Advantages over Conventional Reforming
+Compared with steam methane reforming, ODRM reduces dependence on steam and lowers external heat requirements through in-situ heat generation. Relative to conventional dry reforming, oxygen addition enhances methane conversion, improves thermal balance and reduces the tendency for severe catalyst coking when optimized. The technology also offers flexibility in controlling the H?/CO ratio according to downstream process requirements. 
+Furthermore, simultaneous utilization of methane and carbon dioxide contributes to greenhouse-gas valorization and supports carbon management strategies.
+2.4.3 Challenges and Limitations
+Despite these advantages, several technical challenges remain. Excess oxygen may lead to complete combustion of methane, decreasing syngas yield and process efficiency. Insufficient oxygen, on the other hand, may not provide adequate heat for reforming. Catalyst deactivation resulting from carbon deposition, metal sintering and poisoning continues to limit long-term operation. Achieving an optimum balance between oxidation and reforming reactions therefore requires careful optimization of feed composition, reactor design and 
+
+operating temperature. Continued catalyst development and reactor modelling remain important research priorities.
+2.4.4 Industrial Relevance
+ODRM is increasingly recognized as a promising route for sustainable syngas production because it converts methane-rich natural gas and carbon dioxide streams into valuable chemical feedstocks. The process has potential applications in hydrogen production, methanol synthesis, Fischer–Tropsch fuel production and other gas-to-liquids technologies. Growing interest in carbon capture and utilization has further increased the relevance of ODRM, since it provides a practical pathway for converting captured CO? into value-added products. Although commercial deployment remains limited, advances in catalyst engineering, process simulation and reactor optimization continue to improve its industrial feasibility.
+2.5 Thermodynamics of Oxy-Dry Reforming of Methane
+Thermodynamic analysis plays a central role in understanding and optimizing the oxy-dry reforming of methane (ODRM). Unlike conventional reforming processes, ODRM involves a complex network of simultaneous endothermic and exothermic reactions whose equilibrium behaviour determines methane conversion, carbon dioxide utilization, hydrogen production and carbon formation. Consequently, thermodynamic studies are commonly employed to predict the maximum attainable conversion, product distribution and operating conditions before experimental or process simulation studies are undertaken. Recent investigations have shown that equilibrium-based thermodynamic analysis remains one of the most reliable approaches for evaluating the feasibility and efficiency of ODRM because it provides valuable insight into the influence of temperature, pressure and feed composition on reactor performance. 
+In ODRM, methane reacts with carbon dioxide in the presence of a controlled quantity of oxygen to produce synthesis gas (H? and CO). The introduction of oxygen distinguishes ODRM from conventional dry reforming by supplying part of the energy required for the highly endothermic reforming reactions. This combination of oxidation and reforming reactions creates a favourable thermal balance, reduces external heat requirements and improves process efficiency when the operating conditions are properly selected. 
+Nevertheless, the coexistence of several competing reactions makes thermodynamic evaluation essential for identifying conditions that maximize syngas production while minimizing undesirable side reactions such as methane decomposition, the Boudouard reaction and complete combustion. 
+2.5.1 Fundamentals of Chemical Thermodynamics
+Chemical thermodynamics is concerned with the relationship between heat, work and the chemical transformations occurring in reacting systems. In catalytic reforming processes, thermodynamic principles are used to determine whether a reaction is feasible and to predict the equilibrium composition of the reacting mixture under specified operating conditions. Since ODRM involves several reversible reactions occurring simultaneously, thermodynamic calculations provide a theoretical limit for methane conversion and product selectivity irrespective of catalyst performance. These predictions serve as benchmarks against which experimental and simulation results can be compared. 
+The feasibility of a chemical reaction is primarily determined by the change in Gibbs free energy (?G). A negative Gibbs free-energy change indicates that the reaction can proceed spontaneously under the specified conditions, whereas a positive value suggests that external 
+
+energy is required. Because dry reforming is strongly endothermic, elevated temperatures are generally required to shift the equilibrium towards hydrogen and carbon monoxide formation. Conversely, the partial oxidation reaction is exothermic and supplies heat that promotes the reforming reactions. The interaction between these reactions creates the distinctive thermodynamic behaviour observed in ODRM. 
+Another important thermodynamic property is enthalpy (?H), which represents the heat absorbed or released during a chemical reaction. The dry reforming reaction, (CH4 + CO2 ? 2CO + 2H2) is highly endothermic and therefore requires significant energy input. However, methane oxidation, (CH4 + ?(1/2)O2 ?CO + 2H2) and complete combustion reactions release substantial heat, partially satisfying the energy demand of reforming. This internal heat generation reduces the external energy required by the reactor and constitutes one of the principal thermodynamic advantages of ODRM over conventional dry reforming. 
+2.5.2 Gibbs Free Energy Minimization
+The Gibbs free-energy minimization method has become the most widely adopted thermodynamic approach for analysing ODRM systems because it does not require prior knowledge of individual reaction pathways. Instead, the equilibrium composition is obtained by minimizing the total Gibbs free energy of the reacting mixture while satisfying elemental mass balances. This approach is particularly suitable for complex reacting systems involving 
+numerous simultaneous reactions, including dry reforming, partial oxidation, reverse water-gas shift, methane decomposition and carbon formation. 
+Modern process simulators and thermodynamic software packages, including Aspen HYSYS, Aspen Plus and HSC Chemistry, employ Gibbs free-energy minimization algorithms to estimate equilibrium compositions under varying operating conditions. These calculations enable researchers to investigate the effects of temperature, pressure and feed composition 
+without extensive experimental work. Consequently, Gibbs minimization has become an indispensable tool for process design, optimization and sensitivity analysis in ODRM research. 
+2.5.3 Chemical Equilibrium
+Chemical equilibrium refers to the dynamic state at which the forward and reverse reactions proceed at equal rates, resulting in constant concentrations of reactants and products. In oxy-dry reforming of methane (ODRM), equilibrium analysis is particularly important because several reversible reactions occur simultaneously. The equilibrium composition determines methane conversion, carbon dioxide utilization, hydrogen yield, carbon monoxide production, water formation and carbon deposition. Therefore, equilibrium calculations are widely employed to predict the maximum attainable performance of the reforming process before experimental validation.
+The principal equilibrium reaction governing syngas production is the dry reforming reaction:
+      CH4 + CO2 ? 2CO + 2H2 					(2.9)
+Other equilibrium reactions occurring simultaneously include:
+Reverse Water-Gas Shift (RWGS)
+      CO2 + H2 ? CO + H2O 					(2.10)
+Steam Reforming
+      CH4 + H2O ? CO + 3H2 					(2.11)
+Methane Decomposition
+      CH4 ? C + 2H2 						(2.12)
+Boudouard Reaction
+      2CO ? CO2 + C 						(2.13)
+The equilibrium position of these reactions depends primarily on temperature, pressure and feed composition. High temperatures favour the endothermic reforming reactions, while lower temperatures favour exothermic reactions such as the Boudouard reaction, thereby increasing the likelihood of carbon deposition. Recent thermodynamic investigations have shown that equilibrium analysis provides an effective means of selecting operating conditions that maximize syngas production while suppressing undesirable side reactions.
+2.5.4 Equilibrium Constant
+The equilibrium constant (K) describes the extent to which a reaction proceeds towards products under specified conditions. It is closely related to the standard Gibbs free energy change according to
+?Go = - RT ln K 									(2.14)
+where ?G° is the standard Gibbs free energy change (kJ mol?¹), R is the universal gas constant (8.314 J mol?¹ K?¹), T is the absolute temperature (K), and K is the equilibrium constant.
+A large equilibrium constant indicates that products are favoured, whereas a small equilibrium constant suggests that reactants dominate. Since the dry reforming reaction is strongly endothermic, its equilibrium constant increases significantly with increasing temperature. Consequently, methane conversion and hydrogen production become more favourable at elevated temperatures.
+The equilibrium constant is widely incorporated into thermodynamic models developed using Aspen HYSYS, Aspen Plus and HSC Chemistry to predict equilibrium product distributions under different process conditions. These models enable researchers to identify the optimum operating window without extensive laboratory experimentation.
+
+2.5.5 Effect of Temperature
+Temperature is considered the most influential operating variable in oxy-dry reforming because almost all major reforming reactions are temperature dependent. Since dry reforming is highly endothermic (?H° ? +247 kJ mol?¹), increasing temperature shifts equilibrium towards hydrogen and carbon monoxide formation according to Le Chatelier's principle.
+At temperatures below approximately 700°C, methane conversion is relatively low because insufficient thermal energy is available to overcome the activation energy of methane. Carbon deposition is also more pronounced due to the favourable conditions for methane decomposition and the Boudouard reaction.
+As temperature increases to approximately 800–950°C, methane conversion and carbon dioxide conversion increases substantially. Hydrogen and carbon monoxide yields also increase because equilibrium shifts towards the products of reforming reactions. Simultaneously, carbon formation becomes thermodynamically less favourable, improving catalyst stability. However, excessively high temperatures increase reactor energy requirements and material costs. Consequently, most thermodynamic studies recommend operating temperatures between 800 and 900°C as an optimum compromise between conversion, energy consumption and catalyst durability.
+2.5.6 Effect of Pressure
+Pressure exerts a significant influence on reforming reactions because the number of gaseous molecules changes during reaction. According to Le Chatelier's principle, increasing pressure favours the direction producing fewer gas molecules.
+For the dry reforming reaction,
+      CH4 + CO2 ? 2CO + 2H2 				(2.15)
+two moles of reactants produce four moles of gaseous products. Therefore, increasing pressure shifts equilibrium towards the reactants, thereby reducing methane conversion and syngas production. Conversely, low-pressure operation favours hydrogen and carbon monoxide production because equilibrium shifts towards the side containing more gas molecules. For this reason, most industrial reforming processes operate near atmospheric pressure or under moderately elevated pressures where reactor productivity and equipment design can be balanced. Thermodynamic simulations consistently demonstrate that pressure has a smaller effect than temperature but remains an important parameter during process optimization.
+2.5.7 Effect of Feed Composition (CH?/CO?/O? Ratio)
+Feed composition significantly influences the thermodynamic behaviour of ODRM because it determines the balance between oxidation and reforming reactions. Increasing the CO?/CH? ratio enhances methane conversion and suppresses carbon formation because excess carbon dioxide gasifies deposited carbon through the reverse Boudouard reaction,
+      C + CO2 ? 2CO 					(2.16)
+Nevertheless, excessive CO? promotes the reverse water-gas shift reaction, thereby reducing hydrogen yield. The addition of a controlled quantity of oxygen distinguishes ODRM from conventional dry reforming. Partial oxidation generates heat according to
+      CH4+?(1/2)O2 ? CO+2H2 				(2.17)
+This exothermic reaction supplies part of the energy required for dry reforming, thereby reducing external heating requirements. However, excessive oxygen promotes complete combustion,
+      CH2 +2O2 ?CO2 +2H2O 				(2.18)
+which decreases syngas production and lowers process efficiency. Consequently, maintaining an appropriate CH?/CO?/O? feed ratio is essential for maximizing methane conversion while minimizing combustion losses and carbon deposition.
+2.5.8 Carbon Formation Tendency
+Carbon deposition remains one of the major limitations affecting catalyst stability during methane reforming. Thermodynamically, carbon formation primarily occurs through methane decomposition
+      CH4 ?C+2H2 					(2.19)
+and the Boudouard reaction
+      2CO? CO2 +C 					(2.20)
+Carbon accumulation blocks catalyst active sites, reduces methane conversion and increases pressure drop within the reactor. Carbon deposition also accelerates catalyst deactivation through encapsulation and filamentous carbon growth.
+Thermodynamic studies indicate that carbon formation is favoured at relatively low temperatures, high methane concentrations and insufficient oxidizing agents. Increasing temperature, increasing the CO?/CH? ratio and introducing small quantities of oxygen all reduce the thermodynamic tendency for coke formation.
+Catalyst promoters such as cerium oxide, lanthanum oxide and magnesium oxide further improve resistance to carbon deposition by increasing oxygen mobility and enhancing the gasification of deposited carbon.
+
+
+2.5.9 Thermodynamic Efficiency
+Thermodynamic efficiency describes the effectiveness with which supplied energy is converted into useful chemical energy contained in the produced syngas. It provides an important measure for comparing different reforming technologies.
+Because ODRM combines endothermic dry reforming with exothermic partial oxidation, part of the required reaction heat is generated internally. Consequently, ODRM generally exhibits higher thermal efficiency than conventional dry reforming, which depends entirely on external heating. Thermodynamic efficiency is commonly evaluated using methane conversion, carbon dioxide conversion, hydrogen yield, syngas yield, H?/CO ratio and overall energy efficiency. Recent equilibrium studies have shown that optimum thermodynamic efficiency is achieved under high temperatures, low pressures and carefully controlled CH?/CO?/O? feed ratios. Under these conditions, methane conversion and syngas production increase while carbon formation and combustion losses are minimized.
+Overall, thermodynamic analysis remains an indispensable tool for optimizing oxy-dry reforming systems. It provides the theoretical basis for selecting operating conditions, predicting equilibrium compositions and evaluating process performance before catalyst development, reactor modelling and experimental investigations are undertaken. This explains why Gibbs free-energy minimization methods are extensively employed in modern process simulation software such as Aspen HYSYS and HSC Chemistry.
+2.6 Attendant Side Reactions in Oxy-Dry Reforming of Methane
+Figure 2.6: General reaction network of Oxy-dry reforming of methane showing the main reaction and attendant side reactions 
+
+			
+
+2.6.1 Reverse Water–Gas Shift (RWGS) Reaction
+The reverse water–gas shift (RWGS) reaction is one of the most significant side reactions occurring during oxy-dry reforming of methane. It involves the reaction of carbon dioxide with hydrogen to produce carbon monoxide and water according to:
+      CO2 + H2 ? CO + H2O 				(2.21)
+Since the reaction is endothermic, it is favored at elevated temperatures commonly employed in oxy-dry reforming (700–1000 °C). Although RWGS increases CO production, it simultaneously consumes hydrogen, thereby reducing the H?/CO ratio of the product gas. This reduction can be undesirable for applications requiring hydrogen-rich syngas. The water 
+
+produced may also participate in other reactions such as the water-gas shift reaction, further influencing equilibrium and product composition. Consequently, reactor operating conditions and catalyst selection must be carefully optimized to limit excessive RWGS activity while maintaining high methane and carbon dioxide conversion. 
+2.6.2 Water–Gas Shift (WGS) Reaction
+The water–gas shift (WGS) reaction proceeds in the opposite direction of the RWGS reaction and is represented as:
+      CO + H2O ?CO2 + H2 				(2.22)
+This mildly exothermic reaction is favored at relatively lower temperatures and in the presence of steam generated from methane oxidation or RWGS. The WGS reaction enhances hydrogen production by converting carbon monoxide into additional hydrogen while regenerating carbon dioxide. Although this may be beneficial when hydrogen is the desired product, it decreases carbon monoxide concentration, thereby increasing the H?/CO ratio. In oxy-dry reforming, both WGS and RWGS may occur simultaneously depending on temperature and feed composition, making thermodynamic control essential for obtaining the desired syngas composition. 
+2.6.3 Methane Cracking
+Methane cracking, also known as methane decomposition, is another important side reaction responsible for catalyst deactivation through carbon formation. The reaction is expressed as:
+      CH4 ?C(s) + 2H2 					(2.23)
+This endothermic reaction becomes increasingly favorable at high temperatures, especially when insufficient oxidizing species are available to remove deposited carbon. Although 
+
+methane cracking contributes to hydrogen formation, the resulting solid carbon accumulates on catalyst surfaces, blocks active sites, and eventually causes catalyst deactivation and pressure drop within the reactor. Nickel-based catalysts are particularly susceptible to carbon deposition arising from methane cracking, necessitating catalyst modification or appropriate operating conditions to suppress coke formation. 
+2.6.4 Boudouard Reaction
+The Boudouard reaction, also known as carbon monoxide disproportionation, is represented by:
+      2CO ? CO2 + C(s) 						(2.24)
+This highly exothermic reaction is favored at relatively low temperatures and contributes significantly to carbon deposition during methane reforming processes. The carbon formed blocks catalyst pores, covers active metal sites, and reduces catalyst activity and stability. Fortunately, increasing the reaction temperature shifts the equilibrium toward carbon monoxide formation, thereby suppressing carbon deposition. Maintaining sufficiently high operating temperatures and providing adequate oxidizing agents such as CO? or H?O help minimize carbon formation through this pathway. 
+2.6.5 Complete Oxidation of Methane
+Complete oxidation occurs when methane reacts with excess oxygen to produce carbon dioxide and water according to:
+      CH4 + 2O2 ? CO2 + 2H2O 					(2.26)
+This reaction is highly exothermic and supplies substantial heat required for the endothermic reforming reactions occurring in oxy-dry reforming. However, excessive oxygen promotes 
+
+complete combustion of methane rather than its conversion into syngas, resulting in reduced hydrogen and carbon monoxide yields. Therefore, oxygen dosage must be carefully controlled to provide sufficient process heat without sacrificing syngas production efficiency.
+2.6.6 Partial Oxidation of Methane
+Partial oxidation of methane is represented as:
+      CH4 +?(1/2)O2 ? CO + 2H2 					(2.27)
+Unlike complete oxidation, partial oxidation directly produces syngas while releasing moderate heat. In oxy-dry reforming, this reaction complements dry reforming by supplying heat internally, thereby reducing external energy requirements. The combined effects of partial oxidation and dry reforming often improve methane conversion, reactor thermal efficiency, and process stability. Nevertheless, excessive oxygen supply may shift the reaction toward complete combustion, making careful control of the O?/CH? ratio essential. 
+2.6.7 Carbon Gasification
+Carbon gasification involves the removal of deposited carbon through reactions with carbon dioxide or steam:
+      C(s) + CO2 ? 2CO 						(2.28)
+      C(s) + H2O ? CO + H2 					(2.29)
+These reactions are endothermic and become increasingly favorable at elevated temperatures. Carbon gasification plays a critical role in maintaining catalyst activity by continuously removing coke deposited through methane cracking and the Boudouard reaction. Consequently, catalysts possessing high oxygen mobility and strong CO? activation ability 
+promote carbon gasification, thereby extending catalyst lifetime and improving long-term reactor stability. 
+2.6.8 Effect of Side Reactions on Syngas Quality
+The occurrence of attendant side reactions significantly influences both the quantity and quality of syngas produced during oxy-dry reforming. The RWGS reaction decreases the H?/CO ratio by consuming hydrogen, whereas the WGS reaction increases hydrogen production at the expense of carbon monoxide. Methane cracking and the Boudouard reaction promote carbon deposition, leading to catalyst deactivation, lower methane conversion, and reduced process efficiency. Conversely, partial oxidation and carbon gasification enhance thermal balance and suppress coke accumulation, thereby improving catalyst stability and reactor performance. Achieving high-quality syngas therefore requires careful optimization of reaction temperature, pressure, oxygen dosage, feed composition, and catalyst characteristics to maximize the desired reforming reactions while minimizing undesirable side reactions. 
+2.7 Catalysts for Oxy-Dry Reforming of Methane
+2.7.1 Catalyst Requirements
+Catalysts play a central role in the oxy-dry reforming (ODR) of methane by lowering the activation energy of the reactions, improving reactant conversion, and enhancing the selectivity towards hydrogen and carbon monoxide. An effective catalyst for ODR should exhibit high activity for methane activation, strong resistance to carbon deposition, excellent thermal stability, and the ability to withstand repeated oxidation and reduction cycles encountered during operation. Furthermore, the catalyst should possess adequate oxygen mobility to facilitate the removal of deposited carbon and maintain long-term performance under high-temperature conditions. Mechanical strength and resistance to sintering are also 
+
+essential to ensure catalyst durability during prolonged industrial operation. Consequently, catalyst design remains one of the most critical factors influencing the efficiency and economic viability of oxy-dry reforming processes (Usman et al., 2022; Li et al., 2024).
+2.7.2 Nickel-Based Catalysts
+Nickel-based catalysts are the most widely investigated catalysts for oxy-dry reforming due to their high catalytic activity and relatively low cost compared with noble metals. Nickel effectively promotes methane dissociation by breaking the strong C–H bond, thereby facilitating the production of hydrogen and carbon monoxide. In addition, nickel catalysts demonstrate good performance in both dry reforming and partial oxidation reactions, making them suitable for the combined reaction network present in oxy-dry reforming.
+			
+
+Figure 2.7 Catalytic reaction mechanisms on a Nickel catalyst.
+Despite these advantages, nickel catalysts are susceptible to carbon deposition and metal sintering at elevated temperatures, which gradually reduce catalyst activity and shorten catalyst lifespan. To overcome these limitations, researchers have focused on modifying nickel catalysts through the addition of promoters and the use of suitable support materials that improve metal dispersion, enhance oxygen mobility, and suppress coke formation. These modifications have significantly improved the stability and catalytic performance of nickel-based systems under oxy-dry reforming conditions (Abdulrasheed et al., 2021; Usman et al., 2022; Li et al., 2024).
+2.7.3 Noble Metal Catalysts
+Noble metal catalysts, including rhodium (Rh), ruthenium (Ru), platinum (Pt), palladium (Pd), and iridium (Ir), exhibit superior catalytic performance for oxy-dry reforming because of their excellent resistance to carbon deposition, high thermal stability, and remarkable catalytic activity. These metals possess a strong ability to activate methane while facilitating the oxidation of carbon species deposited on the catalyst surface, thereby reducing catalyst deactivation.
+Among the noble metals, rhodium has consistently demonstrated the highest activity and stability for methane reforming reactions. However, the widespread industrial application of noble metal catalysts remains limited because of their scarcity and high cost. Consequently, current research has focused on using small quantities of noble metals either as promoters for nickel catalysts or as highly dispersed active phases to balance catalytic performance with economic feasibility (Li et al., 2024; Wang et al., 2023).
+
+
+2.7.4 Catalyst Supports
+Catalyst supports provide structural stability, improve the dispersion of active metal particles, and influence the physicochemical properties of the catalyst. Common support materials employed in oxy-dry reforming include alumina (Al?O?), ceria (CeO?), zirconia (ZrO?), silica (SiO?), magnesium oxide (MgO), lanthanum oxide (La?O?), and mixed metal oxides.
+An ideal catalyst support should possess high surface area, excellent thermal stability, and strong interaction with the active metal. Supports containing oxygen storage materials such as ceria and ceria-zirconia mixed oxides are particularly attractive because they enhance oxygen mobility, facilitate carbon oxidation, and suppress coke accumulation during reforming. Similarly, basic supports such as magnesium oxide and lanthanum oxide improve carbon dioxide adsorption and activation, thereby promoting carbon gasification and reducing catalyst deactivation (Usman et al., 2022; Li et al., 2024).
+2.7.5 Catalyst Promoters
+Catalyst promoters are additives incorporated in small amounts to improve the activity, selectivity, stability, or resistance of catalysts toward deactivation. In oxy-dry reforming, 
+promoters such as cerium (Ce), lanthanum (La), magnesium (Mg), calcium (Ca), potassium (K), and zirconium (Zr) have been extensively investigated. These promoters enhance catalyst performance by improving nickel dispersion, increasing metal-support interaction, strengthening oxygen mobility, and facilitating the removal of deposited carbon through oxidation or gasification reactions. Rare-earth promoters, particularly cerium and lanthanum oxides, have received considerable attention because of their oxygen storage capability, which continuously supplies active oxygen species for coke removal. Consequently, 
+
+promoted catalysts generally exhibit higher methane conversion, greater catalyst stability, and longer operational lifetimes than unpromoted catalysts (Wang et al., 2023; Li et al., 2024).
+2.7.6 Catalyst Deactivation
+Catalyst deactivation remains one of the major challenges limiting the commercial implementation of oxy-dry reforming technology. The primary mechanisms responsible for catalyst deactivation include carbon deposition, metal sintering, poisoning by impurities such as sulfur compounds, and structural changes in the catalyst support.
+At high operating temperatures, nickel particles tend to agglomerate, leading to a reduction in active surface area available for methane activation. Simultaneously, deposited carbon blocks catalyst pores and covers active sites, reducing catalyst efficiency and increasing pressure drop across the reactor. Catalyst poisoning further decreases catalytic activity by strongly adsorbing on active metal sites and preventing reactant molecules from interacting with the catalyst surface. These deactivation mechanisms collectively reduce catalyst lifetime and increase operating costs, highlighting the importance of developing catalysts with enhanced resistance to thermal and chemical degradation (Abdulrasheed et al., 2021; Usman et al., 2022).
+2.7.7 Coke Formation and Mitigation
+Coke formation is regarded as the most significant cause of catalyst deactivation during oxy-dry reforming. Carbon deposition primarily occurs through methane cracking and the Boudouard reaction, both of which generate solid carbon that accumulates on catalyst surfaces. The deposited carbon blocks active catalytic sites, restricts reactant diffusion, promotes pressure drop, and may eventually cause reactor blockage if left uncontrolled.
+
+Several strategies have been developed to mitigate coke formation. These include operating at sufficiently high temperatures, maintaining appropriate CH?/CO?/O? feed ratios, employing supports with high oxygen storage capacity, incorporating catalyst promoters such as ceria and lanthana, and using small amounts of oxygen to facilitate continuous oxidation of deposited carbon. In addition, catalysts with high oxygen mobility promote carbon gasification reactions that convert deposited carbon into carbon monoxide, thereby regenerating active catalyst sites. These approaches collectively improve catalyst longevity, 
+enhance syngas production, and increase the overall efficiency of oxy-dry reforming processes (Li et al., 2024; Wang et al., 2023).
+2.8 Process Variables Affecting Oxy-Dry Reforming of Methane
+2.8.1 Temperature
+Temperature is one of the most influential operating variables affecting the performance of oxy-dry reforming of methane. Since dry reforming and the reverse water-gas shift reaction are endothermic, increasing the reaction temperature generally enhances methane and carbon dioxide conversion while promoting hydrogen and carbon monoxide production. High temperatures also reduce the likelihood of carbon deposition by favoring carbon gasification reactions and suppressing the Boudouard reaction. However, excessively high temperatures may accelerate catalyst sintering, resulting in the loss of active surface area and reduced catalyst stability. Therefore, an optimum temperature range of approximately 750–900 °C is commonly recommended to achieve high syngas yield while maintaining catalyst durability (Li et al., 2024; Usman et al., 2022).
+
+
+2.8.2 Pressure
+Pressure significantly influences the thermodynamic equilibrium of oxy-dry reforming. Because the reforming reactions produce a greater number of gaseous molecules than they consume, they are generally favored at low operating pressures. Increasing the system pressure shifts the equilibrium toward the reactants, thereby reducing methane conversion and hydrogen production. Conversely, operating at atmospheric or near-atmospheric pressure enhances syngas yield and improves process efficiency. Nevertheless, industrial applications may employ moderate pressures to facilitate downstream processing or integration with other units. Consequently, pressure selection requires balancing reaction performance with process economics and equipment design (Abdulrasheed et al., 2021; Wang et al., 2023).
+2.8.3 CH?/CO? Feed Ratio
+The methane-to-carbon dioxide (CH?/CO?) feed ratio plays a crucial role in determining reactant conversion, syngas composition, and carbon deposition tendencies during oxy-dry reforming. A feed ratio close to unity is theoretically preferred because it corresponds to the stoichiometric requirement of the dry reforming reaction. However, increasing the methane concentration beyond this ratio promotes methane cracking and carbon formation due to insufficient oxidizing species available for coke removal. On the other hand, excess carbon dioxide enhances coke gasification and suppresses carbon deposition but may simultaneously increase the reverse water-gas shift reaction, resulting in lower hydrogen yield. Therefore, optimizing the CH?/CO? ratio is essential for achieving high methane conversion, minimizing 
+coke formation, and producing syngas with the desired H?/CO ratio (Usman et al., 2022; Li et al., 2024).
+
+
+2.8.4 Oxygen Concentration
+The addition of oxygen distinguishes oxy-dry reforming from conventional dry reforming by introducing exothermic oxidation reactions that provide heat for the endothermic reforming process. Appropriate oxygen concentration enhances methane conversion, improves reactor thermal balance, and reduces external heating requirements. Furthermore, oxygen facilitates the oxidation of deposited carbon, thereby improving catalyst stability and prolonging catalyst life. However, excessive oxygen promotes complete combustion of methane, producing carbon dioxide and water instead of the desired synthesis gas. Consequently, careful control of the O?/CH? ratio is necessary to maximize syngas production while minimizing undesirable oxidation reactions (Li et al., 2024; Wang et al., 2023).
+2.8.5 Space Velocity
+Gas hourly space velocity (GHSV) represents the volumetric flow rate of the feed gas relative to the catalyst volume and determines the contact time between reactants and the catalyst. Lower space velocity increases the residence time of reactants within the catalyst bed, thereby improving methane conversion and syngas production. Conversely, excessively high space velocity shortens contact time, resulting in incomplete conversion and reduced hydrogen and carbon monoxide yields. However, very low space velocity may lead to unnecessary energy consumption and larger reactor sizes. Therefore, an optimum space velocity is required to achieve efficient catalyst utilization while maintaining high reactor productivity (Abdulrasheed et al., 2021; Usman et al., 2022).
+
+
+
+2.8.6 Residence Time
+Residence time refers to the average duration that reactant gases remain inside the reactor during the reforming process. It directly affects the extent of chemical reactions and equilibrium attainment. Longer residence times generally improve methane and carbon dioxide conversion by allowing sufficient time for reforming reactions to proceed toward equilibrium. They also enhance syngas production and may promote the gasification of deposited carbon. However, excessively long residence times may increase operational costs and encourage undesirable secondary reactions such as the reverse water-gas shift reaction. Therefore, optimizing residence time is essential for maximizing syngas yield while maintaining process efficiency and catalyst stability (Li et al., 2024; Wang et al., 2023).
+2.8.7 Reactor Configuration
+Reactor configuration plays a significant role in determining heat transfer, mass transfer, catalyst utilization, and overall process performance during oxy-dry reforming. Several reactor designs have been investigated, including fixed-bed reactors, fluidized-bed reactors, packed-bed reactors, membrane reactors, and microchannel reactors. Fixed-bed reactors are widely used because of their simple design and ease of operation, whereas fluidized-bed reactors offer superior heat and mass transfer characteristics and improved temperature uniformity. Membrane reactors enhance hydrogen separation during the reforming process, thereby improving hydrogen purity and shifting reaction equilibrium toward greater methane conversion. More recently, microchannel reactors have attracted considerable attention because of their excellent heat transfer characteristics, compact design, and ability to minimize temperature gradients. The selection of an appropriate reactor configuration 
+therefore, depends on factors such as production capacity, catalyst characteristics, operating conditions, and process economics (Usman et al., 2022; Li et al., 2024).
+2.9 Process Modelling of Oxy-Dry Reforming of Methane
+2.9.1 Importance of Process Modelling
+Process modelling has become an indispensable tool in the development and optimization of oxy-dry reforming processes. It enables researchers and engineers to predict reactor performance, evaluate process variables, and optimize operating conditions without relying solely on costly and time-consuming experimental investigations. Through process modelling, the effects of temperature, pressure, feed composition, catalyst performance, and reactor configuration on methane conversion, carbon dioxide utilization, hydrogen production, and carbon deposition can be accurately predicted. In addition, process models provide valuable information for reactor design, scale-up, economic evaluation, and process control, making them essential in the transition from laboratory-scale studies to industrial implementation. As computational capabilities continue to improve, process modelling has become an integral component of modern chemical process development and optimization (Bae et al., 2023; Das et al., 2024).
+2.9.2 Mathematical Modelling Approach
+Mathematical modelling involves the formulation of mathematical equations that describe the physical and chemical phenomena occurring during oxy-dry reforming. These equations are generally based on the fundamental principles of mass conservation, energy conservation, momentum transfer, and chemical reaction kinetics. Depending on the complexity of the model, transport phenomena such as heat transfer, mass diffusion, and fluid flow may also be incorporated to improve prediction accuracy.
+Mathematical models may be classified as steady-state or dynamic models. Steady-state models assume that process variables remain constant with time and are commonly employed 
+for process design and optimization. Dynamic models, on the other hand, account for transient changes in operating conditions and are particularly useful for process control, start-up analysis, and safety studies. The selection of an appropriate modelling approach depends on the research objectives, computational requirements, and the level of detail required for process simulation (Chen et al., 2022; Das et al., 2024).
+2.9.3 Equilibrium Models
+Equilibrium models are among the most widely used approaches for analysing oxy-dry reforming because of their simplicity and relatively low computational requirements. These models assume that all chemical reactions proceed to thermodynamic equilibrium, allowing the equilibrium composition of the product gases to be determined through the minimization of Gibbs free energy or the application of equilibrium constants.
+Although equilibrium models neglect reaction kinetics and catalyst characteristics, they provide valuable insights into the maximum achievable methane conversion, hydrogen yield, carbon monoxide production, and carbon formation tendency under different operating conditions. Consequently, equilibrium modelling serves as an important preliminary tool for evaluating the influence of temperature, pressure, and feed composition before conducting more detailed kinetic or computational fluid dynamics (CFD) simulations. Furthermore, equilibrium predictions are frequently used to validate experimental data and optimize reactor operating conditions in process simulation software such as Aspen HYSYS and HSC Chemistry (Bae et al., 2023; Sharma et al., 2025).
+2.9.4 Process Flow Diagrams
+A process flow diagram (PFD) is a graphical representation that illustrates the major equipment and process streams involved in an oxy-dry reforming system. It provides a clear overview of the flow of reactants and products throughout the process while serving as the foundation for process simulation and plant design.
+A typical oxy-dry reforming process consists of methane, carbon dioxide, and oxygen feed streams, flow control units, feed compressors, preheaters, a reforming reactor, heat exchangers, coolers, gas separators, and product storage facilities. During process simulation, the PFD enables engineers to establish material and energy balances, define operating conditions, and evaluate the interactions between various process units. In software packages such as Aspen HYSYS, the process flow diagram forms the basis upon which the entire simulation model is developed and analysed. Therefore, an accurate PFD is essential for reliable process modelling and optimization (Chen et al.,2022; Sharma et al., 2025)	
+Figure 2.9: Process flow diagram of oxy-dry reforming of methane 
+MIX-100 – mixer
+E-100 – heater 
+
+PFR-100 – plug flow reactor 
+E-101 – cooler 
+V-100 – separator  
+2.9.5 Model Assumptions
+To simplify the mathematical description of oxy-dry reforming, several assumptions are commonly adopted during process modelling. These assumptions reduce computational complexity while maintaining acceptable prediction accuracy. Typical assumptions include steady-state operation, ideal gas behaviour, negligible pressure drop across the reactor, uniform catalyst distribution, complete mixing of gaseous reactants, and the absence of heat loss to the surroundings. For equilibrium models, it is further assumed that all reactions attain thermodynamic equilibrium before the products leave the reactor. Catalyst deactivation, mechanical degradation, and transport limitations are often neglected unless kinetic or computational fluid dynamics models are specifically developed to account for these phenomena. Although these assumptions introduce certain limitations, they significantly simplify model development and enable efficient prediction of process performance. Nevertheless, model validation using experimental or industrial data remains necessary to ensure the reliability and applicability of simulation results (Das et al., 2024; Bae et al., 2023).
+2.10 Process Simulation of Oxy-Dry Reforming of Methane
+2.10.1 Overview of Process Simulation
+Process simulation is an essential tool in modern chemical engineering for analysing, designing, and optimizing complex industrial processes. In oxy-dry reforming of methane, 
+process simulation enables researchers to evaluate reactor performance, predict syngas composition, estimate energy requirements, and investigate the influence of operating variables without conducting extensive experimental studies. Simulation also reduces research cost, shortens process development time, and provides valuable information for scale-up and commercial implementation. By integrating thermodynamic calculations, reaction kinetics, and transport phenomena, process simulation improves process understanding and supports the design of efficient and environmentally sustainable reforming systems (Singh et al., 2023; Oliveira et al., 2024).
+2.10.2 Aspen HYSYS Simulation Approach
+Aspen HYSYS is one of the most widely used commercial process simulation software packages in the oil, gas, and chemical industries. It is employed to simulate steady-state and dynamic chemical processes by performing rigorous material and energy balance calculations. In oxy-dry reforming studies, Aspen HYSYS is commonly used to develop process flow diagrams, define reactor operating conditions, perform equilibrium or 
+conversion reactor simulations, and evaluate methane conversion, carbon dioxide utilization, syngas composition, and energy efficiency. The simulation procedure generally involves selecting an appropriate thermodynamic property package, defining feed compositions, specifying reactor models, introducing reaction stoichiometry or equilibrium expressions, and analysing process performance under different operating conditions. Aspen HYSYS also provides flexibility for sensitivity analysis, allowing researchers to investigate the effects of temperature, pressure, oxygen concentration, and feed ratios on syngas production. These capabilities make the software a valuable tool for process optimization and industrial process design (Oliveira et al., 2024; Al-Hajri et al., 2022).
+2.10.3 HSC Chemistry Thermodynamic Analysis
+HSC Chemistry is a widely recognized software package used for thermodynamic calculations and equilibrium analysis of chemical reactions. It is particularly useful in methane reforming studies because it predicts equilibrium product compositions through Gibbs free energy minimization. Unlike process simulators that emphasize equipment modelling, HSC Chemistry focuses primarily on chemical equilibrium and thermodynamic feasibility. 
+In oxy-dry reforming, HSC Chemistry enables the prediction of methane and carbon dioxide conversion, hydrogen and carbon monoxide yields, equilibrium constants, carbon formation tendencies, and reaction spontaneity under varying temperatures and pressures. The software is especially useful for identifying favourable operating conditions before detailed reactor simulation is carried out using other simulation platforms. Consequently, HSC Chemistry serves as an effective preliminary tool for thermodynamic evaluation and optimization of reforming processes (Kumar et al., 2023; Singh et al., 2023).
+2.10.4 COMSOL Multiphysics analysis 
+COMSOL Multiphysics is an advanced numerical simulation software that solves coupled physical phenomena using the finite element method. Unlike Aspen HYSYS and HSC Chemistry, which primarily focus on process simulation and thermodynamic equilibrium, COMSOL allows detailed analysis of transport phenomena occurring within the reactor.
+In oxy-dry reforming, COMSOL is employed to investigate the interaction between heat transfer, fluid flow, species transport, and chemical reactions inside catalytic reactors. The software predicts temperature distribution, concentration profiles of methane, carbon dioxide, hydrogen, carbon monoxide, oxygen and water, as well as reaction rates throughout the 
+reactor domain. Furthermore, COMSOL facilitates the evaluation of carbon deposition tendencies by simulating local reaction environments where methane cracking and the Boudouard reaction become favourable. Such detailed spatial information assists researchers in identifying hot spots, concentration gradients, diffusion limitations, and regions susceptible to catalyst deactivation. These capabilities make COMSOL an effective tool for reactor design, catalyst evaluation, and optimization of oxy-dry reforming processes (Zhang et al., 2024; Ferreira et al., 2025).
+
+2.10.5 Model Validation
+Model validation is a critical step in process simulation because it establishes the reliability and accuracy of simulation results. Validation is usually performed by comparing predicted values with published experimental data or industrial operating data under similar operating conditions. Important validation parameters include methane conversion, carbon dioxide conversion, hydrogen yield, carbon monoxide yield, H?/CO ratio, reactor temperature, and carbon deposition tendency.
+A validated model provides confidence that the mathematical assumptions, thermodynamic methods, and simulation approaches accurately represent the actual reforming process. Once validated, the model can be applied to investigate new operating conditions, optimize reactor performance, and evaluate process modifications with a high degree of confidence. Therefore, model validation remains an essential component of simulation-based research (Al-Hajri et al., 2022; Zhang et al., 2024).
+2.10.6 Sensitivity Analysis
+Sensitivity analysis is a systematic technique used to evaluate how variations in operating parameters influence process performance. In oxy-dry reforming, sensitivity analysis is commonly performed by varying one process variable while maintaining the others constant. 
+Parameters frequently investigated include reaction temperature, operating pressure, CH?/CO? ratio, oxygen concentration, gas hourly space velocity, and reactor dimensions.
+The results obtained from sensitivity analysis enable researchers to identify the operating variables that have the greatest influence on methane conversion, hydrogen production, carbon monoxide formation, H?/CO ratio, energy efficiency, and carbon deposition. Furthermore, sensitivity analysis provides valuable information for process optimization and assists in determining optimum operating conditions for industrial applications. Both Aspen HYSYS and COMSOL Multiphysics provide integrated tools that facilitate comprehensive sensitivity studies under different process conditions (Ferreira et al., 2025; Kumar et al., 2023).
+2.10.7 Comparison of Simulation Tools
+Several simulation tools are available for investigating oxy-dry reforming, each possessing unique capabilities and limitations. Aspen HYSYS is particularly suitable for steady-state process simulation, process design, material and energy balance calculations, and economic evaluation of industrial systems. HSC Chemistry specializes in thermodynamic equilibrium 
+analysis and provides rapid prediction of reaction feasibility, equilibrium compositions, and carbon formation tendencies. COMSOL Multiphysics, on the other hand, offers detailed multiphysics simulations by simultaneously solving heat transfer, mass transfer, fluid flow, and chemical reaction equations within the reactor.
+Although each software package has individual strengths, combining these simulation tools provides a more comprehensive understanding of the oxy-dry reforming process. HSC Chemistry establishes thermodynamic feasibility, Aspen HYSYS evaluates overall process performance, while COMSOL Multiphysics investigates detailed reactor behaviour and transport phenomena. Consequently, the integration of these simulation platforms enhances 
+prediction accuracy and provides a robust framework for process optimization and reactor design (Oliveira et al., 2024; Zhang et al., 2024).
+2.11 Recent Advances in Oxy-Dry Reforming Research
+2.11.1 Recent Experimental Studies
+Recent experimental studies have focused on improving catalyst activity, enhancing syngas yield, and minimizing carbon deposition during oxy-dry reforming of methane. Researchers have developed advanced nickel-based catalysts modified with rare-earth metals and transition metal promoters to improve catalyst stability and resistance to coke formation. In addition, investigations have shown that controlled oxygen addition enhances methane conversion by supplying heat for the endothermic reforming reactions while simultaneously reducing catalyst deactivation through carbon oxidation. These findings have contributed significantly to improving the efficiency and long-term stability of oxy-dry reforming processes (García et al., 2023; Zhou et al., 2024).
+2.11.2 Recent Modelling Studies
+Recent modelling studies have increasingly integrated thermodynamic analysis, process simulation, computational fluid dynamics (CFD), and finite element modelling to better understand oxy-dry reforming behaviour. These studies have examined the influence of operating parameters such as temperature, pressure, oxygen concentration, and feed composition on methane conversion, syngas composition, and carbon deposition. The integration of Aspen HYSYS, HSC Chemistry, and COMSOL Multiphysics has enabled more accurate prediction of reactor performance by combining process simulation with detailed heat and mass transfer analysis. Such modelling approaches have reduced experimental costs while improving process optimization and reactor design (Morales et al., 2024; Chen et al., 2025).
+2.11.3 AI and Optimization Techniques
+Artificial intelligence (AI) and machine learning techniques are increasingly being applied to methane reforming processes for predictive modelling and process optimization. Algorithms such as artificial neural networks (ANN), genetic algorithms (GA), particle swarm optimization (PSO), and response surface methodology (RSM) have been employed to predict reactor performance and determine optimal operating conditions. These techniques improve prediction accuracy, reduce computational time, and facilitate multi-objective optimization involving methane conversion, hydrogen yield, energy efficiency, and carbon deposition. The integration of AI with conventional simulation software is expected to accelerate the development of intelligent and autonomous reforming systems (Khan et al., 2023; Patel et al., 2025).
+2.11.4 Industrial Developments
+Growing global demand for low-carbon hydrogen has accelerated industrial interest in methane reforming technologies with integrated carbon utilization. Recent developments have focused on improving reactor design, developing more durable catalysts, and integrating reforming processes with carbon capture and utilization (CCU) technologies. Process intensification techniques such as microchannel reactors, membrane reactors, and electrified reformers have also gained attention because of their improved thermal efficiency and compact design. These innovations demonstrate the growing potential of oxy-dry reforming as a sustainable route for syngas and hydrogen production in future energy systems (IEA, 2024; Lee et al., 2025).
+2.12 Research Gaps
+2.12.1 Limitations of Previous Studies
+Despite considerable progress in oxy-dry reforming research, several limitations remain. Most previous investigations have concentrated either on experimental catalyst development or thermodynamic equilibrium analysis, with limited integration of detailed reactor modelling and transport phenomena. In addition, many studies have considered only a narrow range of operating conditions and have paid insufficient attention to simultaneous evaluation of heat transfer, mass transfer, and carbon deposition within the reactor. Furthermore, comparisons between different simulation platforms remain relatively scarce, limiting confidence in model predictions (Morales et al., 2024; Patel et al., 2025).
+
+
+2.12.2 Identified Knowledge Gaps
+A review of recent literature indicates several important knowledge gaps. First, few studies have combined thermodynamic analysis, process simulation, and multiphysics modelling into a single integrated framework for oxy-dry reforming. Second, limited information is available on the coupled effects of heat and mass transfer on temperature distribution, reactant conversion, syngas production, and carbon deposition tendencies. Third, comprehensive comparative studies involving Aspen HYSYS, HSC Chemistry, and COMSOL Multiphysics under identical operating conditions are still lacking. Addressing these gaps is essential for improving process prediction accuracy and supporting industrial reactor design (Chen et al., 2025; García et al., 2023).
+2.12.3 How the Present Study Addresses the Gaps
+The present study seeks to address these identified gaps through an integrated investigation of oxy-dry reforming of methane using thermodynamic analysis, process simulation, and multiphysics modelling. HSC Chemistry will be employed to evaluate thermodynamic equilibrium and carbon formation tendencies, Aspen HYSYS will be used for steady-state process simulation and sensitivity analysis, while COMSOL Multiphysics will investigate the effects of heat and mass transfer on temperature distribution, reactant conversion, syngas production, and carbon deposition in a packed-bed reactor. By combining these complementary simulation tools, this study is expected to provide a more comprehensive understanding of oxy-dry reforming and contribute to the development of efficient and sustainable syngas production technologies.
+
+
+
+      CHAPTER THREE
+3.1 Methodology
+
+
+
+
+
+
+
+      CHAPTER FOUR
+4.1 Expected Results
+At the end of the study, the following will be determined:
+* Optimum operating conditions for maximum syngas yield and minimum carbon formation will be identified.
+* A validated Aspen HYSYS model for predicting oxy-dry reforming performance will be developed.
+* The effect of temperature, pressure, and feed ratio on methane conversion and H2/CO ratio will be evaluated.
+COMSOL simulations will reveal reactor heat, mass transfer, and flow behavior 
+
+
+
+
+
+
+
+
+
+
+
+References
+1. Abdulrasheed A.A., Jalil A.A., Siang T.J and Hambali1 U.H (2020).Thermodynamic sensitivity analysis of CO2 reforming of methane based on equilibrium predictions, “IOP Conference Series: Materials Science and Engineering 808 012001
+2. Rosha P., Kumar S., and Ibrahim H. (2021). Thermodynamic Equilibrium Analysis of Oxy-Dry Reforming of Biogas with CO? Sequestration using Aspen HYSYS, “Asia-Pacific Journal of Chemical Engineering, vol. 16, Issue 5.
+3. Knoelcheman A., Deivson C.S, and Marcos A.M. (2021). Performance of Alternative Methane Reforms Based on Experimental Kinetic Evaluation and Simulation in a Fixed Bed Reactor, “Processes, vol. 9 Issue 8 
+4. Schmidt D, Maier L and Deutschmann O. (2022). Towards Thermochemical Recuperation Applying Combined Steam Reforming and Partial Oxidation of Methane, “Energy Conversion and Management, vol. 251 
+5. Cavalcante, et al. (2023). Autothermal Reforming of Methane: A Thermodynamic Study on the Use of Air and Pure Oxygen as Oxidizing Agents, “MDPI- Methane 2023, 2(4) 389-403, https://doi.org/10.3390/methane2040026
+6. Rakhi V. and Mauss F. (2024). Thermodynamic Model: Steam and Oxidative Reforming of Methane over Nickel Catalyst, “Springer Nature 137, 791-812
+7. Manas M, Akash B. S and Sinan D. (2024). Kinetics of Thermal Dry Reforming of Methane for Syngas Production and Solid Carbon Capture,” Reaction Chemistry & Engineering, 2902-2914
+8. Malik, M. I., Abatzoglou, N., Blanchard, J., & Achouri, I. E. (2025). Pilot Scale Study of Elevated Pressure Autothermal Dry Reforming of Methane over Ni-UGSO Pellets, “Journal of CO? Utilization, 97, 103121.
+9.  Abdulaziz A.M.A, Norah A., and Rao A. U, (2026). Numerical Investigation and Assessment of the Langmuir–Hinshelwood–Hougen–Watson Model for Dry Reforming of Methane, “Scientific reports (2026)
+10. Chen, X., Li, Y., Zhang, H., & Sun, Q. (2025). Integrated modelling and optimization of methane reforming processes using multiphysics simulation. Chemical Engineering Journal, 503, 160184.
+11. García, M. A., Torres, J. L., Fernández, R., & Gómez, P. (2023). Recent progress in catalyst development for oxy-carbon dioxide reforming of methane. Catalysis Today, 430, 115046.
+12. International Energy Agency (IEA). (2024). Global Hydrogen Review 2024. Paris: International Energy Agency.
+13. Khan, M. A., Hussain, S., Ahmed, R., & Ali, M. (2023). Artificial intelligence applications in hydrogen production and methane reforming technologies: A review. Energy AI, 14, 100289.
+14. Lee, J., Kim, H., Park, S., & Choi, Y. (2025). Industrial progress in low-carbon syngas production through advanced methane reforming technologies. International Journal of Hydrogen Energy, 50, 15388–15409.
+15. Morales, D., Hernández, A., Pérez, J., & Castillo, E. (2024). Advances in numerical modelling of methane reforming reactors: Current status and future perspectives. Fuel Processing Technology, 257, 108119.
+16. Patel, R., Sharma, N., Gupta, P., & Singh, A. (2025). Machine learning-assisted optimization of methane reforming processes for sustainable hydrogen production. Energy Conversion and Management, 326, 119119.
+17. Zhou, Y., Wang, L., Liu, H., & Xu, J. (2024). Experimental investigation of catalyst stability and coke suppression during oxy-dry reforming of methane. Applied Catalysis A: General, 678, 119824.
+18. Al-Hajri, N., Al-Marzouqi, M., & Alnaqbi, M. (2022). Simulation and optimization of methane reforming processes using Aspen HYSYS. Chemical Engineering and Processing: Process Intensification, 176, 108944.
+19. Ferreira, L. R., Santos, M. A., Silva, R. F., & Costa, P. H. (2025). Multiphysics modelling of catalytic methane reforming reactors using COMSOL Multiphysics. Chemical Engineering Science, 289, 120431.
+20. Kumar, S., Verma, P., Singh, R., & Sharma, A. (2023). Thermodynamic equilibrium analysis of methane reforming processes using HSC Chemistry. Journal of Natural Gas Science and Engineering, 116, 105061.
+21. Oliveira, J. P., Rodrigues, F. M., Pereira, L. C., & Gomes, A. R. (2024). Integrated process simulation and optimization of methane reforming technologies for hydrogen and syngas production. Fuel, 372, 131982.
+22. Singh, A., Patel, D., Kumar, V., & Mishra, R. (2023). Advances in process simulation and optimization of methane reforming technologies: A review. Renewable and Sustainable Energy Reviews, 186, 113640.
+23. Zhang, H., Liu, Y., Chen, X., & Zhao, T. (2024). Numerical investigation of coupled heat and mass transfer during catalytic methane reforming using finite element analysis. International Journal of Hydrogen Energy, 49, 21475–21492.
+24. Bae, J., Kim, S., Lee, H., & Park, J. (2023). Thermodynamic and process simulation analysis of methane reforming technologies for sustainable hydrogen production. International Journal of Hydrogen Energy, 48(61), 23564–23581.
+25. Chen, Y., Liu, Z., Wang, H., & Zhao, X. (2022). Process modelling and simulation of methane reforming technologies for syngas production: A review. Fuel Processing Technology, 232, 107257.
+26. Das, P., Kumar, R., Singh, A., & Verma, S. (2024). Recent advances in process modelling and simulation of methane reforming technologies for hydrogen production. Chemical Engineering Research and Design, 203, 312–329.
+27. Sharma, N., Gupta, V., Mishra, R., & Patel, S. (2025). Equilibrium modelling and optimization of oxy-carbon dioxide reforming of methane for efficient syngas production. Journal of CO? Utilization, 82, 102742.
+28. Abdulrasheed, A. A., Jalil, A. A., Gambo, Y., Ibrahim, M., Hambali, H. U., & Hamid, M. Y. S. (2021). Recent advances in methane dry reforming catalysts: A review. Renewable and Sustainable Energy Reviews, 151, 111573.
+29. Usman, M., Daud, W. M. A. W., & Abbas, H. F. (2022). Recent progress in catalyst development for dry and oxy-carbon dioxide reforming of methane. Catalysts, 12(10), 1156.
+30. Wang, X., Zhang, Y., Liu, H., & Chen, J. (2023). Advances in catalyst design for methane reforming: Carbon resistance and stability. International Journal of Hydrogen Energy, 48(42), 16312–16335.
+31. Li, Z., Chen, Y., Zhao, Q., & Sun, H. (2024). Recent developments in catalysts for oxy-CO? reforming of methane toward efficient syngas production. Catalysis Science & Technology, 14, 1842–1867.
+
