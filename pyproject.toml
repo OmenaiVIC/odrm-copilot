@@ -1,0 +1,92 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "odrm-copilot"
+version = "0.1.0"
+description = "AI surrogate process & optimization API for flare gas valorization (ODRM)"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+license = "LicenseRef-Proprietary"
+
+dependencies = [
+  # API
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "pydantic>=2.8",
+  "pydantic-settings>=2.4",
+  "httpx>=0.27",
+  # Data
+  "pandas>=2.2",
+  "pyarrow>=17.0",
+  "numpy>=1.26",
+  # ML / surrogate
+  "xgboost>=2.1",
+  "scikit-learn>=1.5",
+  "joblib>=1.4",
+  # Agent layer
+  "langchain>=0.3",
+  "langchain-core>=0.3",
+  "langchain-openai>=0.2",
+  # Config
+  "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.2",
+  "pytest-cov>=5.0",
+  "pytest-asyncio>=0.23",
+  "anyio>=4.4",
+  "ruff>=0.5",
+  "mypy>=1.10",
+  "pandas-stubs",
+  "types-requests",
+  "ipykernel",
+]
+
+[project.scripts]
+odrm = "odrm.main:main"
+
+[tool.setuptools.packages.find]
+where = ["backend/src"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["backend/tests"]
+pythonpath = ["backend/src"]
+addopts = "-ra --strict-markers --strict-config"
+asyncio_mode = "auto"
+filterwarnings = ["error::DeprecationWarning:odrm.*"]
+markers = [
+  "unit: fast, no I/O",
+  "integration: crosses a boundary (DB, API, filesystem)",
+  "ml: touches model training/inference",
+  "agent: exercises LangChain tool selection",
+  "slow: excluded from the commit gate",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["backend/src", "backend/tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+packages = ["odrm"]
+mypy_path = "backend/src"
+warn_unused_ignores = true
+disallow_untyped_defs = true
+
+[tool.coverage.run]
+source = ["odrm"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
