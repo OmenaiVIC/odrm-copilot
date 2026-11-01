@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+.env
+.venv/
+env/
+
+# Node
+node_modules/
+.next/
+
+# Data & Models
+data/*.parquet
+models/*.joblib
+*.csv
+
+# System
+.DS_Store
