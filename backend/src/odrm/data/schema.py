@@ -167,6 +167,11 @@ def _coerce_numeric(frame: pd.DataFrame) -> None:
 
 
 def _validate_run_ids(frame: pd.DataFrame) -> None:
+    duplicated = frame["run_id"].duplicated()
+    if bool(duplicated.any()):
+        example = frame.loc[duplicated, "run_id"].iloc[0]
+        raise SchemaError(f"run_id contains a duplicate value: {example!r}")
+
     for value in frame["run_id"]:
         try:
             uuid.UUID(str(value))
@@ -221,6 +226,48 @@ def _validate_bounds(frame: pd.DataFrame) -> None:
             raise BoundsError(f"{name} must be at most {high:g}, got {example!r}")
 
 
+def _classify_carbon_risk(values: pd.Series) -> pd.Series:
+    classes = np.select(
+        [values < 1.0, values < 5.0, values < 20.0],
+        ["none", "low", "moderate"],
+        default="high",
+    )
+    return pd.Series(classes, index=values.index, dtype="string")
+
+
+def _validate_derived(frame: pd.DataFrame) -> None:
+    co_yield = frame["co_yield_mol_per_mol_ch4"].to_numpy(dtype=float)
+    if bool((co_yield <= 0.0).any()):
+        raise SchemaError("co_yield_mol_per_mol_ch4 must be > 0 to derive h2_co_ratio")
+
+    h2_yield = frame["h2_yield_mol_per_mol_ch4"].to_numpy(dtype=float)
+    ch4_conversion = frame["ch4_conversion"].to_numpy(dtype=float)
+    expected: dict[str, np.ndarray] = {
+        "h2_co_ratio": h2_yield / co_yield,
+        "syngas_yield_mol_per_mol_ch4": h2_yield + co_yield,
+        "ch4_slip_pct": (1.0 - ch4_conversion) * 100.0,
+    }
+    for name, values in expected.items():
+        actual = frame[name].to_numpy(dtype=float)
+        matches = np.isclose(actual, values, rtol=1e-9, atol=1e-9)
+        if not bool(matches.all()):
+            index = int(np.flatnonzero(~matches)[0])
+            raise SchemaError(
+                f"{name} does not match its derivation: got {actual[index]!r}, "
+                f"expected {values[index]!r}"
+            )
+
+    expected_risk = _classify_carbon_risk(frame["carbon_deposition_mg_per_gcat"])
+    actual_risk = frame["carbon_risk_class"].astype(str)
+    mismatched = actual_risk != expected_risk
+    if bool(mismatched.any()):
+        index = mismatched[mismatched].index[0]
+        raise SchemaError(
+            "carbon_risk_class does not match its derivation: "
+            f"got {actual_risk.loc[index]!r}, expected {expected_risk.loc[index]!r}"
+        )
+
+
 def validate_odrm_frame(df: pd.DataFrame) -> pd.DataFrame:
     """Validate the v1 ODRM contract and return a canonical copy."""
     if not isinstance(df, pd.DataFrame):
@@ -244,5 +291,6 @@ def validate_odrm_frame(df: pd.DataFrame) -> pd.DataFrame:
     _validate_enums(out)
     _validate_balance(out)
     _validate_bounds(out)
+    _validate_derived(out)
 
     return out

@@ -92,6 +92,13 @@ def test_rejects_invalid_enum_or_constant(
         validate_odrm_frame(mutated)
 
 
+def test_rejects_duplicate_run_ids(odrm_frame: pd.DataFrame) -> None:
+    mutated = odrm_frame.copy()
+    mutated.loc[mutated.index[1], "run_id"] = mutated.loc[mutated.index[0], "run_id"]
+    with pytest.raises(SchemaError, match="run_id"):
+        validate_odrm_frame(mutated)
+
+
 @pytest.mark.parametrize(
     ("column", "value"),
     [
@@ -169,3 +176,58 @@ def test_accepts_balance_error_at_tolerance(odrm_frame: pd.DataFrame, value: flo
     mutated.loc[mutated.index[0], "balance_error_pct"] = value
     validated = validate_odrm_frame(mutated)
     assert validated.loc[validated.index[0], "balance_error_pct"] == value
+
+
+@pytest.mark.parametrize(
+    "column",
+    ["h2_co_ratio", "syngas_yield_mol_per_mol_ch4", "ch4_slip_pct"],
+)
+def test_rejects_derived_numeric_mismatch(odrm_frame: pd.DataFrame, column: str) -> None:
+    mutated = odrm_frame.copy()
+    mutated.loc[mutated.index[0], column] = mutated.loc[mutated.index[0], column] + 0.01
+    with pytest.raises(SchemaError, match=column):
+        validate_odrm_frame(mutated)
+
+
+def test_rejects_derived_risk_mismatch(odrm_frame: pd.DataFrame) -> None:
+    mutated = odrm_frame.copy()
+    mutated.loc[mutated.index[0], "carbon_deposition_mg_per_gcat"] = 50.0
+    mutated.loc[mutated.index[0], "carbon_risk_class"] = "none"
+    with pytest.raises(SchemaError, match="carbon_risk_class"):
+        validate_odrm_frame(mutated)
+
+
+def test_rejects_zero_co_yield(odrm_frame: pd.DataFrame) -> None:
+    mutated = odrm_frame.copy()
+    mutated.loc[mutated.index[0], "co_yield_mol_per_mol_ch4"] = 0.0
+    with pytest.raises(SchemaError, match="co_yield"):
+        validate_odrm_frame(mutated)
+
+
+def test_accepts_derived_values_within_tolerance(odrm_frame: pd.DataFrame) -> None:
+    mutated = odrm_frame.copy()
+    mutated.loc[mutated.index[0], "syngas_yield_mol_per_mol_ch4"] += 1e-10
+    validate_odrm_frame(mutated)
+
+
+@pytest.mark.parametrize(
+    ("carbon", "risk_class"),
+    [
+        (0.0, "none"),
+        (0.999, "none"),
+        (1.0, "low"),
+        (4.999, "low"),
+        (5.0, "moderate"),
+        (19.999, "moderate"),
+        (20.0, "high"),
+        (100.0, "high"),
+    ],
+)
+def test_carbon_risk_threshold_boundaries(
+    odrm_frame: pd.DataFrame, carbon: float, risk_class: str
+) -> None:
+    mutated = odrm_frame.copy()
+    mutated["carbon_risk_class"] = mutated["carbon_risk_class"].astype("string")
+    mutated.loc[mutated.index[0], "carbon_deposition_mg_per_gcat"] = carbon
+    mutated.loc[mutated.index[0], "carbon_risk_class"] = risk_class
+    validate_odrm_frame(mutated)
