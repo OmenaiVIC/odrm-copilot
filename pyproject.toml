@@ -44,6 +44,7 @@ dev = [
   "pandas-stubs",
   "types-requests",
   "ipykernel",
+  "jsonschema>=4.23",
 ]
 
 [project.scripts]
@@ -80,7 +81,7 @@ ignore = ["E501"]
 [tool.mypy]
 python_version = "3.11"
 strict = true
-packages = ["odrm"]
+files = ["backend/src/odrm", "scripts"]
 mypy_path = "backend/src"
 warn_unused_ignores = true
 disallow_untyped_defs = true

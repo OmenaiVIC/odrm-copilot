@@ -26,6 +26,9 @@ data/raw/*
 data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+# Sprint 1 generated artifacts
+data/processed/odrm/
+data/odrm_dataset.parquet
 models/*.joblib
 *.csv
 

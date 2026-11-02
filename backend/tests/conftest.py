@@ -163,29 +163,6 @@ def make_odrm_frame(rows: int = 200, seed: int = _SEED) -> pd.DataFrame:
         }
     )
 
-    float_columns = [
-        "catalyst_loading_wt_pct",
-        "temperature_c",
-        "pressure_bar",
-        "ch4_o2_ratio",
-        "co2_ch4_ratio",
-        "h2o_ch4_ratio",
-        "ghsv_per_h",
-        "n2_dilution_mol_pct",
-        "contact_time_ms",
-        "ch4_conversion",
-        "co2_conversion",
-        "o2_conversion",
-        "h2_yield_mol_per_mol_ch4",
-        "co_yield_mol_per_mol_ch4",
-        "h2_co_ratio",
-        "syngas_yield_mol_per_mol_ch4",
-        "ch4_slip_pct",
-        "carbon_deposition_mg_per_gcat",
-        "energy_input_kw",
-        "balance_error_pct",
-    ]
-    frame[float_columns] = frame[float_columns].astype("float32")
     frame["source"] = frame["source"].astype("category")
     frame["catalyst"] = frame["catalyst"].astype("category")
     frame["carbon_risk_class"] = frame["carbon_risk_class"].astype("category")
