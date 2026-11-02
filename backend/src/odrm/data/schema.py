@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 import math
+import uuid
+from typing import cast
+
+import pandas as pd
 
 REQUIRED: dict[str, str] = {
     "run_id": "string",
@@ -99,3 +103,115 @@ class BoundsError(SchemaError):
 
 class BalanceError(SchemaError):
     """Raised when the reported elemental balance error is unphysical."""
+
+
+def _validate_columns(frame: pd.DataFrame) -> None:
+    if bool(frame.columns.duplicated().any()):
+        duplicated = frame.columns[frame.columns.duplicated()].tolist()
+        raise SchemaError(f"duplicate column names: {duplicated!r}")
+
+    expected = set(REQUIRED) | set(OPTIONAL)
+    missing = sorted(set(REQUIRED) - set(frame.columns))
+    if missing:
+        raise SchemaError(f"missing required columns: {missing!r}")
+
+    unexpected = sorted(set(frame.columns) - expected)
+    if unexpected:
+        raise SchemaError(f"unexpected columns: {unexpected!r}")
+
+
+def _coerce_timestamps(values: pd.Series) -> pd.Series:
+    if not pd.api.types.is_datetime64_any_dtype(values.dtype):
+        parsed: list[pd.Timestamp] = []
+        for value in values:
+            try:
+                point = pd.Timestamp(value)
+            except (TypeError, ValueError) as exc:
+                raise SchemaError(f"created_at contains an invalid timestamp: {value!r}") from exc
+            if bool(pd.isna(point)) or point.tzinfo is None:
+                raise SchemaError("created_at must be timezone-aware and non-null")
+            parsed.append(point.tz_convert("UTC"))
+        return pd.Series(parsed, index=values.index, dtype="datetime64[ns, UTC]")
+
+    if values.dt.tz is None:
+        raise SchemaError("created_at must be timezone-aware")
+    return cast(pd.Series, values.dt.tz_convert("UTC"))
+
+
+def _coerce_required_strings(frame: pd.DataFrame) -> None:
+    for name, kind in REQUIRED.items():
+        if kind not in {"string", "const"}:
+            continue
+        frame[name] = frame[name].astype("string")
+
+
+def _coerce_optional_strings(frame: pd.DataFrame) -> None:
+    for name, kind in OPTIONAL.items():
+        if kind != "string":
+            continue
+        frame[name] = frame[name].astype("string")
+
+
+def _coerce_numeric(frame: pd.DataFrame) -> None:
+    for name, kind in {**REQUIRED, **OPTIONAL}.items():
+        if kind != "number":
+            continue
+        original = frame[name]
+        converted = pd.to_numeric(original, errors="coerce")
+        newly_missing = converted.isna() & original.notna()
+        if bool(newly_missing.any()):
+            example = original.loc[newly_missing].iloc[0]
+            raise SchemaError(f"{name} contains a non-numeric value: {example!r}")
+        frame[name] = converted.astype("float64")
+
+
+def _validate_run_ids(frame: pd.DataFrame) -> None:
+    for value in frame["run_id"]:
+        try:
+            uuid.UUID(str(value))
+        except (TypeError, ValueError) as exc:
+            raise SchemaError(f"run_id contains an invalid UUID: {value!r}") from exc
+
+
+def _validate_created_at(frame: pd.DataFrame) -> None:
+    frame["created_at"] = _coerce_timestamps(frame["created_at"])
+
+
+def _validate_enums(frame: pd.DataFrame) -> None:
+    for name, allowed in ENUMS.items():
+        values = set(frame[name].dropna().astype(str))
+        invalid = values - set(allowed)
+        if invalid:
+            raise SchemaError(f"{name} contains invalid values: {sorted(invalid)!r}")
+        frame[name] = frame[name].astype(pd.CategoricalDtype(categories=list(allowed)))
+
+
+def _validate_schema_version(frame: pd.DataFrame) -> None:
+    versions = set(frame["schema_version"].dropna().astype(str))
+    if versions != {SCHEMA_VERSION}:
+        raise SchemaError(f"schema_version must be {SCHEMA_VERSION!r}, got {sorted(versions)!r}")
+
+
+def validate_odrm_frame(df: pd.DataFrame) -> pd.DataFrame:
+    """Validate the v1 ODRM contract and return a canonical copy."""
+    if not isinstance(df, pd.DataFrame):
+        raise SchemaError("validate_odrm_frame requires a pandas DataFrame")
+    if df.empty:
+        raise SchemaError("ODRM frame must not be empty")
+
+    _validate_columns(df)
+    out = df.copy(deep=True)
+
+    for name in REQUIRED:
+        if bool(out[name].isna().any()):
+            raise SchemaError(f"required column {name!r} contains null values")
+
+    _coerce_required_strings(out)
+    _coerce_optional_strings(out)
+    _coerce_numeric(out)
+    _validate_schema_version(out)
+    _validate_run_ids(out)
+    _validate_created_at(out)
+    _validate_enums(out)
+
+    return out
