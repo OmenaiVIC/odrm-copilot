@@ -4,6 +4,7 @@ import math
 import uuid
 from typing import cast
 
+import numpy as np
 import pandas as pd
 
 REQUIRED: dict[str, str] = {
@@ -192,6 +193,34 @@ def _validate_schema_version(frame: pd.DataFrame) -> None:
         raise SchemaError(f"schema_version must be {SCHEMA_VERSION!r}, got {sorted(versions)!r}")
 
 
+def _validate_balance(frame: pd.DataFrame) -> None:
+    excess = frame["balance_error_pct"].abs() > BALANCE_ERROR_TOLERANCE_PCT
+    if bool(excess.any()):
+        example = frame.loc[excess, "balance_error_pct"].iloc[0]
+        raise BalanceError(
+            f"balance_error_pct must stay within ±{BALANCE_ERROR_TOLERANCE_PCT}%, got {example!r}"
+        )
+
+
+def _validate_bounds(frame: pd.DataFrame) -> None:
+    for name, (low, high) in BOUNDS.items():
+        values = frame[name].dropna()
+        if values.empty:
+            continue
+        numeric = values.to_numpy(dtype=float)
+        if not bool(np.isfinite(numeric).all()):
+            raise BoundsError(f"{name} must contain only finite values")
+
+        below = values <= low if name in EXCLUSIVE_MINIMUMS else values < low
+        if bool(below.any()):
+            example = values.loc[below].iloc[0]
+            raise BoundsError(f"{name} must be at least {low:g}, got {example!r}")
+
+        if high != math.inf and bool((values > high).any()):
+            example = values.loc[values > high].iloc[0]
+            raise BoundsError(f"{name} must be at most {high:g}, got {example!r}")
+
+
 def validate_odrm_frame(df: pd.DataFrame) -> pd.DataFrame:
     """Validate the v1 ODRM contract and return a canonical copy."""
     if not isinstance(df, pd.DataFrame):
@@ -213,5 +242,7 @@ def validate_odrm_frame(df: pd.DataFrame) -> pd.DataFrame:
     _validate_run_ids(out)
     _validate_created_at(out)
     _validate_enums(out)
+    _validate_balance(out)
+    _validate_bounds(out)
 
     return out

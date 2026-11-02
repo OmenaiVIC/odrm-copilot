@@ -5,7 +5,7 @@ from typing import Any
 import pandas as pd
 import pytest
 
-from odrm.data.schema import SchemaError, validate_odrm_frame
+from odrm.data.schema import BalanceError, BoundsError, SchemaError, validate_odrm_frame
 
 
 def test_rejects_non_dataframe() -> None:
@@ -90,3 +90,82 @@ def test_rejects_invalid_enum_or_constant(
     mutated.loc[mutated.index[0], column] = value
     with pytest.raises(SchemaError, match=column):
         validate_odrm_frame(mutated)
+
+
+@pytest.mark.parametrize(
+    ("column", "value"),
+    [
+        ("temperature_c", 499.0),
+        ("temperature_c", 1000.01),
+        ("pressure_bar", 0.99),
+        ("pressure_bar", 30.01),
+        ("ch4_o2_ratio", 1.39),
+        ("ch4_o2_ratio", 2.51),
+        ("co2_ch4_ratio", -0.01),
+        ("co2_ch4_ratio", 1.51),
+        ("h2o_ch4_ratio", -0.01),
+        ("h2o_ch4_ratio", 1.51),
+        ("ghsv_per_h", 999.0),
+        ("ghsv_per_h", 100001.0),
+        ("catalyst_loading_wt_pct", -0.01),
+        ("catalyst_loading_wt_pct", 20.01),
+        ("n2_dilution_mol_pct", -0.01),
+        ("n2_dilution_mol_pct", 50.01),
+        ("contact_time_ms", 0.0),
+        ("ch4_conversion", -0.01),
+        ("ch4_conversion", 1.01),
+        ("co2_conversion", -0.01),
+        ("co2_conversion", 1.01),
+        ("o2_conversion", -0.01),
+        ("o2_conversion", 1.01),
+        ("h2_yield_mol_per_mol_ch4", -0.01),
+        ("h2_yield_mol_per_mol_ch4", 4.01),
+        ("co_yield_mol_per_mol_ch4", -0.01),
+        ("co_yield_mol_per_mol_ch4", 4.01),
+        ("h2_co_ratio", -0.01),
+        ("syngas_yield_mol_per_mol_ch4", -0.01),
+        ("syngas_yield_mol_per_mol_ch4", 8.01),
+        ("ch4_slip_pct", -0.01),
+        ("ch4_slip_pct", 100.01),
+        ("carbon_deposition_mg_per_gcat", -0.01),
+        ("carbon_deposition_mg_per_gcat", 100.01),
+        ("energy_input_kw", -0.01),
+        ("energy_input_kw", 100000.01),
+    ],
+)
+def test_rejects_values_outside_bounds(odrm_frame: pd.DataFrame, column: str, value: float) -> None:
+    mutated = odrm_frame.copy()
+    mutated.loc[mutated.index[0], column] = value
+    with pytest.raises(BoundsError, match=column):
+        validate_odrm_frame(mutated)
+
+
+@pytest.mark.parametrize(
+    ("column", "value"),
+    [
+        ("h2_co_ratio", float("inf")),
+        ("contact_time_ms", float("inf")),
+        ("carbon_deposition_mg_per_gcat", float("nan")),
+    ],
+)
+def test_rejects_non_finite_values(odrm_frame: pd.DataFrame, column: str, value: float) -> None:
+    mutated = odrm_frame.copy()
+    mutated.loc[mutated.index[0], column] = value
+    with pytest.raises(SchemaError, match=column):
+        validate_odrm_frame(mutated)
+
+
+@pytest.mark.parametrize("value", [-2.01, 2.01])
+def test_rejects_unphysical_balance_error(odrm_frame: pd.DataFrame, value: float) -> None:
+    mutated = odrm_frame.copy()
+    mutated.loc[mutated.index[0], "balance_error_pct"] = value
+    with pytest.raises(BalanceError, match="balance_error_pct"):
+        validate_odrm_frame(mutated)
+
+
+@pytest.mark.parametrize("value", [-2.0, 2.0])
+def test_accepts_balance_error_at_tolerance(odrm_frame: pd.DataFrame, value: float) -> None:
+    mutated = odrm_frame.copy()
+    mutated.loc[mutated.index[0], "balance_error_pct"] = value
+    validated = validate_odrm_frame(mutated)
+    assert validated.loc[validated.index[0], "balance_error_pct"] == value

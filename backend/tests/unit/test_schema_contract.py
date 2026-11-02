@@ -95,18 +95,14 @@ def test_python_required_and_optional_types_match_schema(schema: dict[str, Any])
 
 def test_python_enums_match_schema(schema: dict[str, Any]) -> None:
     schema_enums = {
-        name: tuple(prop["enum"])
-        for name, prop in schema["properties"].items()
-        if "enum" in prop
+        name: tuple(prop["enum"]) for name, prop in schema["properties"].items() if "enum" in prop
     }
     assert schema_enums == odrm_schema.ENUMS
 
 
 def test_python_bounds_match_schema(schema: dict[str, Any]) -> None:
     numeric_properties = {
-        name
-        for name, prop in schema["properties"].items()
-        if _non_null_type(prop) == "number"
+        name for name, prop in schema["properties"].items() if _non_null_type(prop) == "number"
     }
     assert set(odrm_schema.BOUNDS) == numeric_properties
 
