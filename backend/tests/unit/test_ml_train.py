@@ -1,8 +1,10 @@
-import pytest
-import pandas as pd
-from pathlib import Path
 from unittest.mock import patch
+
+import pandas as pd
+import pytest
+
 from odrm.ml.train import train_single_target
+
 
 @pytest.fixture
 def training_data():
@@ -11,7 +13,7 @@ def training_data():
     data = {
         "quality_flag": ["valid"] * 40,
         "carbon_risk_class": ["none"] * 10 + ["low"] * 10 + ["moderate"] * 10 + ["high"] * 10,
-        "temperature_c": [800.0 + i for i in range(40)], # Add some variance
+        "temperature_c": [800.0 + i for i in range(40)],  # Add some variance
         "pressure_bar": [10.0] * 40,
         "ch4_o2_ratio": [2.0] * 40,
         "co2_ch4_ratio": [0.5] * 40,
@@ -26,25 +28,23 @@ def training_data():
     }
     return pd.DataFrame(data)
 
+
 # We mock evaluate_gates so the test doesn't fail on the dummy data's low R2
 @patch("odrm.ml.train.evaluate_gates")
 def test_train_single_target(mock_gates, training_data, tmp_path):
     """Test that a model trains and saves without crashing."""
     target = "ch4_conversion"
-    
+
     # Train the model
     metadata = train_single_target(
-        df=training_data, 
-        target=target, 
-        model_root=tmp_path, 
-        random_state=7
+        df=training_data, target=target, model_root=tmp_path, random_state=7
     )
-    
+
     # Verify the metadata structure
     assert metadata["target"] == target
     assert "test_r2" in metadata["metrics"]
     assert "model_version" in metadata
-    
+
     # Verify artifacts were saved
     target_dir = tmp_path / target
     assert (target_dir / "latest.json").exists()

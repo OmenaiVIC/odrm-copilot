@@ -1,20 +1,23 @@
 import sys
 from pathlib import Path
+
 import pandas as pd
 
-# Ensure the src directory is in the path
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend" / "src"))
 
-from odrm.ml.train import train_single_target
 from odrm.ml.features import TARGETS
+from odrm.ml.train import train_single_target
 
-def main():
+
+def main() -> None:
     dataset_path = Path("data/odrm_dataset.parquet")
     model_root = Path("models/odrm")
 
     if not dataset_path.exists():
         print(f"Error: Could not find dataset at {dataset_path}")
-        print("Please run: .\\.venv\\Scripts\\python.exe scripts\\generate_odrm_data.py --n 10000 --seed 7")
+        print(
+            "Please run: .\\.venv\\Scripts\\python.exe scripts\\generate_odrm_data.py --n 10000 --seed 7"
+        )
         sys.exit(1)
 
     print(f"Loading dataset from {dataset_path}...")
@@ -25,10 +28,7 @@ def main():
         print(f"--- Training target: {target} ---")
         try:
             metadata = train_single_target(
-                df=df,
-                target=target,
-                model_root=model_root,
-                random_state=7
+                df=df, target=target, model_root=model_root, random_state=7
             )
             print(f"SUCCESS: {target}")
             print(f"  R²   : {metadata['metrics']['test_r2']:.4f}")
@@ -40,6 +40,7 @@ def main():
             sys.exit(1)
 
     print("All models trained and passed gates successfully!")
+
 
 if __name__ == "__main__":
     main()
