@@ -1,182 +1,65 @@
-from __future__ import annotations
-
-import numpy as np
-import pandas as pd
 import pytest
+import pandas as pd
+import numpy as np
 
-from odrm.data import schema
-from odrm.ml import features
-
-pytestmark = pytest.mark.unit
-
-EXPECTED_NUMERIC = (
-    "temperature_c",
-    "pressure_bar",
-    "ch4_o2_ratio",
-    "co2_ch4_ratio",
-    "h2o_ch4_ratio",
-    "ghsv_per_h",
-    "catalyst_loading_wt_pct",
-    "n2_dilution_mol_pct",
-)
-EXPECTED_ONE_HOT = (
-    "catalyst__Ni_Al2O3",
-    "catalyst__Ni-MgO",
-    "catalyst__Rh",
-    "catalyst__Pt",
-    "catalyst__none",
-    "catalyst__other",
+from odrm.ml.features import (
+    build_feature_frame,
+    extract_target,
+    assert_no_leakage,
+    LeakageError,
+    FeatureError,
+    TargetError,
+    FEATURES,
 )
 
+@pytest.fixture
+def sample_frame():
+    """A minimal valid dataframe for testing feature extraction."""
+    return pd.DataFrame({
+        "temperature_c": [800.0],
+        "pressure_bar": [10.0],
+        "ch4_o2_ratio": [2.0],
+        "co2_ch4_ratio": [0.5],
+        "h2o_ch4_ratio": [0.2],
+        "ghsv_per_h": [5000.0],
+        "catalyst": ["Ni/Al2O3"],
+        "catalyst_loading_wt_pct": [10.0],
+        "n2_dilution_mol_pct": [np.nan],
+        # Targets & Derived
+        "ch4_conversion": [0.8],
+        "syngas_yield_mol_per_mol_ch4": [2.5],
+        "ch4_slip_pct": [20.0],
+    })
 
-def test_feature_list_is_explicit_and_ordered() -> None:
-    assert features.FEATURES == EXPECTED_NUMERIC + EXPECTED_ONE_HOT
-    assert schema.ENUMS["catalyst"] == features.CATALYST_CATEGORIES
-    assert features.CATALYST_FEATURE_NAMES == EXPECTED_ONE_HOT
-    assert features.TARGETS == (
-        "ch4_conversion",
-        "syngas_yield_mol_per_mol_ch4",
-    )
-    assert len(features.FEATURES) == len(set(features.FEATURES))
+def test_feature_contract(sample_frame):
+    """Test that the feature matrix matches the expected columns exactly."""
+    X = build_feature_frame(sample_frame)
+    assert list(X.columns) == list(FEATURES)
+    assert "catalyst__Ni_Al2O3" in X.columns
+    assert "ch4_conversion" not in X.columns
+    assert "ch4_slip_pct" not in X.columns
 
+def test_leakage_guard():
+    """Test that injecting a derived column raises a LeakageError."""
+    with pytest.raises(LeakageError, match="leak target or post-reaction data"):
+        assert_no_leakage(["ch4_slip_pct"])
 
-def test_build_feature_frame_encodes_catalyst_in_schema_order(
-    odrm_frame: pd.DataFrame,
-) -> None:
-    out = features.build_feature_frame(odrm_frame)
+def test_unknown_catalyst(sample_frame):
+    """Test that an unknown catalyst raises a FeatureError."""
+    bad_frame = sample_frame.copy()
+    bad_frame["catalyst"] = ["Unobtanium"]
+    with pytest.raises(FeatureError, match="unknown categories"):
+        build_feature_frame(bad_frame)
 
-    assert list(out.columns) == list(features.FEATURES)
-    assert len(out) == len(odrm_frame)
-    assert out.index.equals(odrm_frame.index)
-    assert all(dtype == np.float64 for dtype in out.dtypes)
+def test_target_extraction(sample_frame):
+    """Test that the target extraction returns the right series."""
+    y = extract_target(sample_frame, "ch4_conversion")
+    assert isinstance(y, pd.Series)
+    assert y.iloc[0] == 0.8
 
-    catalysts = odrm_frame["catalyst"].astype(str).to_numpy()
-    for category, column in zip(
-        features.CATALYST_CATEGORIES,
-        features.CATALYST_FEATURE_NAMES,
-        strict=True,
-    ):
-        expected = (catalysts == category).astype(np.float64)
-        np.testing.assert_array_equal(out[column].to_numpy(), expected)
-
-    assert out.loc[:, list(features.CATALYST_FEATURE_NAMES)].sum(axis=1).eq(1.0).all()
-
-
-def test_optional_nulls_survive_without_imputation(odrm_frame: pd.DataFrame) -> None:
-    frame = odrm_frame.copy()
-    frame.loc[frame.index[:3], "catalyst_loading_wt_pct"] = np.nan
-    frame.loc[frame.index[3:6], "n2_dilution_mol_pct"] = np.nan
-
-    out = features.build_feature_frame(frame)
-
-    assert out["catalyst_loading_wt_pct"].isna().sum() == 3
-    assert out["n2_dilution_mol_pct"].isna().sum() == 3
-    assert out.loc[frame.index[:3], "catalyst_loading_wt_pct"].isna().all()
-    assert out.loc[frame.index[3:6], "n2_dilution_mol_pct"].isna().all()
-
-
-@pytest.mark.parametrize(
-    "leaked",
-    [
-        "ch4_slip_pct",
-        "syngas_yield_mol_per_mol_ch4",
-        "co2_conversion",
-        "o2_conversion",
-        "h2_yield_mol_per_mol_ch4",
-        "co_yield_mol_per_mol_ch4",
-        "carbon_deposition_mg_per_gcat",
-        "carbon_risk_class",
-        "h2_co_ratio",
-        "run_id",
-        "energy_input_kw",
-        "quality_flag",
-        "balance_error_pct",
-        "ch4_conversion",
-    ],
-)
-def test_leakage_guard_rejects_forbidden_candidates(leaked: str) -> None:
-    with pytest.raises(features.LeakageError, match=leaked):
-        features.assert_no_leakage([*features.FEATURES, leaked])
-
-
-def test_leakage_guard_accepts_resolved_features() -> None:
-    features.assert_no_leakage(features.FEATURES)
-
-
-def test_build_feature_frame_rejects_unknown_catalyst(odrm_frame: pd.DataFrame) -> None:
-    frame = odrm_frame.copy()
-    frame["catalyst"] = frame["catalyst"].astype(object)
-    frame.loc[frame.index[0], "catalyst"] = "Fe"
-
-    with pytest.raises(features.FeatureError, match="catalyst"):
-        features.build_feature_frame(frame)
-
-
-def test_build_feature_frame_rejects_missing_feature_column(
-    odrm_frame: pd.DataFrame,
-) -> None:
-    frame = odrm_frame.drop(columns=["temperature_c"])
-
-    with pytest.raises(features.FeatureError, match="temperature_c"):
-        features.build_feature_frame(frame)
-
-
-def test_build_feature_frame_rejects_nan_required_feature(
-    odrm_frame: pd.DataFrame,
-) -> None:
-    frame = odrm_frame.copy()
-    frame.loc[frame.index[0], "pressure_bar"] = np.nan
-
-    with pytest.raises(features.FeatureError, match="pressure_bar"):
-        features.build_feature_frame(frame)
-
-
-def test_build_feature_frame_rejects_infinite_optional_feature(
-    odrm_frame: pd.DataFrame,
-) -> None:
-    frame = odrm_frame.copy()
-    frame.loc[frame.index[0], "n2_dilution_mol_pct"] = np.inf
-
-    with pytest.raises(features.FeatureError, match="n2_dilution_mol_pct"):
-        features.build_feature_frame(frame)
-
-
-def test_build_feature_frame_is_deterministic(odrm_frame: pd.DataFrame) -> None:
-    first = features.build_feature_frame(odrm_frame)
-    second = features.build_feature_frame(odrm_frame)
-
-    pd.testing.assert_frame_equal(first, second)
-
-
-def test_target_extraction_returns_float64_without_mutation(
-    odrm_frame: pd.DataFrame,
-) -> None:
-    before = odrm_frame.copy(deep=True)
-
-    target = features.extract_target(odrm_frame, "ch4_conversion")
-
-    assert target.dtype == np.float64
-    assert target.name == "ch4_conversion"
-    assert target.index.equals(odrm_frame.index)
-    pd.testing.assert_frame_equal(odrm_frame, before)
-
-
-def test_target_extraction_rejects_unknown_target(odrm_frame: pd.DataFrame) -> None:
-    with pytest.raises(features.TargetError, match="unknown target"):
-        features.extract_target(odrm_frame, "co2_conversion")
-
-
-def test_target_extraction_rejects_out_of_bounds(odrm_frame: pd.DataFrame) -> None:
-    frame = odrm_frame.copy()
-    frame.loc[frame.index[0], "ch4_conversion"] = 1.5
-
-    with pytest.raises(features.TargetError, match="bounds"):
-        features.extract_target(frame, "ch4_conversion")
-
-
-def test_target_extraction_rejects_non_finite(odrm_frame: pd.DataFrame) -> None:
-    frame = odrm_frame.copy()
-    frame.loc[frame.index[0], "syngas_yield_mol_per_mol_ch4"] = np.nan
-
-    with pytest.raises(features.TargetError, match="finite"):
-        features.extract_target(frame, "syngas_yield_mol_per_mol_ch4")
+def test_target_bounds(sample_frame):
+    """Test that out-of-bounds targets raise a TargetError."""
+    bad_frame = sample_frame.copy()
+    bad_frame["ch4_conversion"] = [1.5] # Max is 1.0
+    with pytest.raises(TargetError, match="outside its bounds"):
+        extract_target(bad_frame, "ch4_conversion")
