@@ -17,7 +17,7 @@
 1.  **User Input:** Natural language or form input (Feed composition, Temp, Pressure).
 2.  **Agent Orchestrator:** Parses intent, validates physics bounds (e.g., Temp < 1000°C).
 3.  **Surrogate Model:** Runs inference in <50ms (predicting CH4 Conversion, H2/CO ratio, Carbon Deposition Risk).
-4.  **TEA Engine:** Calculates the financial ROI based on current gas prices and carbon credit values.
+4.  **TEA Engine:** Calculates the financial ROI based on current gas prices and carbon credit values (via the Market Data Service).
 5.  **Output:** A dashboard with the optimal operating parameters, risk warnings, and an ESG report.
 
 ---
@@ -54,25 +54,27 @@ We sell the "picks" (software optimization) to the "miners" (plant operators, un
 2.  Validation metrics enforcing an R² score > 0.95.
 3.  A FastAPI route `/api/predict` that accepts JSON and returns the ML prediction. 
 
-### 🟢 Sprint 3: Agentic Orchestrator (The Interface)
-**Goal:** Allow users to ask questions in plain English.
+### 🟢 Sprint 3: Techno-Economic Analysis (TEA) Engine & Financial Output (The Money)
+**Goal:** Turn the AI predictions into actionable financial ROI.
 **Deliverables:**
-1.  A LangChain agent (`src/agent/orchestrator.py`) initialized with a strict system prompt.
-2.  A tool called `predict_odrm_conditions()` wired to the FastAPI endpoint.
-3.  Tests ensuring the agent extracts parameters correctly and does not hallucinate physics.
+1.  A pure, deterministic financial engine (`backend/src/odrm/domain/tea.py`) that calculates daily revenue, OPEX, carbon credits, and ROI.
+2.  A new FastAPI route `POST /api/v1/tea` that takes plant conditions and financial assumptions.
+3.  Tests ensuring the math is strictly auditable and requires no network calls.
 
-### 🟢 Sprint 4: Core UI/UX & Evidence Chain
-**Goal:** A beautiful frontend that engineers can trust.
+### 🟢 Sprint 4: Core UI/UX, Market Data & Evidence Chain
+**Goal:** A beautiful frontend that engineers can trust, fed by live market prices.
 **Deliverables:**
 1.  A Next.js dashboard with an input form (Feed Composition, Temp).
 2.  A results panel showing predicted H2/CO ratio and Carbon risk.
-3.  The **Evidence Chain Component**: A UI list showing the model version used and the confidence score of the prediction.
+3.  **Market Data Service:** Implement `GET /api/v1/market-prices` to fetch live gas and carbon credit prices for the TEA engine, with caching to prevent API rate limits.
+4.  The **Evidence Chain Component**: A UI list showing the model version used and the confidence score of the prediction.
 
-### 🟢 Sprint 5: Techno-Economic Analysis (TEA) Module
-**Goal:** Show the plant operator the money.
+### 🟢 Sprint 5: Agentic Orchestrator (The Interface)
+**Goal:** Allow users to ask questions in plain English.
 **Deliverables:**
-1.  Extend the ML model/backend to include a TEA calculator (Estimated ROI based on inputted gas costs and carbon credit values).
-2.  UI panels showing "Estimated Profit: $X/ton" and "Carbon Credits Generated: Y".
+1.  A LangChain agent (`src/agent/orchestrator.py`) initialized with a strict system prompt.
+2.  A tool called `predict_and_calculate_tea()` wired to the FastAPI endpoints.
+3.  Tests ensuring the agent extracts parameters correctly and does not hallucinate physics or financial math.
 
 ### 🟢 Sprint 6: Expanded Feedstocks & Predictive Maintenance
 **Goal:** Make the product usable for real-world, dirty gas.
