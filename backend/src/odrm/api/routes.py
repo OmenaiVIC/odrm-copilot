@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request
 
 from odrm.api.schemas import (
+    MarketPricesResponse,
     PredictRequest,
     PredictResponse,
     TeaFinancials,
@@ -15,6 +16,7 @@ from odrm.domain.tea import (
     calculate_tea,
 )
 from odrm.ml.features import TARGETS
+from odrm.services.market_data import MarketDataError, MarketDataService
 from odrm.services.prediction import (
     ModelUnavailableError,
     PredictionError,
@@ -22,6 +24,7 @@ from odrm.services.prediction import (
 )
 
 router = APIRouter()
+market_router = APIRouter()
 
 
 def _tea_financials(result: TeaResult) -> TeaFinancials:
@@ -90,4 +93,25 @@ def tea(request: TeaRequest, req: Request) -> TeaResponse:
         model_versions=versions,
         financials=_tea_financials(result),
         warnings=list(result.warnings),
+    )
+
+
+@market_router.get("/market-prices", response_model=MarketPricesResponse)
+def market_prices(req: Request) -> MarketPricesResponse:
+    service: MarketDataService = req.app.state.market_data
+    try:
+        quote, cached = service.get_prices()
+    except MarketDataError as exc:
+        raise HTTPException(status_code=503, detail="Market data unavailable.") from exc
+
+    return MarketPricesResponse(
+        natural_gas_price_usd_per_mmbtu=quote.natural_gas_price_usd_per_mmbtu,
+        syngas_price_usd_per_kmol=quote.syngas_price_usd_per_kmol,
+        carbon_credit_price_usd_per_tonne_co2e=quote.carbon_credit_price_usd_per_tonne_co2e,
+        currency="USD",
+        source=quote.source,
+        is_mock=quote.is_mock,
+        as_of=quote.as_of,
+        cached=cached,
+        cache_ttl_seconds=int(service.ttl_seconds),
     )

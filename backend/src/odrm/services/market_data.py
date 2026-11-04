@@ -93,6 +93,10 @@ class MarketDataService:
         self._cached_quote: MarketPriceQuote | None = None
         self._cached_at: float | None = None
 
+    @property
+    def ttl_seconds(self) -> float:
+        return self._ttl_seconds
+
     def get_prices(self) -> tuple[MarketPriceQuote, bool]:
         with self._lock:
             now = self._clock()

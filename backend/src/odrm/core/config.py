@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -18,6 +19,7 @@ class Settings(BaseSettings):
     model_dir: str = "./models"
     data_dir: str = "./data"
     max_temperature_c: float = 1000.0
+    market_data_ttl_seconds: int = Field(default=86_400, ge=0, le=604_800)
 
     @property
     def cors_origin_list(self) -> list[str]:

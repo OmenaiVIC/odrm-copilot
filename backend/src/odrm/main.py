@@ -4,10 +4,12 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from odrm.api.routes import market_router
 from odrm.api.routes import router as predict_router
 from odrm.core.config import Settings
 from odrm.ml.features import TARGETS
 from odrm.ml.registry import ModelNotFoundError, load_model
+from odrm.services.market_data import MarketDataService, MockMarketPriceProvider
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +34,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
 
     app.state.models = {}
+    app.state.market_data = MarketDataService(
+        provider=MockMarketPriceProvider(),
+        ttl_seconds=settings.market_data_ttl_seconds,
+    )
 
     base_model_dir = Path(getattr(settings, "model_dir", "models"))
     model_root = base_model_dir / "odrm" if (base_model_dir / "odrm").is_dir() else base_model_dir
@@ -45,6 +51,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             logger.warning(f"Model {target} not found in {model_root}. API will return 503.")
 
     app.include_router(predict_router, prefix="/api/v1", tags=["predict"])
+    app.include_router(market_router, prefix="/api/v1", tags=["market"])
 
     @app.get("/health")
     def health() -> dict[str, str]:

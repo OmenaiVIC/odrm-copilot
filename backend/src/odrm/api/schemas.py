@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -27,6 +28,20 @@ class PredictRequest(BaseModel):
 class PredictResponse(BaseModel):
     predictions: dict[str, float]
     model_version: str
+
+
+class MarketPricesResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+
+    natural_gas_price_usd_per_mmbtu: float
+    syngas_price_usd_per_kmol: float
+    carbon_credit_price_usd_per_tonne_co2e: float
+    currency: Literal["USD"] = "USD"
+    source: str
+    is_mock: bool
+    as_of: datetime
+    cached: bool
+    cache_ttl_seconds: int
 
 
 class TeaAssumptions(BaseModel):
