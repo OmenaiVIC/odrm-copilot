@@ -1,4 +1,13 @@
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field
+
+from odrm.domain.tea_defaults import (
+    DEFAULT_CO2_UTILIZATION_FRACTION,
+    DEFAULT_OPERATING_DAYS_PER_YEAR,
+    DEFAULT_OPERATING_HOURS_PER_DAY,
+    DEFAULT_OPEX_PCT_OF_CAPEX_PER_YEAR,
+)
 
 
 class PredictRequest(BaseModel):
@@ -18,3 +27,51 @@ class PredictRequest(BaseModel):
 class PredictResponse(BaseModel):
     predictions: dict[str, float]
     model_version: str
+
+
+class TeaAssumptions(BaseModel):
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+
+    ch4_feed_kmol_per_h: float = Field(gt=0, le=1_000_000)
+    natural_gas_price_usd_per_mmbtu: float = Field(ge=0, le=1_000)
+    syngas_price_usd_per_kmol: float = Field(ge=0, le=1_000_000)
+    carbon_credit_price_usd_per_tonne_co2e: float = Field(ge=0, le=100_000)
+    co2_utilization_fraction: float = Field(default=DEFAULT_CO2_UTILIZATION_FRACTION, ge=0, le=1)
+    capex_usd: float = Field(gt=0, le=1e12)
+    opex_pct_of_capex_per_year: float = Field(
+        default=DEFAULT_OPEX_PCT_OF_CAPEX_PER_YEAR, ge=0, le=100
+    )
+    operating_hours_per_day: float = Field(default=DEFAULT_OPERATING_HOURS_PER_DAY, gt=0, le=24)
+    operating_days_per_year: float = Field(default=DEFAULT_OPERATING_DAYS_PER_YEAR, gt=0, le=365)
+
+
+class TeaRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    conditions: PredictRequest
+    assumptions: TeaAssumptions
+
+
+class TeaFinancials(BaseModel):
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+
+    syngas_kmol_per_day: float
+    syngas_nm3_per_day: float
+    syngas_revenue_usd_per_day: float
+    co2_consumed_tonnes_per_day: float
+    carbon_credit_value_usd_per_day: float
+    total_revenue_usd_per_day: float
+    feed_cost_usd_per_day: float
+    opex_usd_per_day: float
+    net_cash_flow_usd_per_day: float
+    annual_net_cash_flow_usd: float
+    roi_pct: float
+    payback_years: float | None
+    currency: Literal["USD"] = "USD"
+
+
+class TeaResponse(BaseModel):
+    predictions: dict[str, float]
+    model_versions: dict[str, str]
+    financials: TeaFinancials
+    warnings: list[str]
