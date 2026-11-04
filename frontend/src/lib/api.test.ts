@@ -33,7 +33,7 @@ describe('API Client', () => {
       json: async () => ({ detail: 'Validation Error' }),
     } as Response);
 
-    const payload = { conditions: {}, assumptions: {} } as any;
+    const payload = { conditions: {}, assumptions: {} } as unknown as Parameters<typeof postTea>[0];
     
     await expect(postTea(payload)).rejects.toThrow(ApiError);
     expect(fetch).toHaveBeenCalledWith(

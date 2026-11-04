@@ -121,11 +121,11 @@ export function ResultsPanel({ data, isLoading, isError }: ResultsPanelProps) {
         <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900/50 dark:bg-yellow-900/20">
           <h4 className="text-sm font-semibold text-yellow-800 dark:text-yellow-500 mb-2">Warnings</h4>
           <ul className="list-disc list-inside space-y-1">
-            {warnings.map((code) => (
-              <li key={code} className="text-sm text-yellow-700 dark:text-yellow-400">
-                {WARNING_MESSAGES[code] || code}
-              </li>
-            ))}
+           {warnings.map((code: string) => (
+            <li key={code} className="text-sm text-yellow-700 dark:text-yellow-400">
+              {WARNING_MESSAGES[code] || code}
+            </li>
+    ))}
           </ul>
         </div>
       )}
