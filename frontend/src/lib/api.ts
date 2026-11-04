@@ -47,3 +47,20 @@ export async function apiFetch<T>(
 
   return (await response.json()) as T;
 }
+
+import type { MarketPricesResponse, TeaRequest, TeaResponse } from './types';
+
+// ... keep your existing API_BASE_URL, ApiError, and apiFetch code ...
+
+export async function getMarketPrices(): Promise<MarketPricesResponse> {
+  return apiFetch<MarketPricesResponse>('/market-prices', {
+    method: 'GET',
+  });
+}
+
+export async function postTea(request: TeaRequest): Promise<TeaResponse> {
+  return apiFetch<TeaResponse>('/tea', {
+    method: 'POST',
+    body: JSON.stringify(request),
+  });
+}
