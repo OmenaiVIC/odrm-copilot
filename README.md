@@ -60,6 +60,53 @@ curl -X POST http://localhost:8000/api/v1/predict `
 
 *(Note: If you don't have `curl` on Windows, you can skip this or use PowerShell's `Invoke-RestMethod`).*
 
+## TEA API (Screening Economics)
+
+`POST /api/v1/tea` combines the existing surrogate predictions with a deterministic
+techno-economic screen: syngas production and revenue, CO2 consumption and carbon
+credit value, operating cash flow, ROI, and payback.
+
+The endpoint is a **screening estimate, not investment-grade advice**. It excludes
+tax, financing, depreciation, maintenance escalation, and discounted cash-flow
+analysis. Carbon credits are an engineering estimate based on the supplied
+utilization fraction; they are not a verified credit or an ESG eligibility claim.
+
+### Assumptions
+
+Gas, syngas, and carbon prices are **required**. The backend never fetches market
+data and has no positive price defaults.
+
+| Field | Default | Meaning |
+|---|---:|---|
+| `ch4_feed_kmol_per_h` | required | Methane feed rate; GHSV alone does not determine reactor volume |
+| `natural_gas_price_usd_per_mmbtu` | required | Feed gas price |
+| `syngas_price_usd_per_kmol` | required | Blended syngas price |
+| `carbon_credit_price_usd_per_tonne_co2e` | required | Carbon credit price |
+| `capex_usd` | required | Installed capital cost |
+| `co2_utilization_fraction` | `0.0` | Share of stoichiometric CO2 consumption credited; warning when omitted |
+| `opex_pct_of_capex_per_year` | `5.0` | Annual OPEX as a percentage of CAPEX |
+| `operating_hours_per_day` | `24.0` | Operating hours per day |
+| `operating_days_per_year` | `330.0` | Operating days per year |
+
+`syngas_yield_mol_per_mol_ch4` is predicted per mole of CH4 **fed**, not per mole
+converted. A non-positive annual cash flow returns `payback_years: null` and a
+`negative_annual_cash_flow` warning. Warnings are always present and may be empty.
+
+### Example
+
+```powershell
+curl -X POST http://localhost:8000/api/v1/tea `
+     -H "Content-Type: application/json" `
+     -d '{"conditions":{"temperature_c":800.0,"pressure_bar":10.0,"ch4_o2_ratio":2.0,"co2_ch4_ratio":0.5,"h2o_ch4_ratio":0.2,"ghsv_per_h":5000.0,"catalyst":"Ni/Al2O3"},"assumptions":{"ch4_feed_kmol_per_h":100.0,"natural_gas_price_usd_per_mmbtu":3.0,"syngas_price_usd_per_kmol":4.0,"carbon_credit_price_usd_per_tonne_co2e":25.0,"co2_utilization_fraction":0.4,"capex_usd":5000000.0}}'
+```
+
+The response contains `predictions`, `model_versions`, `financials`, and `warnings`.
+`/api/v1/predict` is unchanged and remains the prediction-only endpoint.
+
+Validation failures return `422`; missing models return `503`; non-finite model
+output or a non-finite TEA result returns `500` without a stack trace or partial
+financials.
+
 ---
 
 ## 🌱 The Impact
