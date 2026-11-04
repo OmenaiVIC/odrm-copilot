@@ -1,38 +1,33 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from odrm.api.routes import router as predict_router
 
-from odrm.core.config import Settings, get_settings
-
-
-def create_app(settings: Settings | None = None) -> FastAPI:
-    cfg = settings or get_settings()
-
-    app = FastAPI(
-        title="ODRM-Copilot API",
-        version="0.1.0",
-        description="Surrogate process modelling and optimization API for flare gas valorization.",
-    )
-    app.state.settings = cfg
-
+def create_app() -> FastAPI:
+    app = FastAPI(title="ODRM Copilot")
+    
+    # Simplified CORS for local testing
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=cfg.cors_origin_list,
+        allow_origins=["*"], # We can lock this down later
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
-
-    @app.get("/health", tags=["meta"])
-    def health() -> dict[str, str]:
-        return {"status": "ok", "env": cfg.env}
-
+    
+    # Mount the prediction API
+    app.include_router(predict_router, prefix="/api/v1", tags=["predict"])
+    
+    @app.get("/health")
+    def health():
+        return {"status": "ok"}
+        
     return app
-
 
 app = create_app()
 
-
 def main() -> None:
     import uvicorn
-
     uvicorn.run("odrm.main:app", host="0.0.0.0", port=8000)
+
+if __name__ == "__main__":
+    main()
