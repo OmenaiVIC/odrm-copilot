@@ -52,6 +52,16 @@ cd odrm-copilot
 ```powershell
 .\.venv\Scripts\python.exe -m uvicorn odrm.main:app --port 8000
 ```
+**6. Test a prediction (requires `curl` or Postman):**
+```powershell
+curl -X POST http://localhost:8000/api/v1/predict `
+     -H "Content-Type: application/json" `
+     -d '{\"temperature_c\": 800.0, \"pressure_bar\": 10.0, \"ch4_o2_ratio\": 2.0, \"co2_ch4_ratio\": 0.5, \"h2o_ch4_ratio\": 0.2, \"ghsv_per_h\": 5000.0, \"catalyst\": \"Ni/Al2O3\"}'
+
+*(Note: If you don't have `curl` on Windows, you can skip this or use PowerShell's `Invoke-RestMethod`).*
+
+---
+
 ## 🌱 The Impact
 *   **For the Operator:** Turn a wasted liability into a revenue-generating chemical asset.
 *   **For the ESG Investor:** A measurable, scalable path to reducing Scope 1 emissions.
