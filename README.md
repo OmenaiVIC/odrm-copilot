@@ -58,8 +58,16 @@ curl -X POST http://localhost:8000/api/v1/predict `
      -H "Content-Type: application/json" `
      -d '{\"temperature_c\": 800.0, \"pressure_bar\": 10.0, \"ch4_o2_ratio\": 2.0, \"co2_ch4_ratio\": 0.5, \"h2o_ch4_ratio\": 0.2, \"ghsv_per_h\": 5000.0, \"catalyst\": \"Ni/Al2O3\"}'
 ```
-
 *(Note: If you don't have `curl` on Windows, you can skip this or use PowerShell's `Invoke-RestMethod`).*
+
+**7. Start the frontend dashboard:**
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+Open http://localhost:3000 in your browser to use the interactive screening dashboard.
+
 
 ## 📊 Techno-Economic Analysis (TEA) API
 
