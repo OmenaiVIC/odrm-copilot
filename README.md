@@ -133,3 +133,32 @@ The trained ML surrogate models, the TEA Engine, and the production SaaS dashboa
 
 
 
+
+## 📊 Techno-Economic Analysis (TEA) API
+
+The `/api/v1/tea` endpoint combines the surrogate AI predictions with a deterministic financial engine to screen the economic viability of a flare gas project.
+
+**Important:** This is a screening tool, not an investment-grade financial model. It does not account for taxes, financing, inflation, or variable OPEX. Market prices are **never** fetched from the internet; the caller must supply them.
+
+### Sample Request
+```json
+{
+  "conditions": {
+    "temperature_c": 800.0,
+    "pressure_bar": 10.0,
+    "ch4_o2_ratio": 2.0,
+    "co2_ch4_ratio": 0.5,
+    "h2o_ch4_ratio": 0.2,
+    "ghsv_per_h": 5000.0,
+    "catalyst": "Ni/Al2O3"
+  },
+  "assumptions": {
+    "ch4_feed_kmol_per_h": 100.0,
+    "natural_gas_price_usd_per_mmbtu": 3.0,
+    "syngas_price_usd_per_kmol": 4.0,
+    "carbon_credit_price_usd_per_tonne_co2e": 25.0,
+    "co2_utilization_fraction": 0.4,
+    "capex_usd": 5000000.0
+  }
+}
+```
