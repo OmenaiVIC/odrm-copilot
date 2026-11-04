@@ -29,7 +29,7 @@ def train_single_target(df: pd.DataFrame, target: str, model_root: Path, random_
     X_test = build_feature_frame(test_df)
     y_test = extract_target(test_df, target)
 
-    # 2. Setup Model (Lightweight search for laptop safety)
+    # 2. Setup Model
     base_model = xgb.XGBRegressor(
         objective="reg:squarederror",
         tree_method="hist",
@@ -37,18 +37,22 @@ def train_single_target(df: pd.DataFrame, target: str, model_root: Path, random_
         n_jobs=2 
     )
     
+    # Full search space from SPRINT_2_PLAN.md §3.4
     param_grid = {
-        "n_estimators": [50, 100],
-        "max_depth": [3, 5],
-        "learning_rate": [0.1, 0.2],
+        "n_estimators": [200, 400, 600],
+        "max_depth": [3, 4, 5, 6, 8],
+        "learning_rate": [0.03, 0.05, 0.1, 0.2],
+        "subsample": [0.7, 0.85, 1.0],
+        "colsample_bytree": [0.7, 0.85, 1.0],
+        "min_child_weight": [1, 3, 5],
     }
     
     search = RandomizedSearchCV(
         base_model,
         param_distributions=param_grid,
-        n_iter=3, # Kept low for fast local training
+        n_iter=15, # Increased for better tuning
         scoring="neg_root_mean_squared_error",
-        cv=2, # 2-fold CV is faster for a quick pipeline
+        cv=3, # 3-fold is standard and safe
         random_state=random_state,
         n_jobs=1
     )
@@ -60,7 +64,7 @@ def train_single_target(df: pd.DataFrame, target: str, model_root: Path, random_
     train_preds = best_model.predict(X_train)
     test_preds = best_model.predict(X_test)
     
-    # FIX: scikit-learn removed squared=False, so we take np.sqrt of MSE
+    # Calculate metrics
     test_mse = mean_squared_error(y_test, test_preds)
     test_rmse = np.sqrt(test_mse)
     test_mae = mean_absolute_error(y_test, test_preds)

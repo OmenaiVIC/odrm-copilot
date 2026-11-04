@@ -37,3 +37,5 @@ models/*.joblib
 Thumbs.db
 *.log
 
+models/**/*.joblib
+

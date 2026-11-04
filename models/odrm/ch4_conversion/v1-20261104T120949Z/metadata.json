@@ -1,0 +1,37 @@
+{
+  "schema_version": "v1",
+  "target": "ch4_conversion",
+  "model_version": "v1-20261104T120949Z",
+  "created_at": "2026-11-04T12:09:49.595914+00:00",
+  "features": [
+    "temperature_c",
+    "pressure_bar",
+    "ch4_o2_ratio",
+    "co2_ch4_ratio",
+    "h2o_ch4_ratio",
+    "ghsv_per_h",
+    "catalyst_loading_wt_pct",
+    "n2_dilution_mol_pct",
+    "catalyst__Ni_Al2O3",
+    "catalyst__Ni-MgO",
+    "catalyst__Rh",
+    "catalyst__Pt",
+    "catalyst__none",
+    "catalyst__other"
+  ],
+  "hyperparameters": {
+    "subsample": 0.7,
+    "n_estimators": 400,
+    "min_child_weight": 5,
+    "max_depth": 8,
+    "learning_rate": 0.03,
+    "colsample_bytree": 1.0
+  },
+  "metrics": {
+    "train_r2": 0.9987363570027717,
+    "test_r2": 0.9887250064821613,
+    "test_rmse": 0.028544091445507548,
+    "test_mae": 0.019066713043947955
+  },
+  "git_sha": "08a3be81e2507ae10d7edbdb39a2466be2093f3d"
+}
