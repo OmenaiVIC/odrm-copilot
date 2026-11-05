@@ -28,7 +28,8 @@
 *   **Single-Tool Design:** The agent is restricted to `calculate_project_economics` to prevent hallucinated endpoints.
 *   **Authority:** The final response strictly embeds the `TeaResponse` returned by the backend API.
 
-## 4. Known limitations & Configuration
-*   The system requires an LLM provider to be configured in the `.env` file (Ollama, OpenAI, or Gemini).
-*   If no provider is configured, the endpoint safely returns `503 Agent Unavailable`.
-*   Manual smoke testing of the live LLM was deferred to environment setup.
+## 4. Manual Live Test & Environment Fixes
+*   During live testing, `httpx` on Windows was blocking local loopback requests due to system proxy settings. This was fixed by adding `trust_env=False` to the `HttpTeaClient`.
+*   Switched from the OpenAI-compatible Gemini endpoint to the native `langchain-google-genai` package to resolve persistent `GoogleModelNotFoundError` exceptions.
+*   Live testing successfully demonstrated the agent parsing a natural language prompt, extracting the exact JSON payload, invoking the TEA tool, and returning the formatted financial response.
+*   (Note: A temporary `503 UNAVAILABLE` from Google's free tier was observed, which is an upstream infrastructure limit, not a code defect).

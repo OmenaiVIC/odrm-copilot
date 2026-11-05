@@ -33,7 +33,7 @@ class HttpTeaClient:
         client: httpx.Client | None = None,
     ) -> None:
         self._tea_url = f"{base_url.rstrip('/')}/tea"
-        self._client = client or httpx.Client(timeout=timeout_seconds)
+        self._client = client or httpx.Client(timeout=timeout_seconds, trust_env=False)
 
     def calculate(self, request: TeaRequest) -> TeaResponse:
         try:

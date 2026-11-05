@@ -134,11 +134,14 @@ class AgentService:
                 {"messages": [{"role": "user", "content": message}]},
                 config={"recursion_limit": 6},
             )
+
         except Exception as exc:
+            import traceback
             logger.warning(
-                "agent invocation failed request_id=%s error=%s",
+                "agent invocation failed request_id=%s error=%s\n%s",
                 request_id,
                 type(exc).__name__,
+                traceback.format_exc(),
             )
             return self._failure_outcome(recorder)
 
