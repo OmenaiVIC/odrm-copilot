@@ -26,9 +26,9 @@ dependencies = [
   "scikit-learn>=1.5",
   "joblib>=1.4",
   # Agent layer
-  "langchain>=0.3",
-  "langchain-core>=0.3",
-  "langchain-openai>=0.2",
+  "langchain>=1.4,<2",
+  "langchain-core>=1.7,<2",
+  "langchain-openai>=1.7,<2",
   # Config
   "python-dotenv>=1.0",
 ]
