@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getMarketPrices, postTea, ApiError } from './api';
+import { getMarketPrices, postChat, postTea, ApiError } from './api';
 
 // Mock global fetch
 global.fetch = vi.fn();
@@ -33,15 +33,43 @@ describe('API Client', () => {
       json: async () => ({ detail: 'Validation Error' }),
     } as Response);
 
-    const payload = { conditions: {}, assumptions: {} } as unknown as Parameters<typeof postTea>[0];
-    
+    const payload = {
+      conditions: {},
+      assumptions: {},
+    } as unknown as Parameters<typeof postTea>[0];
+
     await expect(postTea(payload)).rejects.toThrow(ApiError);
     expect(fetch).toHaveBeenCalledWith(
       expect.stringContaining('/tea'),
-      expect.objectContaining({ 
+      expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       })
     );
+  });
+
+  it('postChat posts the message and returns the parsed response', async () => {
+    const mockResponse = {
+      status: 'ok',
+      reply: 'Screening complete.',
+      result: null,
+      request_id: 'req-1',
+    };
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => mockResponse,
+    } as Response);
+
+    const result = await postChat('run the screening');
+
+    expect(fetch).toHaveBeenCalledWith(
+      expect.stringContaining('/chat'),
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ message: 'run the screening' }),
+      })
+    );
+    expect(result).toEqual(mockResponse);
   });
 });

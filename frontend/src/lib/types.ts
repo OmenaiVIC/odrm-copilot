@@ -67,3 +67,27 @@ export interface TeaResponse {
   financials: TeaFinancials;
   warnings: string[];
 }
+
+export type ChatStatus = 'ok' | 'needs_input';
+
+export interface ChatRequest {
+  message: string;
+}
+
+export interface ChatErrorDetail {
+  code: string;
+  message: string;
+  request_id?: string;
+  field?: string | null;
+  value?: number | string | null;
+  minimum?: number | null;
+  maximum?: number | null;
+  missing_fields?: string[];
+}
+
+export interface ChatResponse {
+  status: ChatStatus;
+  reply: string;
+  result: TeaResponse | null;
+  request_id: string;
+}
