@@ -85,6 +85,24 @@ class FakeTeaClient(TeaClient):
         return self.response
 
 
+def tool_call_message(payload: dict[str, Any], call_id: str = "call-1") -> AIMessage:
+    return AIMessage(
+        content="",
+        tool_calls=[
+            {
+                "name": "calculate_project_economics",
+                "args": payload,
+                "id": call_id,
+                "type": "tool_call",
+            }
+        ],
+    )
+
+
+def final_message(text: str) -> AIMessage:
+    return AIMessage(content=text)
+
+
 class ScriptedChatModel(BaseChatModel):
     responses: list[AIMessage]
     index: int = 0
