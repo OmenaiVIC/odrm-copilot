@@ -103,6 +103,43 @@ def test_guardrail_error_returns_structured_422_without_tea_call(
     assert tea.requests == []
 
 
+def test_unknown_catalyst_returns_422(test_settings: Settings) -> None:
+    payload = make_tea_request().model_dump(mode="python")
+    payload["conditions"]["catalyst"] = "Unobtainium"
+    service, tea = service_with([tool_call_message(payload), final_message("Unknown catalyst.")])
+
+    with client_for(service, test_settings) as client:
+        response = client.post("/api/v1/chat", json={"message": "use Unobtainium"})
+
+    assert response.status_code == 422
+    detail = response.json()["detail"]
+    assert detail["code"] == "UNKNOWN_CATALYST"
+    assert detail["field"] == "conditions.catalyst"
+    assert "Unobtainium" in response.text
+    assert tea.requests == []
+
+
+def test_missing_arguments_returns_422_with_paths(test_settings: Settings) -> None:
+    payload = make_tea_request().model_dump(mode="python")
+    del payload["conditions"]["pressure_bar"]
+    del payload["assumptions"]["capex_usd"]
+    service, tea = service_with(
+        [tool_call_message(payload), final_message("Which values are missing?")]
+    )
+
+    with client_for(service, test_settings) as client:
+        response = client.post("/api/v1/chat", json={"message": "run it"})
+
+    assert response.status_code == 422
+    detail = response.json()["detail"]
+    assert detail["code"] == "MISSING_ARGUMENTS"
+    assert detail["missing_fields"] == [
+        "conditions.pressure_bar",
+        "assumptions.capex_usd",
+    ]
+    assert tea.requests == []
+
+
 def test_tea_unavailable_returns_503_with_request_id(test_settings: Settings) -> None:
     tea = FakeTeaClient(error=TeaUnavailableError("down"))
     service, _ = service_with(
@@ -183,6 +220,21 @@ def test_invalid_chat_request_is_rejected_by_validation(
 
     assert response.status_code == 422
     assert service.calls == 0
+
+
+def test_configured_message_limit_is_enforced(test_settings: Settings) -> None:
+    settings = test_settings.model_copy(update={"chat_max_message_chars": 5})
+    service, tea = service_with([final_message("unused")])
+
+    with client_for(service, settings) as client:
+        response = client.post("/api/v1/chat", json={"message": "123456"})
+
+    assert response.status_code == 422
+    detail = response.json()["detail"]
+    assert detail["code"] == "INVALID_ARGUMENTS"
+    assert detail["field"] == "message"
+    assert "at most 5 characters" in detail["message"]
+    assert tea.requests == []
 
 
 def test_message_is_trimmed_before_reaching_service(test_settings: Settings) -> None:

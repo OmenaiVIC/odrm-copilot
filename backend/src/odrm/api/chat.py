@@ -39,6 +39,17 @@ def _rejection_detail(outcome: AgentOutcome, request_id: str) -> dict[str, Any]:
 @router.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest, req: Request) -> ChatResponse:
     request_id = str(uuid.uuid4())
+    max_chars = req.app.state.settings.chat_max_message_chars
+    if len(request.message) > max_chars:
+        raise HTTPException(
+            status_code=422,
+            detail=_error_detail(
+                "INVALID_ARGUMENTS",
+                f"message must be at most {max_chars} characters.",
+                request_id,
+                field="message",
+            ),
+        )
     service: AgentService = req.app.state.agent_service
     outcome = service.chat(request.message, request_id)
 
