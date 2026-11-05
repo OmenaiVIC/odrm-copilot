@@ -68,6 +68,57 @@ npm run dev
 ```
 Open http://localhost:3000 in your browser to use the interactive screening dashboard.
 
+## AI Screening Assistant
+
+The dashboard includes an additive **Ask the Screening Assistant** section, backed by
+`POST /api/v1/chat`. Send one plain-language screening request (maximum 2000 characters). The
+backend extracts conditions and assumptions, validates them against the same physical and
+financial bounds as `/api/v1/tea`, calls `/api/v1/tea` through the guarded tool, and returns the
+authoritative `TeaResponse` in `result`. There is no conversation history, and the client cannot
+override the provider, model, key, or endpoints.
+
+### Configure a provider
+
+The API starts without an LLM configured; `/chat` returns `503 AGENT_UNAVAILABLE` until a
+provider is set. Use server-side environment variables only:
+
+```text
+# OpenAI
+ODRM_LLM_PROVIDER=openai
+ODRM_LLM_MODEL=<openai-model>
+ODRM_LLM_API_KEY=<server-side-key>
+
+# Local Ollama (OpenAI-compatible endpoint)
+ODRM_LLM_PROVIDER=ollama
+ODRM_LLM_MODEL=<installed-ollama-model>
+ODRM_LLM_BASE_URL=http://localhost:11434/v1
+
+# Gemini (OpenAI-compatible endpoint)
+ODRM_LLM_PROVIDER=gemini
+ODRM_LLM_MODEL=<gemini-model>
+ODRM_LLM_API_KEY=<server-side-key>
+
+# Internal TEA endpoint
+ODRM_TEA_API_BASE_URL=http://127.0.0.1:8000/api/v1
+```
+
+Provider keys are never sent to the browser, written to logs, or included in errors.
+
+### Example
+
+```powershell
+curl -X POST http://localhost:8000/api/v1/chat `
+     -H "Content-Type: application/json" `
+     -d '{"message": "At 750 C, 5 bar, CH4:O2 2.0, CO2:CH4 0.5, H2O:CH4 0.3, GHSV 20000/h, Ni/Al2O3, 10 wt%, 0% N2, with 100 kmol/h CH4 feed, $3.25/MMBtu gas, $4.10/kmol syngas, $28.50/tCO2e credits, and $5,000,000 capex. What is the conversion, yield, and payback?"}'
+```
+
+`status: "ok"` always includes a validated `result`; `status: "needs_input"` has `result: null`
+and asks for the missing values. Guardrail failures return `422` with a structured `detail`
+(`code`, `field`, `minimum`, `maximum`, `request_id`), while provider or TEA outages return
+`503` with `AGENT_UNAVAILABLE` or `TEA_UNAVAILABLE`. This is a screening result, not investment
+advice.
+
+
 
 ## 📊 Techno-Economic Analysis (TEA) API
 
