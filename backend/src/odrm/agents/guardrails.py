@@ -13,6 +13,9 @@ _TOP_LEVEL = ("conditions", "assumptions")
 _CONDITION_FIELDS = tuple(PredictRequest.model_fields)
 _ASSUMPTION_FIELDS = tuple(TeaAssumptions.model_fields)
 _CONDITION_OPTIONAL = ("catalyst_loading_wt_pct", "n2_dilution_mol_pct")
+_CONDITION_REQUIRED = tuple(
+    field for field in _CONDITION_FIELDS if field not in _CONDITION_OPTIONAL
+)
 _ASSUMPTION_REQUIRED = (
     "ch4_feed_kmol_per_h",
     "natural_gas_price_usd_per_mmbtu",
@@ -197,13 +200,15 @@ def validate_tea_request(payload: Any) -> TeaRequest:
         )
 
     missing = [
-        *(f"conditions.{name}" for name in _CONDITION_FIELDS if name not in conditions),
+        *(f"conditions.{name}" for name in _CONDITION_REQUIRED if name not in conditions),
         *(f"assumptions.{name}" for name in _ASSUMPTION_REQUIRED if name not in assumptions),
     ]
     if missing:
         _missing(missing)
 
     for name in _NUMERIC_CONDITIONS:
+        if name not in conditions:
+            continue
         raw = conditions[name]
         if raw is None and name in _CONDITION_OPTIONAL:
             continue

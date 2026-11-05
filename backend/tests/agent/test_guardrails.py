@@ -156,6 +156,17 @@ def test_extra_fields_are_rejected() -> None:
     assert error.field == "surprise"
 
 
+def test_optional_condition_fields_may_be_omitted() -> None:
+    payload = valid_payload()
+    del payload["conditions"]["catalyst_loading_wt_pct"]
+    del payload["conditions"]["n2_dilution_mol_pct"]
+
+    request = validate_tea_request(payload)
+
+    assert request.conditions.catalyst_loading_wt_pct is None
+    assert request.conditions.n2_dilution_mol_pct is None
+
+
 def test_optional_fields_accept_null_and_defaults_fill_optional_assumptions() -> None:
     payload = valid_payload()
     payload["conditions"]["catalyst_loading_wt_pct"] = None

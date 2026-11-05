@@ -9,6 +9,7 @@ from langchain.agents import create_agent
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage
 
+from odrm.agents.guardrails import GuardrailViolation
 from odrm.agents.prompts import SYSTEM_PROMPT
 from odrm.agents.providers import AgentConfigurationError
 from odrm.agents.tea_client import TeaClient, TeaRejectedError
@@ -32,6 +33,7 @@ class AgentOutcome:
     result: TeaResponse | None = None
     error_code: str | None = None
     error_message: str | None = None
+    guardrail_error: GuardrailViolation | None = None
 
 
 def _ok(result: TeaResponse, reply: str) -> AgentOutcome:
@@ -42,8 +44,17 @@ def _ok(result: TeaResponse, reply: str) -> AgentOutcome:
     )
 
 
-def _rejected(code: str, message: str) -> AgentOutcome:
-    return AgentOutcome(status="rejected", error_code=code, error_message=message)
+def _rejected(
+    code: str,
+    message: str,
+    guardrail_error: GuardrailViolation | None = None,
+) -> AgentOutcome:
+    return AgentOutcome(
+        status="rejected",
+        error_code=code,
+        error_message=message,
+        guardrail_error=guardrail_error,
+    )
 
 
 def _unavailable(code: str, message: str) -> AgentOutcome:
@@ -136,7 +147,7 @@ class AgentService:
             return _ok(recorder.result, reply or fallback_reply(recorder.result))
         if recorder.guardrail_error is not None:
             error = recorder.guardrail_error
-            return _rejected(error.code, error.message)
+            return _rejected(error.code, error.message, error)
         if recorder.tea_error is not None:
             if isinstance(recorder.tea_error, TeaRejectedError):
                 return _rejected("TEA_REJECTED", "The TEA service rejected the request.")
@@ -153,7 +164,7 @@ class AgentService:
             return _ok(recorder.result, fallback_reply(recorder.result))
         if recorder.guardrail_error is not None:
             error = recorder.guardrail_error
-            return _rejected(error.code, error.message)
+            return _rejected(error.code, error.message, error)
         if recorder.tea_error is not None:
             if isinstance(recorder.tea_error, TeaRejectedError):
                 return _rejected("TEA_REJECTED", "The TEA service rejected the request.")

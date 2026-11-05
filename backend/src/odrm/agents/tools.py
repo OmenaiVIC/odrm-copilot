@@ -42,6 +42,14 @@ def _guardrail_payload(error: GuardrailViolation) -> dict[str, Any]:
     return {key: value for key, value in error.to_detail("").items() if key != "request_id"}
 
 
+def calculate_project_economics(
+    tea_client: TeaClient,
+    recorder: AgentRunRecorder,
+) -> BaseTool:
+    """Build the guarded TEA tool; alias kept for the documented tool name."""
+    return create_tea_tool(tea_client, recorder)
+
+
 def create_tea_tool(tea_client: TeaClient, recorder: AgentRunRecorder) -> BaseTool:
     def run(*args: Any, **kwargs: Any) -> dict[str, Any]:
         recorder.tool_invoked = True

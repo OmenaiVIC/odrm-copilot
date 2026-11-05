@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from odrm.domain.tea_defaults import (
     DEFAULT_CO2_UTILIZATION_FRACTION,
@@ -90,3 +92,47 @@ class TeaResponse(BaseModel):
     model_versions: dict[str, str]
     financials: TeaFinancials
     warnings: list[str]
+
+
+ChatStatus = Literal["ok", "needs_input"]
+
+
+class ChatRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    message: str = Field(min_length=1, max_length=2_000)
+
+    @field_validator("message", mode="before")
+    @classmethod
+    def strip_message(cls, value: object) -> object:
+        return value.strip() if isinstance(value, str) else value
+
+
+class ChatErrorDetail(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    code: str
+    message: str
+    request_id: str
+    field: str | None = None
+    value: float | str | None = None
+    minimum: float | None = None
+    maximum: float | None = None
+    missing_fields: list[str] | None = None
+
+
+class ChatResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    status: ChatStatus
+    reply: str
+    result: TeaResponse | None = None
+    request_id: str
+
+    @model_validator(mode="after")
+    def result_matches_status(self) -> ChatResponse:
+        if self.status == "ok" and self.result is None:
+            raise ValueError("status 'ok' requires a result")
+        if self.status == "needs_input" and self.result is not None:
+            raise ValueError("status 'needs_input' must not include a result")
+        return self
