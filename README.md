@@ -118,8 +118,6 @@ and asks for the missing values. Guardrail failures return `422` with a structur
 `503` with `AGENT_UNAVAILABLE` or `TEA_UNAVAILABLE`. This is a screening result, not investment
 advice.
 
-
-
 ## 📊 Techno-Economic Analysis (TEA) API
 
 The `/api/v1/tea` endpoint combines the surrogate AI predictions with a deterministic financial engine to screen the economic viability of a flare gas project.
@@ -163,10 +161,30 @@ If omitted, the engine assumes:
 
 ---
 
+## 🤖 Chat Interface (Agentic Orchestrator)
+
+The `/api/v1/chat` endpoint allows users to ask natural language questions (e.g., *"Is a plant at 850°C and 12 bar profitable with a 100 kmol/h feed and $5M CAPEX?"*). 
+
+The Agent uses a configured LLM (OpenAI, Gemini, or local Ollama) to extract parameters, runs strict physics/financial guardrails, calls the TEA engine, and returns the result.
+
+**To enable the chat feature, configure your `.env` file:**
+```text
+# For local Ollama (free)
+ODRM_LLM_PROVIDER=ollama
+ODRM_LLM_MODEL=qwen-odrm
+ODRM_LLM_BASE_URL=http://localhost:11434/v1
+
+# Or for Gemini
+# ODRM_LLM_PROVIDER=gemini
+# ODRM_LLM_MODEL=gemini-2.5-flash
+# ODRM_LLM_API_KEY=your_api_key_here
+```
+
 ## 🌱 The Impact
 *   **For the Operator:** Turn a wasted liability into a revenue-generating chemical asset.
 *   **For the ESG Investor:** A measurable, scalable path to reducing Scope 1 emissions.
 *   **For the Climate:** A transition from flaring to a circular carbon economy.
+
 
 ## 📄 License
 
