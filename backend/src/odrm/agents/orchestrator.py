@@ -134,15 +134,16 @@ class AgentService:
                 {"messages": [{"role": "user", "content": message}]},
                 config={"recursion_limit": 6},
             )
-
         except Exception as exc:
-            import traceback
             logger.warning(
-                "agent invocation failed request_id=%s error=%s\n%s",
+                "agent invocation failed request_id=%s error=%s",
                 request_id,
                 type(exc).__name__,
-                traceback.format_exc(),
             )
+            # Map network/connection blocks or Google API errors to 503
+            error_name = type(exc).__name__
+            if "NetworkBlockedError" in error_name or "ConnectError" in error_name or "GoogleAPIError" in error_name:
+                return _unavailable("AGENT_UNAVAILABLE", "The AI service is currently unavailable or experiencing high demand.")
             return self._failure_outcome(recorder)
 
         reply = _final_reply(state)

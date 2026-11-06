@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pytest
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr, ValidationError
 
@@ -38,11 +39,14 @@ def test_local_ollama_uses_dummy_key_and_default_base_url() -> None:
     assert model.openai_api_key.get_secret_value() == "ollama"
 
 
-def test_gemini_uses_openai_compatible_default_base_url() -> None:
+def test_gemini_uses_native_google_integration() -> None:
     model = build_chat_model(make_settings(llm_provider="gemini"))
 
-    assert isinstance(model, ChatOpenAI)
-    assert model.openai_api_base == "https://generativelanguage.googleapis.com/v1beta/openai/"
+    # We updated the provider to use the native Google package
+    assert isinstance(model, ChatGoogleGenerativeAI)
+    assert model.model == "test-model"
+    assert model.temperature == 0.0
+    assert model.max_retries == 0
 
 
 def test_explicit_base_url_overrides_provider_default() -> None:

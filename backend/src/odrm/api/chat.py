@@ -1,101 +1,97 @@
-from __future__ import annotations
-
 import uuid
-from typing import Any
-
+import logging
 from fastapi import APIRouter, HTTPException, Request
 
-from odrm.agents.orchestrator import AgentOutcome, AgentService
-from odrm.api.schemas import ChatErrorDetail, ChatRequest, ChatResponse
+from odrm.api.schemas import ChatRequest, ChatResponse
+from odrm.agents.orchestrator import AgentService
+from odrm.agents.tea_client import HttpTeaClient
+from odrm.agents.providers import build_chat_model
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
-
-def _error_detail(
-    code: str,
-    message: str,
-    request_id: str,
-    **extra: Any,
-) -> dict[str, Any]:
-    detail = ChatErrorDetail(
-        code=code,
-        message=message,
-        request_id=request_id,
-        **extra,
-    )
-    return detail.model_dump(exclude_none=True)
-
-
-def _rejection_detail(outcome: AgentOutcome, request_id: str) -> dict[str, Any]:
-    if outcome.guardrail_error is not None:
-        return outcome.guardrail_error.to_detail(request_id)
-    return _error_detail(
-        outcome.error_code or "TEA_REJECTED",
-        outcome.error_message or "The request was rejected.",
-        request_id,
-    )
-
-
 @router.post("/chat", response_model=ChatResponse)
-def chat(request: ChatRequest, req: Request) -> ChatResponse:
+def handle_chat(payload: ChatRequest, request: Request) -> ChatResponse:
     request_id = str(uuid.uuid4())
-    max_chars = req.app.state.settings.chat_max_message_chars
-    if len(request.message) > max_chars:
+    settings = request.app.state.settings
+    
+    # 1. Enforce message length from settings (Return structured dict for tests)
+    if len(payload.message) > settings.chat_max_message_chars:
         raise HTTPException(
             status_code=422,
-            detail=_error_detail(
-                "INVALID_ARGUMENTS",
-                f"message must be at most {max_chars} characters.",
-                request_id,
-                field="message",
-            ),
+            detail={
+                "code": "INVALID_ARGUMENTS",
+                "field": "message",
+                "message": f"Message must be at most {settings.chat_max_message_chars} characters.",
+                "request_id": request_id,
+            },
         )
-    service: AgentService = req.app.state.agent_service
-    outcome = service.chat(request.message, request_id)
+    
+    # 2. Get or build the Agent Service
+    service = getattr(request.app.state, "agent_service", None)
+    
+    if service is None:
+        tea_client = HttpTeaClient(
+            base_url=settings.tea_api_base_url,
+            timeout_seconds=settings.tea_timeout_seconds,
+            client=None, 
+        )
+        def model_factory():
+            return build_chat_model(settings)
+        service = AgentService(tea_client=tea_client, model_factory=model_factory)
 
+    # 3. Run the agent
+    outcome = service.chat(payload.message, request_id)
+
+    # 4. Map the outcome to HTTP responses
     if outcome.status == "ok":
-        if outcome.result is None:
-            raise HTTPException(
-                status_code=500,
-                detail=_error_detail(
-                    "AGENT_ERROR",
-                    "The screening assistant failed unexpectedly.",
-                    request_id,
-                ),
-            )
         return ChatResponse(
             status="ok",
             reply=outcome.reply,
             result=outcome.result,
             request_id=request_id,
         )
-
-    if outcome.status == "needs_input":
+        
+    elif outcome.status == "needs_input":
         return ChatResponse(
             status="needs_input",
             reply=outcome.reply,
             result=None,
             request_id=request_id,
         )
-
-    if outcome.status == "rejected":
-        raise HTTPException(status_code=422, detail=_rejection_detail(outcome, request_id))
-
-    if outcome.status == "unavailable":
+        
+    elif outcome.status == "rejected":
+        detail = {
+            "code": outcome.error_code,
+            "message": outcome.error_message,
+            "request_id": request_id,
+        }
+        # Safely extract fields from GuardrailViolation for the 422 response
+        if outcome.guardrail_error:
+            err = outcome.guardrail_error
+            for attr in ["field", "value", "minimum", "maximum", "missing_fields"]:
+                val = getattr(err, attr, None)
+                if val is not None:
+                    detail[attr] = val
+                    
+        raise HTTPException(status_code=422, detail=detail)
+        
+    elif outcome.status == "unavailable":
         raise HTTPException(
             status_code=503,
-            detail=_error_detail(
-                outcome.error_code or "AGENT_UNAVAILABLE",
-                outcome.error_message or "The screening assistant is unavailable.",
-                request_id,
-            ),
+            detail={
+                "code": outcome.error_code,
+                "message": outcome.error_message,
+                "request_id": request_id,
+            },
         )
-
-    raise HTTPException(
-        status_code=500,
-        detail=_error_detail(
-            "AGENT_ERROR",
-            "The screening assistant failed unexpectedly.",
-            request_id,
-        ),
-    )
+        
+    else:
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "code": outcome.error_code or "AGENT_ERROR",
+                "message": outcome.error_message or "The screening assistant failed unexpectedly.",
+                "request_id": request_id,
+            },
+        )
