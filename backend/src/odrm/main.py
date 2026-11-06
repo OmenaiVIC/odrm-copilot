@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from odrm.agents.orchestrator import AgentService
@@ -12,7 +12,13 @@ from odrm.api.report import EXPOSED_HEADERS
 from odrm.api.report import router as report_router
 from odrm.api.routes import market_router
 from odrm.api.routes import router as predict_router
+from odrm.auth.passwords import PasswordHasher
+from odrm.auth.repository import SqlAlchemyUserRepository, UserRepository
+from odrm.auth.router import router as auth_router
+from odrm.auth.service import AuthService
+from odrm.auth.tokens import TokenService
 from odrm.core.config import Settings
+from odrm.db import create_session_factory
 from odrm.ml.features import TARGETS
 from odrm.ml.registry import ModelNotFoundError, load_model
 from odrm.services.market_data import MarketDataService, MockMarketPriceProvider
@@ -24,12 +30,20 @@ def create_app(
     settings: Settings | None = None,
     *,
     agent_service: AgentService | None = None,
+    user_repository: UserRepository | None = None,
 ) -> FastAPI:
     if settings is None:
         settings = Settings(env="dev")
 
     app = FastAPI(title="ODRM-Copilot API")
     app.state.settings = settings
+    repository = user_repository or SqlAlchemyUserRepository(
+        create_session_factory(settings.database_url)
+    )
+    app.state.user_repository = repository
+    token_service = TokenService(settings)
+    app.state.token_service = token_service
+    app.state.auth_service = AuthService(repository, PasswordHasher(), token_service)
     app.state.agent_service = agent_service or AgentService(
         tea_client=HttpTeaClient(
             base_url=settings.tea_api_base_url,
@@ -68,6 +82,7 @@ def create_app(
         except ModelNotFoundError:
             logger.warning(f"Model {target} not found in {model_root}. API will return 503.")
 
+    app.include_router(auth_router, prefix="/api/v1")
     app.include_router(predict_router, prefix="/api/v1", tags=["predict"])
     app.include_router(market_router, prefix="/api/v1", tags=["market"])
     app.include_router(chat_router, prefix="/api/v1", tags=["chat"])
@@ -76,6 +91,19 @@ def create_app(
     @app.get("/health")
     def health() -> dict[str, str]:
         return {"status": "ok", "env": getattr(settings, "env", "test")}
+
+    @app.get("/ready")
+    def ready(request: Request) -> dict[str, str]:
+        repository: UserRepository = request.app.state.user_repository
+        try:
+            repository.ping()
+        except Exception as exc:
+            logger.warning("Database readiness check failed: %s", type(exc).__name__)
+            raise HTTPException(
+                status_code=503,
+                detail="Database is not ready.",
+            ) from exc
+        return {"status": "ready"}
 
     return app
 
