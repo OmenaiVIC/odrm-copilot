@@ -1,7 +1,13 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { ResultsPanel } from './results-panel';
-import { TeaResponse } from '@/lib/types';
+import { TeaRequest, TeaResponse } from '@/lib/types';
+
+vi.mock('./report-download', () => ({
+  ReportDownload: ({ request }: { request: TeaRequest }) => (
+    <div data-testid="report-download">{request.conditions.catalyst}</div>
+  ),
+}));
 
 describe('ResultsPanel', () => {
   const mockData: TeaResponse = {
@@ -44,6 +50,25 @@ describe('ResultsPanel', () => {
     
     // Warnings
     expect(screen.getByText(/Annual cash flow is negative/i)).toBeInTheDocument();
+  });
+
+  it('renders the report download only when both data and request exist', () => {
+    const request = {
+      conditions: { catalyst: 'Ni/Al2O3' },
+      assumptions: {},
+    } as unknown as TeaRequest;
+
+    const { rerender } = render(
+      <ResultsPanel data={mockData} request={request} isLoading={false} isError={false} />
+    );
+    expect(screen.getByTestId('report-download')).toHaveTextContent('Ni/Al2O3');
+
+    rerender(<ResultsPanel data={mockData} isLoading={false} isError={false} />);
+    expect(screen.queryByTestId('report-download')).not.toBeInTheDocument();
+
+    rerender(<ResultsPanel request={request} isLoading={false} isError={false} />);
+    expect(screen.getByText(/Enter plant conditions/i)).toBeInTheDocument();
+    expect(screen.queryByTestId('report-download')).not.toBeInTheDocument();
   });
 
   it('renders unavailable payback correctly', () => {

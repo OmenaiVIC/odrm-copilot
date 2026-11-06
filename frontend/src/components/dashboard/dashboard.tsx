@@ -173,7 +173,8 @@ export function Dashboard() {
         <div className="sticky top-8">
           <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">3. Screening Result</h2>
           <ResultsPanel 
-            data={teaMutation.data} 
+            data={teaMutation.data}
+            request={teaMutation.variables}
             isLoading={teaMutation.isPending} 
             isError={teaMutation.isError} 
           />

@@ -1,7 +1,9 @@
-import { TeaResponse } from '@/lib/types';
+import { TeaRequest, TeaResponse } from '@/lib/types';
+import { ReportDownload } from './report-download';
 
 interface ResultsPanelProps {
   data?: TeaResponse;
+  request?: TeaRequest;
   isLoading: boolean;
   isError: boolean;
 }
@@ -14,7 +16,7 @@ const WARNING_MESSAGES: Record<string, string> = {
   zero_carbon_price: 'Carbon-credit price is zero. Credit value is zero.',
 };
 
-export function ResultsPanel({ data, isLoading, isError }: ResultsPanelProps) {
+export function ResultsPanel({ data, request, isLoading, isError }: ResultsPanelProps) {
   if (isLoading) {
     return (
       <div className="flex h-full min-h-[400px] animate-pulse flex-col items-center justify-center rounded-xl bg-gray-100 p-6 dark:bg-zinc-800" aria-busy="true">
@@ -138,6 +140,9 @@ export function ResultsPanel({ data, isLoading, isError }: ResultsPanelProps) {
           <li>Syngas Model: {model_versions.syngas_yield_mol_per_mol_ch4}</li>
         </ul>
       </div>
+
+      {/* 5. Download */}
+      {request && <ReportDownload request={request} />}
     </div>
   );
 }

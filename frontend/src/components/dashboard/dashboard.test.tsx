@@ -78,6 +78,9 @@ describe('Dashboard', () => {
     await waitFor(() => {
       expect(screen.getByText('85.00%')).toBeInTheDocument();
       expect(screen.getByText('15.00%')).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Download ESG Report' })
+      ).toBeInTheDocument();
     });
   });
 });
