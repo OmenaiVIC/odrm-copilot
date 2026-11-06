@@ -76,21 +76,29 @@ We sell the "picks" (software optimization) to the "miners" (plant operators, un
 2.  A tool called `predict_and_calculate_tea()` wired to the FastAPI endpoints.
 3.  Tests ensuring the agent extracts parameters correctly and does not hallucinate physics or financial math.
 
-### 🟢 Sprint 6: Expanded Feedstocks & Predictive Maintenance
-**Goal:** Make the product usable for real-world, dirty gas.
+### 🟢 Sprint 6: The ESG Export Engine (Unblocked - Active)
+**Goal:** Fulfill the pitch deck promise of automated compliance reporting.
 **Deliverables:**
-1.  Update the dataset and model to handle impurities (H2S, N2) and variable feedstocks (Landfill gas vs. Flare gas).
-2.  Add a "Predictive Maintenance" output in the UI: If Carbon Risk is >80%, flash a warning to adjust O2 flow.
+1. A new backend endpoint `POST /api/v1/report` that generates a professional PDF.
+2. The PDF will contain plant conditions, AI predictions, financial ROI, and a compliance timestamp.
+3. A "Download ESG Report" button on the frontend Results Panel.
 
-### 🟢 Sprint 7: ESG & Carbon Accounting
-**Goal:** Provide the immutable audit trail for carbon credits.
-**Deliverables:**
-1.  Implement a cryptographic hash chain (Merkle tree) for every successful prediction.
-2.  Endpoint `/api/export_esg_report` that generates a PDF containing user inputs, AI recommendation, CO2 consumed, and the cryptographic hash proving no tampering.
-
-### 🟢 Sprint 8: Beta Launch & Hardening
+### 🟢 Sprint 7: Beta Launch & Hardening (Unblocked - Active)
 **Goal:** Make it ready for early users (Universities, local gas processors).
 **Deliverables:**
-1.  Security audit on the API (rate limiting, input sanitization).
-2.  `docs/API_DOCUMENTATION.md` and `docs/USER_GUIDE.md`.
-3.  Docker Compose file to deploy the frontend, backend, and database locally or on cloud providers.
+1. Security audit on the API (rate limiting, input sanitization, JWT Auth).
+2. `docs/API_DOCUMENTATION.md` and `docs/USER_GUIDE.md`.
+3. Docker Compose file to deploy the frontend, backend, and database locally or on cloud providers.
+
+### 🟡 Sprint 8: Real-World Pilot Integration (Blocked pending NUPRC Data)
+**Goal:** Make the product usable for real-world, dirty gas.
+**Deliverables:**
+1. Update the dataset and model to handle impurities (H2S, N2) and variable feedstocks (Landfill gas vs. Flare gas).
+2. Add a "Predictive Maintenance" output in the UI: If Carbon Risk is >80%, flash a warning to adjust O2 flow.
+3. Train the models on historical data from one of the 28 flare gas sites (via the NUPRC pilot).
+
+### 🟡 Sprint 9: Cryptographic ESG & Carbon Accounting (Blocked pending Pilot)
+**Goal:** Provide the immutable audit trail for carbon credits.
+**Deliverables:**
+1. Implement a cryptographic hash chain (Merkle tree) for every successful prediction.
+2. Endpoint `/api/export_esg_report` that generates a PDF containing user inputs, AI recommendation, CO2 consumed, and the cryptographic hash proving no tampering.
