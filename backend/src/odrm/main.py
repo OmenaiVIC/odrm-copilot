@@ -8,6 +8,8 @@ from odrm.agents.orchestrator import AgentService
 from odrm.agents.providers import build_chat_model
 from odrm.agents.tea_client import HttpTeaClient
 from odrm.api.chat import router as chat_router
+from odrm.api.report import EXPOSED_HEADERS
+from odrm.api.report import router as report_router
 from odrm.api.routes import market_router
 from odrm.api.routes import router as predict_router
 from odrm.core.config import Settings
@@ -46,6 +48,7 @@ def create_app(
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
+        expose_headers=list(EXPOSED_HEADERS),
     )
 
     app.state.models = {}
@@ -68,6 +71,7 @@ def create_app(
     app.include_router(predict_router, prefix="/api/v1", tags=["predict"])
     app.include_router(market_router, prefix="/api/v1", tags=["market"])
     app.include_router(chat_router, prefix="/api/v1", tags=["chat"])
+    app.include_router(report_router, prefix="/api/v1", tags=["report"])
 
     @app.get("/health")
     def health() -> dict[str, str]:
