@@ -38,6 +38,7 @@ dependencies = [
   "langchain>=1.4,<2",
   "langchain-core>=1.7,<2",
   "langchain-openai>=1.7,<2",
+  "langchain-google-genai>=2.0,<3",
   # Config
   "python-dotenv>=1.0",
 ]

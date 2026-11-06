@@ -36,8 +36,8 @@ RUN groupadd --gid 1000 appuser && \
 COPY --from=builder /app/wheels /app/wheels
 COPY --from=builder /app/backend/src ./backend/src
 COPY pyproject.toml README.md ./
-COPY backend/alembic.ini* ./
-COPY backend/migrations ./migrations
+COPY alembic.ini ./
+COPY backend/migrations ./backend/migrations
 
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir /app/wheels/*.whl && \

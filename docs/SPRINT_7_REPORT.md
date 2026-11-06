@@ -40,3 +40,8 @@
 ## 5. Known limitations
 *   JWT tokens are stateless and cannot be revoked until Sprint 9 (Redis denylist).
 *   Role enforcement (RBAC) is deferred to Sprint 8.
+
+## 6. Known Issues & Backlog (Discovered during Manual Testing)
+During the final manual test, two UX limitations were identified. Both are deferred to the Sprint 8 Pilot phase:
+1. **Single-Turn Chat Memory:** The `/api/v1/chat` endpoint is stateless. The AI cannot answer follow-up questions based on previous messages in the thread. (Requires passing the `messages[]` array and adding session management).
+2. **Markdown Rendering:** The AI outputs raw Markdown (e.g., `**bold**`, `### headers`). The frontend currently renders this as raw text. (Requires installing a library like `react-markdown` to parse the output).
