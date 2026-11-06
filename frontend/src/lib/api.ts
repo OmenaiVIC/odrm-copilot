@@ -56,6 +56,58 @@ export async function getMarketPrices(): Promise<MarketPricesResponse> {
   });
 }
 
+export interface ReportDownload {
+  blob: Blob;
+  filename: string;
+  reportId: string | null;
+  sha256: string | null;
+  generatedAt: string | null;
+}
+
+const DEFAULT_REPORT_FILENAME = 'odrm-esg-report.pdf';
+
+function reportFilename(disposition: string | null): string {
+  if (!disposition) {
+    return DEFAULT_REPORT_FILENAME;
+  }
+  const match = disposition.match(/filename="?([^";]+)"?/i);
+  return match ? match[1] : DEFAULT_REPORT_FILENAME;
+}
+
+export async function downloadReport(
+  request: TeaRequest,
+): Promise<ReportDownload> {
+  const url = `${API_BASE_URL.replace(/\/$/, "")}/report`;
+  const response = await fetch(url, {
+    method: 'POST',
+    cache: 'no-store',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    let detail: unknown;
+    try {
+      detail = await response.json();
+    } catch {
+      detail = await response.text();
+    }
+    throw new ApiError(
+      response.status,
+      `API request failed (${response.status} ${response.statusText})`,
+      detail,
+    );
+  }
+
+  return {
+    blob: await response.blob(),
+    filename: reportFilename(response.headers.get('Content-Disposition')),
+    reportId: response.headers.get('X-Report-Id'),
+    sha256: response.headers.get('X-Report-SHA256'),
+    generatedAt: response.headers.get('X-Report-Generated-At'),
+  };
+}
+
 export async function postTea(request: TeaRequest): Promise<TeaResponse> {
   return apiFetch<TeaResponse>('/tea', {
     method: 'POST',
