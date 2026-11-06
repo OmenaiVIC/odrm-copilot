@@ -1,14 +1,15 @@
 import uuid
 import logging
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from odrm.api.schemas import ChatRequest, ChatResponse
 from odrm.agents.orchestrator import AgentService
-from odrm.agents.tea_client import HttpTeaClient
+from odrm.agents.tea_client import InProcessTeaClient
 from odrm.agents.providers import build_chat_model
+from odrm.auth.dependencies import get_current_user
 
 logger = logging.getLogger(__name__)
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 @router.post("/chat", response_model=ChatResponse)
 def handle_chat(payload: ChatRequest, request: Request) -> ChatResponse:
@@ -31,11 +32,7 @@ def handle_chat(payload: ChatRequest, request: Request) -> ChatResponse:
     service = getattr(request.app.state, "agent_service", None)
     
     if service is None:
-        tea_client = HttpTeaClient(
-            base_url=settings.tea_api_base_url,
-            timeout_seconds=settings.tea_timeout_seconds,
-            client=None, 
-        )
+        tea_client = InProcessTeaClient(request.app.state.models)
         def model_factory():
             return build_chat_model(settings)
         service = AgentService(tea_client=tea_client, model_factory=model_factory)

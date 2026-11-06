@@ -12,8 +12,11 @@ import pytest
 from fastapi.testclient import TestClient
 from langchain_core.language_models.fake_chat_models import FakeListChatModel
 
+from odrm.auth.models import User
+from odrm.auth.passwords import PasswordHasher
 from odrm.core.config import Settings, get_settings
 from odrm.main import create_app
+from tests.auth.fakes import InMemoryUserRepository
 
 os.environ.setdefault("ODRM_ENV", "test")
 
@@ -86,18 +89,64 @@ def test_settings(tmp_path_factory: pytest.TempPathFactory) -> Settings:
         cors_origins="http://localhost:3000",
         model_dir=str(tmp_path_factory.mktemp("models")),
         data_dir=str(tmp_path_factory.mktemp("data")),
+        rate_limit_enabled=False,
     )
 
 
 @pytest.fixture(scope="session")
-def app(test_settings: Settings) -> Any:
-    return create_app(settings=test_settings)
+def test_user() -> User:
+    return User(
+        id="11111111-1111-1111-1111-111111111111",
+        email="engineer@example.com",
+        password_hash=PasswordHasher().hash("correct horse battery staple"),
+        role="engineer",
+        is_active=True,
+    )
+
+
+@pytest.fixture(scope="session")
+def auth_repository(test_user: User) -> InMemoryUserRepository:
+    repository = InMemoryUserRepository()
+    repository.add(test_user)
+    return repository
+
+
+@pytest.fixture(scope="session")
+def app(test_settings: Settings, auth_repository: InMemoryUserRepository) -> Any:
+    return create_app(settings=test_settings, user_repository=auth_repository)
 
 
 @pytest.fixture()
-def client(app: Any) -> Iterator[TestClient]:
+def auth_headers(app: Any, test_user: User) -> dict[str, str]:
+    # FIX: Updated to use keyword arguments
+    token = app.state.token_service.issue_access_token(
+        user_id=test_user.id, email=test_user.email, role=test_user.role
+    )
+    return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture()
+def client(app: Any, auth_headers: dict[str, str]) -> Iterator[TestClient]:
+    with TestClient(app, headers=auth_headers) as test_client:
+        yield test_client
+
+
+@pytest.fixture()
+def anonymous_client(app: Any) -> Iterator[TestClient]:
     with TestClient(app) as test_client:
         yield test_client
+
+
+@pytest.fixture()
+def authenticated_client(test_user: User) -> Callable[[Any], TestClient]:
+    def build(app: Any) -> TestClient:
+        # FIX: Updated to use keyword arguments
+        token = app.state.token_service.issue_access_token(
+            user_id=test_user.id, email=test_user.email, role=test_user.role
+        )
+        return TestClient(app, headers={"Authorization": f"Bearer {token}"})
+
+    return build
 
 
 def _risk_class(carbon_mg_per_gcat: np.ndarray) -> list[str]:
@@ -204,18 +253,25 @@ def parquet_path(tmp_path: Any, odrm_frame: pd.DataFrame) -> Any:
 @pytest.fixture(scope="session")
 def tiny_model() -> Any:
     from xgboost import XGBRegressor
+    from odrm.ml.features import FEATURES
 
     rng = np.random.default_rng(_SEED)
-    features = pd.DataFrame(
-        {
-            "temperature_c": rng.uniform(500.0, 1_000.0, 96),
-            "pressure_bar": rng.uniform(1.0, 30.0, 96),
-            "ch4_o2_ratio": rng.uniform(1.4, 2.5, 96),
-            "co2_ch4_ratio": rng.uniform(0.0, 1.5, 96),
-            "h2o_ch4_ratio": rng.uniform(0.0, 1.5, 96),
-            "ghsv_per_h": rng.uniform(1_000.0, 100_000.0, 96),
-        }
-    )
+    n = 96
+    data = {
+        "temperature_c": rng.uniform(500.0, 1_000.0, n),
+        "pressure_bar": rng.uniform(1.0, 30.0, n),
+        "ch4_o2_ratio": rng.uniform(1.4, 2.5, n),
+        "co2_ch4_ratio": rng.uniform(0.0, 1.5, n),
+        "h2o_ch4_ratio": rng.uniform(0.0, 1.5, n),
+        "ghsv_per_h": rng.uniform(1_000.0, 100_000.0, n),
+        "catalyst_loading_wt_pct": rng.uniform(0.0, 20.0, n),
+        "n2_dilution_mol_pct": rng.uniform(0.0, 50.0, n),
+    }
+    for col in FEATURES:
+        if col.startswith("catalyst__"):
+            data[col] = rng.integers(0, 2, n).astype(float)
+
+    features = pd.DataFrame({col: data[col] for col in FEATURES})
     target = (
         0.4
         + 0.0004 * features["temperature_c"]

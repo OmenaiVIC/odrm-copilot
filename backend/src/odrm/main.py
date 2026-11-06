@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from odrm.agents.orchestrator import AgentService
 from odrm.agents.providers import build_chat_model
-from odrm.agents.tea_client import HttpTeaClient
+from odrm.agents.tea_client import InProcessTeaClient
 from odrm.api.chat import router as chat_router
 from odrm.api.report import EXPOSED_HEADERS
 from odrm.api.report import router as report_router
@@ -44,13 +44,6 @@ def create_app(
     token_service = TokenService(settings)
     app.state.token_service = token_service
     app.state.auth_service = AuthService(repository, PasswordHasher(), token_service)
-    app.state.agent_service = agent_service or AgentService(
-        tea_client=HttpTeaClient(
-            base_url=settings.tea_api_base_url,
-            timeout_seconds=settings.tea_timeout_seconds,
-        ),
-        model_factory=lambda: build_chat_model(settings),
-    )
 
     origins = getattr(settings, "cors_origins", "*")
     if isinstance(origins, str):
@@ -81,6 +74,11 @@ def create_app(
             logger.info(f"Loaded model {target} version {meta['model_version']}")
         except ModelNotFoundError:
             logger.warning(f"Model {target} not found in {model_root}. API will return 503.")
+
+    app.state.agent_service = agent_service or AgentService(
+        tea_client=InProcessTeaClient(app.state.models),
+        model_factory=lambda: build_chat_model(settings),
+    )
 
     app.include_router(auth_router, prefix="/api/v1")
     app.include_router(predict_router, prefix="/api/v1", tags=["predict"])

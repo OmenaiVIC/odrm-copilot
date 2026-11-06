@@ -1,11 +1,15 @@
 from __future__ import annotations
 
-from typing import Protocol
+from collections.abc import Mapping
+from typing import Any, Protocol
 
 import httpx
 from pydantic import ValidationError
 
 from odrm.api.schemas import TeaRequest, TeaResponse
+from odrm.api.screening import run_screening
+from odrm.domain.tea import TeaCalculationError, TeaInputError
+from odrm.services.prediction import ModelUnavailableError, PredictionError
 
 
 class TeaClientError(RuntimeError):
@@ -22,6 +26,22 @@ class TeaUnavailableError(TeaClientError):
 
 class TeaClient(Protocol):
     def calculate(self, request: TeaRequest) -> TeaResponse: ...
+
+
+class InProcessTeaClient:
+    def __init__(
+        self,
+        models: Mapping[str, tuple[Any, dict[str, Any]]],
+    ) -> None:
+        self._models = models
+
+    def calculate(self, request: TeaRequest) -> TeaResponse:
+        try:
+            return run_screening(request, self._models)
+        except TeaInputError as exc:
+            raise TeaRejectedError("The TEA service rejected the request.") from exc
+        except (ModelUnavailableError, PredictionError, TeaCalculationError) as exc:
+            raise TeaUnavailableError("The TEA service is unavailable.") from exc
 
 
 class HttpTeaClient:

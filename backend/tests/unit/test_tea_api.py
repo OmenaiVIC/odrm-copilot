@@ -8,6 +8,7 @@ import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 
+from odrm.core.config import Settings
 from odrm.main import create_app
 
 CONDITIONS: dict[str, Any] = {
@@ -60,15 +61,15 @@ def stub_models(
 
 
 @pytest.fixture()
-def tea_app() -> Any:
-    app = create_app()
+def tea_app(test_settings: Settings, auth_repository: Any) -> Any:
+    app = create_app(settings=test_settings, user_repository=auth_repository)
     app.state.models = stub_models()
     return app
 
 
 @pytest.fixture()
-def tea_client(tea_app: Any) -> Iterator[TestClient]:
-    with TestClient(tea_app) as client:
+def tea_client(tea_app: Any, auth_headers: dict[str, str]) -> Iterator[TestClient]:
+    with TestClient(tea_app, headers=auth_headers) as client:
         yield client
 
 
@@ -142,34 +143,34 @@ def test_extra_field_in_assumptions_returns_422(tea_client: TestClient) -> None:
     assert response.status_code == 422
 
 
-def test_missing_models_return_503(tea_app: Any) -> None:
+def test_missing_models_return_503(tea_app: Any, auth_headers: dict[str, str]) -> None:
     tea_app.state.models = {}
-    with TestClient(tea_app) as client:
+    with TestClient(tea_app, headers=auth_headers) as client:
         response = client.post("/api/v1/tea", json=tea_payload())
     assert response.status_code == 503
     assert "Model unavailable" in response.json()["detail"]
 
 
-def test_partial_models_return_503(tea_app: Any) -> None:
+def test_partial_models_return_503(tea_app: Any, auth_headers: dict[str, str]) -> None:
     models = stub_models()
     models.pop("syngas_yield_mol_per_mol_ch4")
     tea_app.state.models = models
-    with TestClient(tea_app) as client:
+    with TestClient(tea_app, headers=auth_headers) as client:
         response = client.post("/api/v1/tea", json=tea_payload())
     assert response.status_code == 503
 
 
-def test_non_finite_prediction_returns_500_without_financials(tea_app: Any) -> None:
+def test_non_finite_prediction_returns_500_without_financials(tea_app: Any, auth_headers: dict[str, str]) -> None:
     tea_app.state.models = stub_models(syngas_yield=math.nan)
-    with TestClient(tea_app) as client:
+    with TestClient(tea_app, headers=auth_headers) as client:
         response = client.post("/api/v1/tea", json=tea_payload())
     assert response.status_code == 500
     assert response.json() == {"detail": "Model prediction failed."}
 
 
-def test_calculation_overflow_returns_500(tea_app: Any) -> None:
+def test_calculation_overflow_returns_500(tea_app: Any, auth_headers: dict[str, str]) -> None:
     tea_app.state.models = stub_models(syngas_yield=1e308)
-    with TestClient(tea_app) as client:
+    with TestClient(tea_app, headers=auth_headers) as client:
         response = client.post("/api/v1/tea", json=tea_payload())
     assert response.status_code == 500
     assert response.json() == {"detail": "TEA calculation failed."}

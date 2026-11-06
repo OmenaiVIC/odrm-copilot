@@ -33,9 +33,13 @@ EXPECTED_FIELDS = {
 
 
 @pytest.fixture()
-def market_client(test_settings: Settings) -> Iterator[TestClient]:
-    app = create_app(settings=test_settings)
-    with TestClient(app) as client:
+def market_client(
+    test_settings: Settings,
+    auth_repository: Any,
+    authenticated_client: Any,
+) -> Iterator[TestClient]:
+    app = create_app(settings=test_settings, user_repository=auth_repository)
+    with authenticated_client(app) as client:
         yield client
 
 
@@ -68,11 +72,15 @@ def test_market_prices_endpoint_returns_fresh_quote_then_cache_hit(
     assert cached["cache_ttl_seconds"] == 86_400
 
 
-def test_market_prices_endpoint_echoes_configured_ttl(test_settings: Settings) -> None:
+def test_market_prices_endpoint_echoes_configured_ttl(
+    test_settings: Settings,
+    auth_repository: Any,
+    authenticated_client: Any,
+) -> None:
     settings = test_settings.model_copy(update={"market_data_ttl_seconds": 0})
-    app = create_app(settings=settings)
+    app = create_app(settings=settings, user_repository=auth_repository)
 
-    with TestClient(app) as client:
+    with authenticated_client(app) as client:
         first = client.get("/api/v1/market-prices")
         second = client.get("/api/v1/market-prices")
 

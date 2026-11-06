@@ -42,10 +42,14 @@ def stub_models() -> dict[str, tuple[Any, dict[str, Any]]]:
 
 
 @pytest.fixture()
-def flow_client(test_settings: Settings) -> Iterator[TestClient]:
-    app = create_app(settings=test_settings)
+def flow_client(
+    test_settings: Settings,
+    auth_repository: Any,
+    auth_headers: dict[str, str],
+) -> Iterator[TestClient]:
+    app = create_app(settings=test_settings, user_repository=auth_repository)
     app.state.models = stub_models()
-    with TestClient(app) as client:
+    with TestClient(app, headers=auth_headers) as client:
         yield client
 
 

@@ -13,6 +13,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from odrm.api.schemas import TeaRequest, TeaResponse
+from odrm.core.config import Settings
 from odrm.main import create_app
 from odrm.reporting.content import build_report_data
 
@@ -66,15 +67,15 @@ def stub_models(
 
 
 @pytest.fixture()
-def report_app() -> Any:
-    app = create_app()
+def report_app(test_settings: Settings, auth_repository: Any) -> Any:
+    app = create_app(settings=test_settings, user_repository=auth_repository)
     app.state.models = stub_models()
     return app
 
 
 @pytest.fixture()
-def report_client(report_app: Any) -> Iterator[TestClient]:
-    with TestClient(report_app) as client:
+def report_client(report_app: Any, auth_headers: dict[str, str]) -> Iterator[TestClient]:
+    with TestClient(report_app, headers=auth_headers) as client:
         yield client
 
 
@@ -134,52 +135,46 @@ def test_report_numbers_and_digest_match_tea(report_client: TestClient) -> None:
 def test_report_invalid_conditions_return_422(report_client: TestClient) -> None:
     payload = report_payload()
     payload["conditions"]["temperature_c"] = 1200.0
-
     response = report_client.post("/api/v1/report", json=payload)
-
     assert response.status_code == 422
 
 
 def test_report_invalid_assumptions_return_422(report_client: TestClient) -> None:
     payload = report_payload()
     payload["assumptions"]["capex_usd"] = 0.0
-
     response = report_client.post("/api/v1/report", json=payload)
-
     assert response.status_code == 422
 
 
 def test_report_extra_top_level_field_returns_422(report_client: TestClient) -> None:
     payload = report_payload()
     payload["unknown"] = 1.0
-
     response = report_client.post("/api/v1/report", json=payload)
-
     assert response.status_code == 422
 
 
-def test_report_missing_models_return_503(report_app: Any) -> None:
+def test_report_missing_models_return_503(report_app: Any, auth_headers: dict[str, str]) -> None:
     report_app.state.models = {}
-    with TestClient(report_app) as client:
+    with TestClient(report_app, headers=auth_headers) as client:
         response = client.post("/api/v1/report", json=report_payload())
 
     assert response.status_code == 503
     assert "Model unavailable" in response.json()["detail"]
 
 
-def test_report_partial_models_return_503(report_app: Any) -> None:
+def test_report_partial_models_return_503(report_app: Any, auth_headers: dict[str, str]) -> None:
     models = stub_models()
     models.pop("syngas_yield_mol_per_mol_ch4")
     report_app.state.models = models
-    with TestClient(report_app) as client:
+    with TestClient(report_app, headers=auth_headers) as client:
         response = client.post("/api/v1/report", json=report_payload())
 
     assert response.status_code == 503
 
 
-def test_report_non_finite_prediction_returns_500_without_pdf(report_app: Any) -> None:
+def test_report_non_finite_prediction_returns_500_without_pdf(report_app: Any, auth_headers: dict[str, str]) -> None:
     report_app.state.models = stub_models(syngas_yield=math.nan)
-    with TestClient(report_app) as client:
+    with TestClient(report_app, headers=auth_headers) as client:
         response = client.post("/api/v1/report", json=report_payload())
 
     assert response.status_code == 500

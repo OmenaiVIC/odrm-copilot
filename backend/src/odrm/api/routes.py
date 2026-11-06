@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from odrm.api.schemas import (
     MarketPricesResponse,
@@ -8,6 +8,7 @@ from odrm.api.schemas import (
     TeaResponse,
 )
 from odrm.api.screening import run_screening
+from odrm.auth.dependencies import get_current_user
 from odrm.domain.tea import TeaCalculationError, TeaInputError
 from odrm.ml.features import TARGETS
 from odrm.services.market_data import MarketDataError, MarketDataService
@@ -17,8 +18,8 @@ from odrm.services.prediction import (
     predict_surrogates,
 )
 
-router = APIRouter()
-market_router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
+market_router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
 @router.post("/predict", response_model=PredictResponse)

@@ -4,11 +4,12 @@ import logging
 from datetime import UTC, datetime
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import Response
 
 from odrm.api.schemas import TeaRequest
 from odrm.api.screening import run_screening
+from odrm.auth.dependencies import get_current_user
 from odrm.domain.tea import TeaCalculationError, TeaInputError
 from odrm.reporting.content import build_report_data
 from odrm.reporting.pdf import render_pdf
@@ -19,7 +20,7 @@ from odrm.services.prediction import (
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 EXPOSED_HEADERS = (
     "Content-Disposition",
