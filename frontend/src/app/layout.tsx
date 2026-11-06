@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Valoris | Flare Gas Valorization",
+  title: "Valoris | ODRM Copilot",
   description: "AI-powered techno-economic screening for flare gas projects.",
 };
 

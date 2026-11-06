@@ -1,0 +1,84 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-odrm}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:-odrm}
+    volumes:
+      - odrm_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-odrm} -d ${POSTGRES_DB:-odrm}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - odrm_net
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ODRM_ENV: ${ODRM_ENV:-production}
+      ODRM_LOG_LEVEL: ${ODRM_LOG_LEVEL:-INFO}
+      ODRM_API_PREFIX: /api/v1
+      ODRM_CORS_ORIGINS: ${ODRM_CORS_ORIGINS:-http://localhost:3000}
+      ODRM_MODEL_DIR: /app/models
+      ODRM_DATA_DIR: /app/data
+      ODRM_MAX_TEMPERATURE_C: "1000"
+      ODRM_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-odrm}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-odrm}
+      ODRM_JWT_SECRET: ${ODRM_JWT_SECRET:?ODRM_JWT_SECRET is required}
+      ODRM_JWT_ALGORITHM: HS256
+      ODRM_JWT_ISSUER: odrm-copilot
+      ODRM_JWT_AUDIENCE: odrm-api
+      ODRM_JWT_ACCESS_TOKEN_MINUTES: "60"
+      ODRM_AUTH_COOKIE_NAME: odrm_access_token
+      ODRM_AUTH_COOKIE_SECURE: ${ODRM_AUTH_COOKIE_SECURE:-false}
+      ODRM_AUTH_COOKIE_SAMESITE: lax
+      ODRM_RATE_LIMIT_ENABLED: ${ODRM_RATE_LIMIT_ENABLED:-true}
+      ODRM_MAX_REQUEST_BYTES: "65536"
+      ODRM_LLM_PROVIDER: ${ODRM_LLM_PROVIDER:-gemini}
+      ODRM_LLM_MODEL: ${ODRM_LLM_MODEL:-gemini-2.5-flash}
+      ODRM_LLM_API_KEY: ${ODRM_LLM_API_KEY:-}
+      ODRM_LLM_BASE_URL: ${ODRM_LLM_BASE_URL:-}
+      ODRM_LLM_TEMPERATURE: "0.0"
+      ODRM_LLM_TIMEOUT_SECONDS: "30"
+      ODRM_CHAT_MAX_MESSAGE_CHARS: "2000"
+      ODRM_TEA_API_BASE_URL: http://127.0.0.1:8000/api/v1
+      ODRM_TEA_TIMEOUT_SECONDS: "30"
+    volumes:
+      - ./models:/app/models:ro
+    ports:
+      - "8000:8000"
+    networks:
+      - odrm_net
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api/v1}
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    networks:
+      - odrm_net
+
+volumes:
+  odrm_pgdata:
+
+networks:
+  odrm_net:
+    driver: bridge

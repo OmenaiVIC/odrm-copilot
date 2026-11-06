@@ -8,8 +8,10 @@ import { ConditionsFields, ConditionsState } from './conditions-fields';
 import { FinancialFields, FinancialState } from './financial-fields';
 import { MarketPricePanel } from './market-price-panel';
 import { ResultsPanel } from './results-panel';
+import { RoadmapBanner } from './roadmap-banner';
 import { validateNumber, BOUNDS } from '@/lib/validation';
 import { TeaRequest } from '@/lib/types';
+import { useAuth } from '@/components/auth/auth-provider';
 
 const DEFAULT_CONDITIONS: ConditionsState = {
   temperature_c: '800',
@@ -36,6 +38,8 @@ const DEFAULT_FINANCIALS: FinancialState = {
 };
 
 export function Dashboard() {
+  const { user, logout } = useAuth();
+
   const [conditions, setConditions] = useState<ConditionsState>(DEFAULT_CONDITIONS);
   const [financials, setFinancials] = useState<FinancialState>(DEFAULT_FINANCIALS);
   
@@ -48,8 +52,7 @@ export function Dashboard() {
     mutationFn: postTea,
   });
 
-  // Populate financials with market data when it arrives (if not manually edited)
-   const [prevMarketData, setPrevMarketData] = useState(marketQuery.data);
+  const [prevMarketData, setPrevMarketData] = useState(marketQuery.data);
 
   // Adjust state during render when market data changes
   if (marketQuery.data !== prevMarketData) {
@@ -63,6 +66,7 @@ export function Dashboard() {
       }));
     }
   }
+
   const handleConditionChange = (field: keyof ConditionsState, value: string) => {
     setConditions((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: '' }));
@@ -72,7 +76,6 @@ export function Dashboard() {
     setFinancials((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: '' }));
     
-    // If the user edits a price, don't overwrite it later
     if (['natural_gas_price_usd_per_mmbtu', 'syngas_price_usd_per_kmol', 'carbon_credit_price_usd_per_tonne_co2e'].includes(field)) {
       setHasEditedPrices(true);
     }
@@ -132,9 +135,30 @@ export function Dashboard() {
 
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-8 flex flex-col gap-8">
-      <header className="border-b border-gray-200 pb-4 dark:border-zinc-800">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">ODRM Copilot</h1>
-        <p className="text-gray-500 dark:text-gray-400">Flare-gas valorization screening</p>
+      
+      {/* Brand & User Header */}
+      <header className="flex flex-col md:flex-row md:items-end justify-between border-b border-gray-200 pb-4 dark:border-zinc-800 gap-4">
+        <div>
+          <h1 className="text-3xl font-extrabold tracking-tight flex items-center gap-2">
+            <span className="bg-gradient-to-r from-emerald-600 to-teal-400 bg-clip-text text-transparent">
+              VALORIS
+            </span>
+            <span className="text-gray-300 dark:text-zinc-700 font-light text-2xl">|</span>
+            <span className="text-gray-900 dark:text-white font-light tracking-widest text-xl uppercase mt-1">
+              ODRM Copilot
+            </span>
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Flare-gas valorization screening</p>
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-300">{user?.email}</span>
+          <button
+            onClick={logout}
+            className="rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-zinc-700 transition-colors"
+          >
+            Sign Out
+          </button>
+        </div>
       </header>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
@@ -163,7 +187,7 @@ export function Dashboard() {
           <button
             type="submit"
             disabled={teaMutation.isPending}
-            className="w-full rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50 transition-colors"
+            className="w-full rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:opacity-50 transition-colors"
           >
             {teaMutation.isPending ? 'Running Screening...' : 'Run Screening'}
           </button>
@@ -173,10 +197,10 @@ export function Dashboard() {
         <div className="sticky top-8">
           <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">3. Screening Result</h2>
           <ResultsPanel 
-            data={teaMutation.data}
-            request={teaMutation.variables}
+            data={teaMutation.data} 
             isLoading={teaMutation.isPending} 
             isError={teaMutation.isError} 
+            request={teaMutation.variables}
           />
           {teaMutation.isError && (
             <div className="mt-4 rounded-lg bg-red-50 p-4 text-sm text-red-800 dark:bg-red-900/30 dark:text-red-400">
@@ -185,6 +209,10 @@ export function Dashboard() {
           )}
         </div>
       </form>
+
+      <div className="mt-8">
+        <RoadmapBanner />
+      </div>
     </div>
   );
 }

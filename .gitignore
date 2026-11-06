@@ -41,3 +41,9 @@ models/**/*.joblib
 
 .vscode/
 
+# Docker
+.env.docker
+*.db
+*.sqlite
+*.sqlite3
+

@@ -172,7 +172,7 @@ export function ChatInterface() {
     <section className="max-w-7xl mx-auto px-4 pb-8 md:px-8 md:pb-12">
       <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          4. Ask the Screening Assistant
+          4. Valoris AI Assistant
         </h2>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           Describe the reactor conditions, feed, prices, and capex in plain language. This is a
@@ -189,7 +189,7 @@ export function ChatInterface() {
               key={entry.id}
               className={
                 entry.role === 'user'
-                  ? 'self-end rounded-lg bg-blue-50 px-4 py-3 text-sm text-blue-950 dark:bg-blue-900/30 dark:text-blue-100'
+                  ? 'self-end rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-950 dark:bg-emerald-900/30 dark:text-emerald-100'
                   : 'self-start rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-800 dark:bg-zinc-800 dark:text-gray-200'
               }
             >
@@ -199,7 +199,7 @@ export function ChatInterface() {
               <p className="whitespace-pre-wrap">{entry.content}</p>
               {entry.result && (
                 <details className="mt-3">
-                  <summary className="cursor-pointer text-sm font-medium text-blue-600 hover:underline dark:text-blue-400">
+                  <summary className="cursor-pointer text-sm font-medium text-emerald-600 hover:underline dark:text-emerald-400">
                     View screening result
                   </summary>
                   <div className="mt-4">
@@ -261,7 +261,7 @@ export function ChatInterface() {
             rows={4}
             maxLength={MAX_MESSAGE_CHARS}
             placeholder="At 750 C, 5 bar, CH4:O2 2.0, ... what is the conversion, yield, and payback?"
-            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-zinc-700 dark:bg-zinc-950 dark:text-gray-100"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 dark:border-zinc-700 dark:bg-zinc-950 dark:text-gray-100"
           />
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -271,7 +271,7 @@ export function ChatInterface() {
             <button
               type="submit"
               disabled={isPending || trimmed.length === 0 || isTooLong}
-              className="rounded-lg bg-blue-600 px-5 py-2 font-semibold text-white shadow-sm transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50"
+              className="rounded-lg bg-emerald-600 px-5 py-2 font-semibold text-white shadow-sm transition-colors hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:opacity-50"
             >
               {isPending ? 'Screening...' : 'Ask Assistant'}
             </button>

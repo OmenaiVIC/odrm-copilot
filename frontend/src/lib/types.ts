@@ -91,3 +91,16 @@ export interface ChatResponse {
   result: TeaResponse | null;
   request_id: string;
 }
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  role: string;
+}
+
+export interface LoginResponse {
+  access_token: string;
+  token_type: "bearer";
+  expires_in: number;
+  user: AuthUser;
+}
