@@ -1,8 +1,11 @@
-from functools import lru_cache
+﻿from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, SecretStr
+from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_DEVELOPMENT_JWT_SECRET = "dev-only-insecure-jwt-secret-change-me"
+_PRODUCTION_ENVS = {"staging", "production", "prod"}
 
 
 class Settings(BaseSettings):
@@ -30,6 +33,34 @@ class Settings(BaseSettings):
     chat_max_message_chars: int = Field(default=2_000, ge=1, le=8_000)
     tea_api_base_url: str = "http://127.0.0.1:8000/api/v1"
     tea_timeout_seconds: float = Field(default=30.0, gt=0.0)
+
+    jwt_secret: SecretStr = SecretStr(_DEVELOPMENT_JWT_SECRET)
+    jwt_algorithm: Literal["HS256"] = "HS256"
+    jwt_issuer: str = "odrm-copilot"
+    jwt_audience: str = "odrm-api"
+    jwt_access_token_minutes: int = Field(default=60, ge=5, le=1_440)
+    database_url: str = "sqlite:///./odrm.db"
+    auth_cookie_name: str = "odrm_access_token"
+    auth_cookie_secure: bool = False
+    auth_cookie_samesite: Literal["lax", "strict", "none"] = "lax"
+    rate_limit_enabled: bool = True
+    max_request_bytes: int = Field(default=65_536, ge=1_024, le=1_048_576)
+
+    @model_validator(mode="after")
+    def validate_security_settings(self) -> "Settings":
+        secret = self.jwt_secret.get_secret_value()
+        if self.env.lower() in _PRODUCTION_ENVS and (
+            secret == _DEVELOPMENT_JWT_SECRET or len(secret) < 32
+        ):
+            raise ValueError(
+                "jwt_secret must be a non-placeholder value of at least 32 characters "
+                "in staging and production"
+            )
+        if self.auth_cookie_samesite == "none" and not self.auth_cookie_secure:
+            raise ValueError(
+                "auth_cookie_secure must be true when auth_cookie_samesite is 'none'"
+            )
+        return self
 
     @property
     def cors_origin_list(self) -> list[str]:
