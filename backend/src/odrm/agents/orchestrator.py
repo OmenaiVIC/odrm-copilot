@@ -140,10 +140,18 @@ class AgentService:
                 request_id,
                 type(exc).__name__,
             )
-            # Map network/connection blocks or Google API errors to 503
             error_name = type(exc).__name__
-            if "NetworkBlockedError" in error_name or "ConnectError" in error_name or "GoogleAPIError" in error_name:
-                return _unavailable("AGENT_UNAVAILABLE", "The AI service is currently unavailable or experiencing high demand.")
+            
+            # Map network blocks, Google API errors, and timeouts to 503
+            if (
+                "NetworkBlockedError" in error_name 
+                or "ConnectError" in error_name 
+                or "GoogleAPIError" in error_name
+                or "DeadlineExceeded" in error_name
+                or "Timeout" in error_name
+            ):
+                return _unavailable("AGENT_UNAVAILABLE", "The AI service is currently experiencing high demand or taking too long.")
+                
             return self._failure_outcome(recorder)
 
         reply = _final_reply(state)

@@ -1,6 +1,10 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { ApiError, postChat } from '@/lib/api';
 import type { ChatErrorDetail, TeaResponse } from '@/lib/types';
 import { ResultsPanel } from '@/components/dashboard/results-panel';
@@ -189,14 +193,23 @@ export function ChatInterface() {
               key={entry.id}
               className={
                 entry.role === 'user'
-                  ? 'self-end rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-950 dark:bg-emerald-900/30 dark:text-emerald-100'
-                  : 'self-start rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-800 dark:bg-zinc-800 dark:text-gray-200'
+                  ? 'self-end rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-950 dark:bg-emerald-900/30 dark:text-emerald-100 max-w-[85%]'
+                  : 'self-start rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-800 dark:bg-zinc-800 dark:text-gray-200 max-w-[85%]'
               }
             >
               <p className="mb-1 text-xs font-semibold uppercase tracking-wide opacity-70">
                 {entry.role === 'user' ? 'You' : 'Screening assistant'}
               </p>
-              <p className="whitespace-pre-wrap">{entry.content}</p>
+              
+              <div className="prose prose-sm dark:prose-invert max-w-none">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm, remarkMath]}
+                  rehypePlugins={[rehypeKatex]}
+                >
+                  {entry.content}
+                </ReactMarkdown>
+              </div>
+
               {entry.result && (
                 <details className="mt-3">
                   <summary className="cursor-pointer text-sm font-medium text-emerald-600 hover:underline dark:text-emerald-400">
