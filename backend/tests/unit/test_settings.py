@@ -83,3 +83,50 @@ def test_cors_origins_are_trimmed_and_empty_values_ignored() -> None:
         "http://localhost:3000",
         "https://odrm.example",
     ]
+
+
+def test_chat_history_defaults_are_configured() -> None:
+    settings = Settings(env="test")
+
+    assert settings.chat_max_message_chars == 2_000
+    assert settings.chat_max_messages == 20
+    assert settings.chat_max_history_chars == 30_000
+    assert settings.chat_history_max_messages == 10
+    assert settings.chat_history_max_chars == 16_000
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("chat_max_messages", 0),
+        ("chat_max_messages", 101),
+        ("chat_max_history_chars", 999),
+        ("chat_max_history_chars", 60_001),
+        ("chat_history_max_messages", 0),
+        ("chat_history_max_messages", 51),
+        ("chat_history_max_chars", 999),
+        ("chat_history_max_chars", 60_001),
+    ],
+)
+def test_chat_history_settings_are_bounded(field: str, value: int) -> None:
+    with pytest.raises(ValidationError, match=field):
+        Settings(env="test", **{field: value})
+
+
+def test_chat_history_model_message_window_cannot_exceed_the_request_window() -> None:
+    with pytest.raises(ValidationError, match="chat_history_max_messages"):
+        Settings(env="test", chat_max_messages=5, chat_history_max_messages=6)
+
+
+def test_chat_history_model_character_window_cannot_exceed_the_request_window() -> None:
+    with pytest.raises(ValidationError, match="chat_history_max_chars"):
+        Settings(
+            env="test",
+            chat_max_history_chars=1_000,
+            chat_history_max_chars=1_001,
+        )
+
+
+def test_chat_history_request_window_must_fit_the_body_limit() -> None:
+    with pytest.raises(ValidationError, match="chat_max_history_chars"):
+        Settings(env="test", max_request_bytes=20_000)

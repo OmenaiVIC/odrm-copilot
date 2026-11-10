@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     llm_temperature: float = Field(default=0.0, ge=0.0, le=1.0)
     llm_timeout_seconds: float = Field(default=30.0, gt=0.0)
     chat_max_message_chars: int = Field(default=2_000, ge=1, le=8_000)
+    chat_max_messages: int = Field(default=20, ge=1, le=100)
+    chat_max_history_chars: int = Field(default=30_000, ge=1_000, le=60_000)
+    chat_history_max_messages: int = Field(default=10, ge=1, le=50)
+    chat_history_max_chars: int = Field(default=16_000, ge=1_000, le=60_000)
     tea_api_base_url: str = "http://127.0.0.1:8000/api/v1"
     tea_timeout_seconds: float = Field(default=30.0, gt=0.0)
 
@@ -59,6 +63,18 @@ class Settings(BaseSettings):
         if self.auth_cookie_samesite == "none" and not self.auth_cookie_secure:
             raise ValueError(
                 "auth_cookie_secure must be true when auth_cookie_samesite is 'none'"
+            )
+        if self.chat_history_max_messages > self.chat_max_messages:
+            raise ValueError(
+                "chat_history_max_messages must be less than or equal to chat_max_messages"
+            )
+        if self.chat_history_max_chars > self.chat_max_history_chars:
+            raise ValueError(
+                "chat_history_max_chars must be less than or equal to chat_max_history_chars"
+            )
+        if self.chat_max_history_chars >= self.max_request_bytes:
+            raise ValueError(
+                "chat_max_history_chars must be less than max_request_bytes"
             )
         return self
 
