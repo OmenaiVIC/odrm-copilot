@@ -253,6 +253,7 @@ def parquet_path(tmp_path: Any, odrm_frame: pd.DataFrame) -> Any:
 @pytest.fixture(scope="session")
 def tiny_model() -> Any:
     from xgboost import XGBRegressor
+
     from odrm.ml.features import FEATURES
 
     rng = np.random.default_rng(_SEED)

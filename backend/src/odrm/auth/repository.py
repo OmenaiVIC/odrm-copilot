@@ -86,4 +86,4 @@ class SqlAlchemyUserRepository:
 
     def ping(self) -> bool:
         with self._session_factory() as session:
-            return session.execute(text("SELECT 1")).scalar_one() == 1
+            return bool(session.execute(text("SELECT 1")).scalar_one() == 1)

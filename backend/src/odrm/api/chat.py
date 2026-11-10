@@ -57,11 +57,9 @@ def handle_chat(payload: ChatRequest, request: Request) -> ChatResponse:
 
     if service is None:
         tea_client = InProcessTeaClient(request.app.state.models)
-        def model_factory():
-            return build_chat_model(settings)
         service = AgentService(
             tea_client=tea_client,
-            model_factory=model_factory,
+            model_factory=lambda: build_chat_model(settings),
             history_max_messages=settings.chat_history_max_messages,
             history_max_chars=settings.chat_history_max_chars,
         )

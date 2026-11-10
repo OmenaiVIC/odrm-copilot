@@ -3,11 +3,11 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal, cast
 
 from langchain.agents import create_agent
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage, HumanMessage
+from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 
 from odrm.agents.context import prepare_history
 from odrm.agents.guardrails import GuardrailViolation
@@ -155,7 +155,7 @@ class AgentService:
                 system_prompt=SYSTEM_PROMPT,
             )
             state = agent.invoke(
-                {"messages": prepared},
+                {"messages": cast(list[AnyMessage | dict[str, Any]], prepared)},
                 config={"recursion_limit": 6},
             )
         except Exception as exc:
