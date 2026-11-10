@@ -139,7 +139,7 @@ describe('API Client', () => {
     });
   });
 
-  it('postChat posts the message and returns the parsed response', async () => {
+  it('postChat posts the messages and returns the parsed response', async () => {
     const mockResponse = {
       status: 'ok',
       reply: 'Screening complete.',
@@ -152,13 +152,21 @@ describe('API Client', () => {
       json: async () => mockResponse,
     } as Response);
 
-    const result = await postChat('run the screening');
+    const messages = [
+      { role: 'user' as const, content: 'Run the screening.' },
+      { role: 'assistant' as const, content: 'The payback is 2 years.' },
+      { role: 'user' as const, content: 'Now raise the temperature to 800 C.' },
+    ];
+
+    const result = await postChat(messages);
 
     expect(fetch).toHaveBeenCalledWith(
       expect.stringContaining('/chat'),
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify({ message: 'run the screening' }),
+        body: JSON.stringify({ messages }),
+        credentials: 'include',
+        headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
       })
     );
     expect(result).toEqual(mockResponse);

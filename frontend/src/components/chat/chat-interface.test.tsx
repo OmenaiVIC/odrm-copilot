@@ -64,7 +64,11 @@ describe('ChatInterface', () => {
     expect(screen.getByText('15.00%')).toBeInTheDocument();
     expect(fetch).toHaveBeenCalledWith(
       expect.stringContaining('/chat'),
-      expect.objectContaining({ body: JSON.stringify({ message: 'Run the screening.' }) })
+      expect.objectContaining({
+        body: JSON.stringify({
+          messages: [{ role: 'user', content: 'Run the screening.' }],
+        }),
+      })
     );
   });
 
@@ -83,6 +87,116 @@ describe('ChatInterface', () => {
 
     expect(await screen.findByText('Please provide the capex.')).toBeInTheDocument();
     expect(screen.queryByText('View screening result')).not.toBeInTheDocument();
+  });
+
+  it('sends prior completed turns with the next message', async () => {
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(
+        jsonResponse({
+          status: 'ok',
+          reply: 'At 750 C the payback is 2.0 years.',
+          result: TEA_RESULT,
+          request_id: 'req-1',
+        })
+      )
+      .mockResolvedValueOnce(
+        jsonResponse({
+          status: 'ok',
+          reply: 'At 800 C the payback is 1.9 years.',
+          result: TEA_RESULT,
+          request_id: 'req-2',
+        })
+      );
+
+    render(<ChatInterface />);
+    submit('Run the screening at 750 C.');
+    expect(await screen.findByText('At 750 C the payback is 2.0 years.')).toBeInTheDocument();
+
+    submit('Now raise the temperature to 800 C and rerun.');
+    expect(await screen.findByText('At 800 C the payback is 1.9 years.')).toBeInTheDocument();
+
+    expect(vi.mocked(fetch).mock.calls[1][1]?.body).toBe(
+      JSON.stringify({
+        messages: [
+          { role: 'user', content: 'Run the screening at 750 C.' },
+          { role: 'assistant', content: 'At 750 C the payback is 2.0 years.' },
+          { role: 'user', content: 'Now raise the temperature to 800 C and rerun.' },
+        ],
+      })
+    );
+  });
+
+  it('excludes a failed unanswered turn from the next request history', async () => {
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(
+        jsonResponse(
+          {
+            detail: {
+              code: 'AGENT_UNAVAILABLE',
+              message: 'The screening assistant is unavailable.',
+              request_id: 'req-1',
+            },
+          },
+          503
+        )
+      )
+      .mockResolvedValueOnce(
+        jsonResponse({
+          status: 'needs_input',
+          reply: 'Please provide the capex.',
+          result: null,
+          request_id: 'req-2',
+        })
+      );
+
+    render(<ChatInterface />);
+    submit('Run it.');
+    expect(await screen.findByText(/Screening temporarily unavailable/)).toBeInTheDocument();
+
+    submit('Run it again.');
+    expect(await screen.findByText('Please provide the capex.')).toBeInTheDocument();
+
+    expect(vi.mocked(fetch).mock.calls[1][1]?.body).toBe(
+      JSON.stringify({
+        messages: [{ role: 'user', content: 'Run it again.' }],
+      })
+    );
+  });
+
+  it('caps the request history to the newest ten messages', async () => {
+    render(<ChatInterface />);
+
+    for (let index = 0; index < 5; index += 1) {
+      vi.mocked(fetch).mockResolvedValueOnce(
+        jsonResponse({
+          status: 'needs_input',
+          reply: `Reply ${index}.`,
+          result: null,
+          request_id: `req-${index}`,
+        })
+      );
+      submit(`Message ${index}.`);
+      expect(await screen.findByText(`Reply ${index}.`)).toBeInTheDocument();
+    }
+
+    vi.mocked(fetch).mockResolvedValueOnce(
+      jsonResponse({
+        status: 'needs_input',
+        reply: 'Final reply.',
+        result: null,
+        request_id: 'req-final',
+      })
+    );
+    submit('Message 5.');
+    expect(await screen.findByText('Final reply.')).toBeInTheDocument();
+
+    const body = JSON.parse(String(vi.mocked(fetch).mock.calls[5][1]?.body)) as {
+      messages: Array<{ role: string; content: string }>;
+    };
+
+    expect(body.messages).toHaveLength(10);
+    expect(body.messages[0]).toEqual({ role: 'assistant', content: 'Reply 0.' });
+    expect(body.messages[9]).toEqual({ role: 'user', content: 'Message 5.' });
   });
 
   it('shows a structured guardrail error and preserves the composer', async () => {

@@ -4,6 +4,7 @@ import type {
   TeaResponse,
   LoginResponse,
   AuthUser,
+  ChatMessage,
 } from "./types";
 
 const API_BASE_URL =
@@ -90,10 +91,10 @@ export async function postTea(request: TeaRequest): Promise<TeaResponse> {
   });
 }
 
-export async function postChat(message: string): Promise<ChatResponse> {
+export async function postChat(messages: ChatMessage[]): Promise<ChatResponse> {
   return apiFetch<ChatResponse>("/chat", {
     method: "POST",
-    body: JSON.stringify({ message }),
+    body: JSON.stringify({ messages }),
   });
 }
 

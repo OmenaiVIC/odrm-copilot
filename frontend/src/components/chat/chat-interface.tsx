@@ -6,10 +6,11 @@ import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { ApiError, postChat } from '@/lib/api';
-import type { ChatErrorDetail, TeaResponse } from '@/lib/types';
+import type { ChatErrorDetail, ChatMessage, TeaResponse } from '@/lib/types';
 import { ResultsPanel } from '@/components/dashboard/results-panel';
 
 const MAX_MESSAGE_CHARS = 2_000;
+const MAX_HISTORY_MESSAGES = 10;
 
 interface ChatEntry {
   id: number;
@@ -139,6 +140,16 @@ export function ChatInterface() {
       return;
     }
 
+    const history: ChatMessage[] = entries.map(({ role, content }) => ({
+      role,
+      content,
+    }));
+    while (history.at(-1)?.role === 'user') {
+      history.pop();
+    }
+    history.push({ role: 'user', content: trimmed });
+    const requestMessages = history.slice(-MAX_HISTORY_MESSAGES);
+
     nextId.current += 1;
     const userEntry: ChatEntry = {
       id: nextId.current,
@@ -152,7 +163,7 @@ export function ChatInterface() {
     setIsPending(true);
 
     try {
-      const response = await postChat(trimmed);
+      const response = await postChat(requestMessages);
       nextId.current += 1;
       setEntries((previous) => [
         ...previous,
@@ -181,6 +192,9 @@ export function ChatInterface() {
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           Describe the reactor conditions, feed, prices, and capex in plain language. This is a
           screening result, not investment advice.
+        </p>
+        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          The assistant uses recent messages from this tab; history is not saved across refreshes.
         </p>
 
         <div

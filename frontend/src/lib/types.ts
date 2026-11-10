@@ -70,8 +70,15 @@ export interface TeaResponse {
 
 export type ChatStatus = 'ok' | 'needs_input';
 
+export type ChatRole = 'user' | 'assistant';
+
+export interface ChatMessage {
+  role: ChatRole;
+  content: string;
+}
+
 export interface ChatRequest {
-  message: string;
+  messages: ChatMessage[];
 }
 
 export interface ChatErrorDetail {
