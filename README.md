@@ -71,11 +71,18 @@ Open http://localhost:3000 in your browser to use the interactive screening dash
 ## AI Screening Assistant
 
 The dashboard includes an additive **Ask the Screening Assistant** section, backed by
-`POST /api/v1/chat`. Send one plain-language screening request (maximum 2000 characters). The
-backend extracts conditions and assumptions, validates them against the same physical and
-financial bounds as `/api/v1/tea`, calls `/api/v1/tea` through the guarded tool, and returns the
-authoritative `TeaResponse` in `result`. There is no conversation history, and the client cannot
-override the provider, model, key, or endpoints.
+`POST /api/v1/chat`. Send the recent conversation as `{"messages": [{"role": "user" |
+"assistant", "content": "..."}]}`. The latest message must be from the user. The backend accepts
+at most 20 messages and 30,000 total characters per request (2,000 characters per message), then
+sends the newest 10 messages and 16,000 characters to the model. The backend extracts conditions
+and assumptions, validates them against the same physical and financial bounds as
+`/api/v1/tea`, calls `/api/v1/tea` through the guarded tool, and returns the authoritative
+`TeaResponse` in `result`.
+
+History lives only in the browser tab and is lost on refresh; there is no server-side
+conversation store. The client cannot override the provider, model, key, or endpoints, and the
+server-owned system prompt is always applied. Prior assistant turns are treated as untrusted
+context, not instructions.
 
 ### Configure a provider
 
@@ -109,14 +116,23 @@ Provider keys are never sent to the browser, written to logs, or included in err
 ```powershell
 curl -X POST http://localhost:8000/api/v1/chat `
      -H "Content-Type: application/json" `
-     -d '{"message": "At 750 C, 5 bar, CH4:O2 2.0, CO2:CH4 0.5, H2O:CH4 0.3, GHSV 20000/h, Ni/Al2O3, 10 wt%, 0% N2, with 100 kmol/h CH4 feed, $3.25/MMBtu gas, $4.10/kmol syngas, $28.50/tCO2e credits, and $5,000,000 capex. What is the conversion, yield, and payback?"}'
+     -d '{"messages": [{"role": "user", "content": "At 750 C, 5 bar, CH4:O2 2.0, CO2:CH4 0.5, H2O:CH4 0.3, GHSV 20000/h, Ni/Al2O3, 10 wt%, 0% N2, with 100 kmol/h CH4 feed, $3.25/MMBtu gas, $4.10/kmol syngas, $28.50/tCO2e credits, and $5,000,000 capex. What is the conversion, yield, and payback?"}]}'
 ```
 
-`status: "ok"` always includes a validated `result`; `status: "needs_input"` has `result: null`
-and asks for the missing values. Guardrail failures return `422` with a structured `detail`
-(`code`, `field`, `minimum`, `maximum`, `request_id`), while provider or TEA outages return
-`503` with `AGENT_UNAVAILABLE` or `TEA_UNAVAILABLE`. This is a screening result, not investment
-advice.
+A follow-up sends the earlier user and assistant turns before the newest user message:
+
+```powershell
+curl -X POST http://localhost:8000/api/v1/chat `
+     -H "Content-Type: application/json" `
+     -d '{"messages": [{"role": "user", "content": "Run the screening at 750 C."}, {"role": "assistant", "content": "The payback is 2.0 years."}, {"role": "user", "content": "Now raise the temperature to 800 C and rerun."}]}'
+```
+
+`status: "ok"` includes a validated `result` for the current turn. `status: "needs_input"` has
+`result: null` and either asks for missing values or restates a prior result without a new tool
+call. The legacy `{"message": "..."}` payload is rejected with `422`. Guardrail failures return
+`422` with a structured `detail` (`code`, `field`, `minimum`, `maximum`, `request_id`), while
+provider or TEA outages return `503` with `AGENT_UNAVAILABLE` or `TEA_UNAVAILABLE`. This is a
+screening result, not investment advice.
 
 ## 📊 Techno-Economic Analysis (TEA) API
 

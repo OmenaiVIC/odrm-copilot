@@ -256,6 +256,25 @@ Rules:
 - A provider abstraction keeps the LLM swappable; tests use LangChain fake models
   and network is blocked in the test harness.
 
+### 7.1 Conversation history (Sprint 8)
+
+`POST /api/v1/chat` accepts `{"messages": [{"role": "user" | "assistant", "content": "..."}]}`
+and rejects the legacy `{"message": "..."}` shape. The browser owns the transcript for the
+lifetime of the tab; the backend is stateless and revalidates the whole history on every turn.
+
+- Clients may send only `user` and `assistant` roles. The last turn must be `user`.
+- Request guard: at most 20 messages, 2,000 characters per message, and 30,000 total characters.
+- Model window: `prepare_history` keeps the newest 10 messages / 16,000 characters, drops a
+  leading assistant turn, merges consecutive same-role turns, and converts to LangChain
+  `HumanMessage` / `AIMessage` objects.
+- The server-owned system prompt is always applied. Prior assistant text is untrusted context,
+  never instructions, and prior tool calls or `TeaResponse` payloads are not replayed.
+- `status: "ok"` carries the current turn's authoritative result. A follow-up answered from
+  history may return `needs_input` with `result: null`; its prior result panel stays attached to
+  the original UI entry.
+- Failed user turns remain visible but are excluded from the next request's history. No
+  database table, session store, or vector memory is introduced.
+
 ---
 
 ## 8. API design (`/api/v1`)
