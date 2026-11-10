@@ -31,12 +31,17 @@
 *   **Rate Limiting:** `slowapi` enforces per-IP limits (Login: 5/min, Chat: 20/min).
 *   **UI Rebrand:** Transitioned to the "VALORIS | ODRM Copilot" brand identity with an emerald/teal color palette.
 
-## 4. Deviations & Fixes (Post-Deployment)
-*   **Tailwind CSS Fix:** Migrated from the experimental `@tailwindcss/turbopack` to the official `@tailwindcss/postcss` plugin. This fixed the production Docker build where CSS was failing to compile.
-*   **Markdown Rendering:** Installed `react-markdown`, `remark-gfm`, and `rehype-katex` to ensure the AI's output renders beautifully instead of displaying raw asterisks and math symbols.
-*   **Agent Persona:** Updated `prompts.py` to give the AI a conversational persona, allowing it to answer "meta" questions (like "What is your purpose?") without timing out or attempting to force a tool call.
+## 4. Strategic Alignment with NOGIET
+*   The Valoris platform is explicitly designed to be the decision-support complement to the Nigerian Oil and Gas Industry Emission Tracker (NOGIET).
+*   While NOGIET uses satellite data to detect and map methane plumes, Valoris provides the techno-economic analysis (TEA) required to prove if capturing that gas is financially viable.
+*   The PDF ESG Export Engine (Sprint 6) and the TEA Engine (Sprint 3) directly support the measurement-based reporting requirements mandated by the Commission's 2022 Guidelines for Fugitive Methane.
+
+## 5. Deviations & Fixes (Post-Deployment)
+*   **Tailwind CSS Fix:** Migrated to the official `@tailwindcss/postcss` plugin to fix production CSS compilation.
+*   **Markdown Rendering:** Installed `react-markdown`, `remark-gfm`, and `rehype-katex` to ensure AI outputs render beautifully.
+*   **Agent Persona:** Updated `prompts.py` to give the AI a conversational persona, allowing it to answer "meta" questions without timing out.
 *   **Docker Live Smoke Test:** The full stack was successfully booted locally. Users can log in, run screenings, download PDF reports, and use the AI Chat.
 
-## 5. Known limitations (Addressed in Sprint 8)
+## 6. Known limitations (Addressed in Sprint 8)
 *   **Single-Turn Chat Memory:** The `/api/v1/chat` endpoint is currently stateless. This is the primary deliverable for Sprint 8 (Multi-Turn Memory).
 *   **JWT tokens** are stateless and cannot be revoked until Sprint 10 (Redis denylist).

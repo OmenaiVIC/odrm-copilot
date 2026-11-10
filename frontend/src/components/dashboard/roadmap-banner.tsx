@@ -13,17 +13,17 @@ export function RoadmapBanner() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="rounded-lg border border-gray-200 bg-white p-4 opacity-60 dark:border-zinc-800 dark:bg-zinc-950">
           <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20 mb-2">
-            Sprint 8 (Pilot)
+            Sprint 9 (Pilot)
           </span>
-          <h4 className="font-medium text-gray-900 dark:text-white">Predictive Maintenance</h4>
+          <h4 className="font-medium text-gray-900 dark:text-white">NOGIET Integration & Predictive Maintenance</h4>
           <p className="text-xs text-gray-500 mt-1">
-            Train on real-world plant data to predict equipment degradation, prevent costly shutdowns, and automatically alert operators to dangerous carbon buildup.
+            Automatically sync Valoris financial models with NOGIET satellite hotspot alerts. Train on real-world plant data to predict equipment degradation before it causes a methane plume.
           </p>
         </div>
 
         <div className="rounded-lg border border-gray-200 bg-white p-4 opacity-60 dark:border-zinc-800 dark:bg-zinc-950">
           <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20 mb-2">
-            Sprint 9 (Pilot)
+            Sprint 10 (Pilot)
           </span>
           <h4 className="font-medium text-gray-900 dark:text-white">Tamper-Proof Carbon Credits</h4>
           <p className="text-xs text-gray-500 mt-1">
