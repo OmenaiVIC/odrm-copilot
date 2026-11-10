@@ -95,6 +95,19 @@ class TeaResponse(BaseModel):
 
 
 ChatStatus = Literal["ok", "needs_input"]
+ChatRole = Literal["user", "assistant"]
+
+
+class ChatMessage(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    role: ChatRole
+    content: str = Field(min_length=1)
+
+    @field_validator("content", mode="before")
+    @classmethod
+    def strip_content(cls, value: object) -> object:
+        return value.strip() if isinstance(value, str) else value
 
 
 class ChatRequest(BaseModel):
