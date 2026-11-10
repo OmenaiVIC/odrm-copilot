@@ -113,12 +113,7 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    message: str = Field(min_length=1, max_length=2_000)
-
-    @field_validator("message", mode="before")
-    @classmethod
-    def strip_message(cls, value: object) -> object:
-        return value.strip() if isinstance(value, str) else value
+    messages: list[ChatMessage] = Field(min_length=1)
 
 
 class ChatErrorDetail(BaseModel):

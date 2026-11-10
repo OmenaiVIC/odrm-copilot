@@ -78,6 +78,8 @@ def create_app(
     app.state.agent_service = agent_service or AgentService(
         tea_client=InProcessTeaClient(app.state.models),
         model_factory=lambda: build_chat_model(settings),
+        history_max_messages=settings.chat_history_max_messages,
+        history_max_chars=settings.chat_history_max_chars,
     )
 
     app.include_router(auth_router, prefix="/api/v1")

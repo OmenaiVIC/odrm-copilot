@@ -1,44 +1,72 @@
-import uuid
 import logging
+import uuid
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 
-from odrm.api.schemas import ChatRequest, ChatResponse
 from odrm.agents.orchestrator import AgentService
-from odrm.agents.tea_client import InProcessTeaClient
 from odrm.agents.providers import build_chat_model
+from odrm.agents.tea_client import InProcessTeaClient
+from odrm.api.schemas import ChatRequest, ChatResponse
 from odrm.auth.dependencies import get_current_user
 
 logger = logging.getLogger(__name__)
 router = APIRouter(dependencies=[Depends(get_current_user)])
 
+
+def _invalid_messages(request_id: str, message: str) -> HTTPException:
+    return HTTPException(
+        status_code=422,
+        detail={
+            "code": "INVALID_ARGUMENTS",
+            "field": "messages",
+            "message": message,
+            "request_id": request_id,
+        },
+    )
+
+
 @router.post("/chat", response_model=ChatResponse)
 def handle_chat(payload: ChatRequest, request: Request) -> ChatResponse:
     request_id = str(uuid.uuid4())
     settings = request.app.state.settings
-    
-    # 1. Enforce message length from settings (Return structured dict for tests)
-    if len(payload.message) > settings.chat_max_message_chars:
-        raise HTTPException(
-            status_code=422,
-            detail={
-                "code": "INVALID_ARGUMENTS",
-                "field": "message",
-                "message": f"Message must be at most {settings.chat_max_message_chars} characters.",
-                "request_id": request_id,
-            },
+
+    if len(payload.messages) > settings.chat_max_messages:
+        raise _invalid_messages(
+            request_id,
+            f"Conversation history must be at most {settings.chat_max_messages} messages.",
         )
-    
-    # 2. Get or build the Agent Service
+
+    if payload.messages[-1].role != "user":
+        raise _invalid_messages(request_id, "The last message must have role 'user'.")
+
+    for message in payload.messages:
+        if len(message.content) > settings.chat_max_message_chars:
+            raise _invalid_messages(
+                request_id,
+                f"Each message must be at most {settings.chat_max_message_chars} characters.",
+            )
+
+    total_chars = sum(len(message.content) for message in payload.messages)
+    if total_chars > settings.chat_max_history_chars:
+        raise _invalid_messages(
+            request_id,
+            f"Conversation history must be at most {settings.chat_max_history_chars} characters.",
+        )
+
     service = getattr(request.app.state, "agent_service", None)
-    
+
     if service is None:
         tea_client = InProcessTeaClient(request.app.state.models)
         def model_factory():
             return build_chat_model(settings)
-        service = AgentService(tea_client=tea_client, model_factory=model_factory)
+        service = AgentService(
+            tea_client=tea_client,
+            model_factory=model_factory,
+            history_max_messages=settings.chat_history_max_messages,
+            history_max_chars=settings.chat_history_max_chars,
+        )
 
-    # 3. Run the agent
-    outcome = service.chat(payload.message, request_id)
+    outcome = service.chat(payload.messages, request_id)
 
     # 4. Map the outcome to HTTP responses
     if outcome.status == "ok":

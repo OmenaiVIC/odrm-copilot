@@ -1,20 +1,21 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from typing import Literal
 
 from langchain.agents import create_agent
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage
+from langchain_core.messages import AIMessage, HumanMessage
 
+from odrm.agents.context import prepare_history
 from odrm.agents.guardrails import GuardrailViolation
 from odrm.agents.prompts import SYSTEM_PROMPT
 from odrm.agents.providers import AgentConfigurationError
 from odrm.agents.tea_client import TeaClient, TeaRejectedError
 from odrm.agents.tools import AgentRunRecorder, create_tea_tool
-from odrm.api.schemas import TeaResponse
+from odrm.api.schemas import ChatMessage, TeaResponse
 
 logger = logging.getLogger(__name__)
 
@@ -106,11 +107,34 @@ class AgentService:
         self,
         tea_client: TeaClient,
         model_factory: Callable[[], BaseChatModel],
+        *,
+        history_max_messages: int = 10,
+        history_max_chars: int = 16_000,
     ) -> None:
         self._tea_client = tea_client
         self._model_factory = model_factory
+        self._history_max_messages = history_max_messages
+        self._history_max_chars = history_max_chars
 
-    def chat(self, message: str, request_id: str) -> AgentOutcome:
+    def chat(self, messages: Sequence[ChatMessage], request_id: str) -> AgentOutcome:
+        prepared = prepare_history(
+            messages,
+            max_messages=self._history_max_messages,
+            max_chars=self._history_max_chars,
+        )
+        logger.info(
+            "history_received=%d history_sent=%d history_dropped=%d request_id=%s",
+            len(messages),
+            len(prepared),
+            max(0, len(messages) - len(prepared)),
+            request_id,
+        )
+        if not prepared or not isinstance(prepared[-1], HumanMessage):
+            return AgentOutcome(
+                status="needs_input",
+                reply=_NEEDS_INPUT_FALLBACK,
+            )
+
         recorder = AgentRunRecorder()
         tool = create_tea_tool(self._tea_client, recorder)
 
@@ -131,7 +155,7 @@ class AgentService:
                 system_prompt=SYSTEM_PROMPT,
             )
             state = agent.invoke(
-                {"messages": [{"role": "user", "content": message}]},
+                {"messages": prepared},
                 config={"recursion_limit": 6},
             )
         except Exception as exc:

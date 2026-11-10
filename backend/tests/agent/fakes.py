@@ -7,6 +7,7 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage
 from langchain_core.outputs import ChatGeneration, ChatResult
 from langchain_core.tools import BaseTool
+from pydantic import Field
 
 from odrm.agents.tea_client import TeaClient, TeaClientError
 from odrm.api.schemas import TeaRequest, TeaResponse
@@ -107,6 +108,7 @@ class ScriptedChatModel(BaseChatModel):
     responses: list[AIMessage]
     index: int = 0
     fail_on_call: int | None = None
+    seen_messages: list[list[BaseMessage]] = Field(default_factory=list)
 
     @property
     def _llm_type(self) -> str:
@@ -124,6 +126,7 @@ class ScriptedChatModel(BaseChatModel):
         run_manager: CallbackManagerForLLMRun | None = None,
         **kwargs: Any,
     ) -> ChatResult:
+        self.seen_messages.append(list(messages))
         if self.fail_on_call is not None and self.index == self.fail_on_call:
             raise RuntimeError("scripted model failure")
         message = self.responses[self.index]
