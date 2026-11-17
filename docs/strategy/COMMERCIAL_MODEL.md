@@ -29,3 +29,10 @@ Instead of a standard SaaS launch, we are executing a phased public-private part
 *   **Offer:** Predictive Maintenance and Tamper-Proof Carbon Credits.
 *   **Revenue:** Premium SaaS tier + transaction fees on verified carbon credits.
 *   **Purpose:** Global expansion and capturing the high-margin international ESG market.
+
+## 4. The Tokenized Carbon Credit Model (Phase 3)
+Valoris will not just generate ESG reports; we will cryptographically verify the carbon credits. By utilizing a Merkle-tree audit trail, every ton of CO2 captured will be immutably recorded on-chain. 
+
+This transforms Valoris from a simple SaaS tool into a **Climate Fintech infrastructure layer**.
+*   **Transaction Fees:** Valoris will charge a small basis-point fee on every verified carbon credit that is minted or traded on-chain.
+*   **Liquidity Provision:** By making African carbon credits verifiable and tradeable, we unlock access to global liquidity pools that currently ignore the Global South due to a lack of trust.

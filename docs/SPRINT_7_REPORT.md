@@ -35,6 +35,7 @@
 *   The Valoris platform is explicitly designed to be the decision-support complement to the Nigerian Oil and Gas Industry Emission Tracker (NOGIET).
 *   While NOGIET uses satellite data to detect and map methane plumes, Valoris provides the techno-economic analysis (TEA) required to prove if capturing that gas is financially viable.
 *   The PDF ESG Export Engine (Sprint 6) and the TEA Engine (Sprint 3) directly support the measurement-based reporting requirements mandated by the Commission's 2022 Guidelines for Fugitive Methane.
+*   **Future Roadmap:** This foundational work directly enables Sprint 10's cryptographic tokenization, transforming verified credits into tradeable on-chain assets.
 
 ## 5. Deviations & Fixes (Post-Deployment)
 *   **Tailwind CSS Fix:** Migrated to the official `@tailwindcss/postcss` plugin to fix production CSS compilation.
