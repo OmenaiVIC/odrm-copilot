@@ -24,15 +24,15 @@ Instead of a standard SaaS launch, we are executing a phased public-private part
 *   **Revenue:** Annual government licensing fee + B2B SaaS subscriptions from the operators.
 *   **Purpose:** Deep lock-in. When NOGIET detects a plume, Valoris is the native tool that shows the financial solution.
 
-### Phase 3: Operational Intelligence & Cryptographic ESG
+### Phase 3: Operational Intelligence & Cryptographic ESG (RWA Tokenization)
 *   **Target:** International ESG Investors & Global South Operators.
-*   **Offer:** Predictive Maintenance and Tamper-Proof Carbon Credits.
-*   **Revenue:** Premium SaaS tier + transaction fees on verified carbon credits.
-*   **Purpose:** Global expansion and capturing the high-margin international ESG market.
+*   **Offer:** Predictive Maintenance, Tamper-Proof Carbon Credits, and **Proof of Impact RWA Tokens**.
+*   **Revenue:** Premium SaaS tier + basis-point transaction fees on every verified carbon credit minted or traded on-chain.
+*   **Purpose:** Global expansion. This transforms Valoris from a simple SaaS tool into a **Climate Fintech infrastructure layer**.
 
-## 4. The Tokenized Carbon Credit Model (Phase 3)
-Valoris will not just generate ESG reports; we will cryptographically verify the carbon credits. By utilizing a Merkle-tree audit trail, every ton of CO2 captured will be immutably recorded on-chain. 
+**The RWA Tokenization Engine (Global Revenue):**
+While Phases 1 and 2 focus on the Nigerian regulatory pilot, Phase 3 unlocks our global revenue engine. Valoris will not just generate ESG reports; we will cryptographically verify the carbon credits. By utilizing a **Merkle-tree audit trail**, every ton of CO2 captured is immutably recorded and mathematically proven to be tamper-proof. 
 
-This transforms Valoris from a simple SaaS tool into a **Climate Fintech infrastructure layer**.
-*   **Transaction Fees:** Valoris will charge a small basis-point fee on every verified carbon credit that is minted or traded on-chain.
-*   **Liquidity Provision:** By making African carbon credits verifiable and tradeable, we unlock access to global liquidity pools that currently ignore the Global South due to a lack of trust.
+Once verified, we mint these "Proof of Impact" RWA (Real-World Asset) tokens using **Stellar's Soroban smart contracts**, which provide protocol-level compliance controls (freezing, clawbacks, authorization).
+
+**Liquidity Unlock:** This compliant RWA approach allows African carbon credits to be traded on international markets, solving the trust deficit that currently discounts Global South credits and unlocking deep liquidity.
