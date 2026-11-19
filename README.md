@@ -173,7 +173,7 @@ ODRM_LLM_BASE_URL=http://localhost:11434/v1
 ## 🗺️ Roadmap
 *   **[x] Sprints 1-8:** Data Engineering, ML Surrogate, TEA Engine, UI/Market Data, Agentic Orchestrator (with Multi-Turn Memory), ESG Export, and Dockerized Beta Hardening.
 *   **[ ] Sprint 9 (Pilot):** Integration with satellite tracking APIs (NOGIET) and Predictive Maintenance.
-*   **[ ] Sprint 10 (Pilot):** **Cryptographic Carbon Credits & Tokenization.** Implementation of a Merkle-tree audit trail and on-chain verification (smart contracts) to make carbon credits fully bankable and tradeable by international ESG investors.
+*   **[ ] Sprint 10 (Pilot):** **Cryptographic Carbon Credits & RWA Tokenization** Implementation of a Merkle-tree audit trail and on-chain verification on Stellar (Soroban) for compliant, bankable and tradeable carbon credits to ESG investors.
 
 ## 📄 License
 

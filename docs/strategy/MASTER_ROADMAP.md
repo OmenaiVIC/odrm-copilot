@@ -43,9 +43,9 @@ Valoris is not a standalone SaaS. It is a strategic national partnership model.
     *   *Purpose:* Deep lock-in. We become the "Regulatory Command Center" for Nigeria.
 *   **Phase 3: Operational Intelligence & Cryptographic ESG (Tokenization)**
     *   *Target:* International ESG Investors & Global South Operators.
-    *   *Offer:* Predictive Maintenance and **Tamper-Proof Carbon Credits** (Merkle-tree verified and tokenized on-chain).
+    *   *Offer:* Predictive Maintenance and **Tamper-Proof Carbon Credits** (Merkle-tree verified and tokenized on-chain using Stellar's Soroban smart contracts for protocol-level compliance).
     *   *Revenue:* Premium SaaS tier + transaction fees on verified, tradeable carbon credits.
-    *   *Purpose:* Global expansion, unlocking international liquidity for African carbon credits.
+    *   *Purpose:* Global expansion, unlocking international liquidity for African carbon credits through regulated, compliant RWA tokenization.
 
 ### Risk Register (Probability-Impact)
 | Risk ID | Risk Description | Prob | Impact | Score | Mitigation |
