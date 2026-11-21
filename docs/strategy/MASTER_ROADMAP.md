@@ -3,7 +3,7 @@
 ## PART 1: CTO Architectural Blueprint
 
 **Product Name:** Valoris (Internal Engineering Codename: *ODRM-Copilot / Syngas Shovel*)
-**Core Value Proposition:** A B2B SaaS platform that uses Surrogate AI and Agentic workflows to predict, optimize, and financially model Oxy-Dry Reforming of Methane (ODRM). Valoris acts as the **"Action Layer"** for the Nigerian Oil and Gas Industry Emission Tracker (NOGIET), turning satellite-detected emissions into profitable business cases for operators.
+**Core Value Proposition:** A B2B SaaS platform that uses Surrogate AI and Agentic workflows to predict, optimize, and financially model Oxy-Dry Reforming of Methane (ODRM). Valoris is designed as the **"Action Layer"** for NOGIET-style (Nigerian Oil and Gas Industry Emission Tracker) emission tracking — turning satellite-detected emissions into profitable business cases.
 
 ### 1. The Tech Stack
 *   **Frontend:** Next.js (React), Tailwind CSS, TanStack Query, React-Markdown.
@@ -14,12 +14,12 @@
 *   **The Evidence Chain:** A Merkle-tree based logging system for immutable ESG/Carbon reports and tokenization.
 
 ### 2. System Flow
-1.  **NOGIET Detection:** The Commission's NOGIET satellite system detects a methane hotspot at Site A.
+1.  **Detection:** A NOGIET-style satellite system surfaces a methane hotspot at Site A.
 2.  **User Input:** The operator (or NUPRC auditor) opens Valoris and inputs the site's conditions.
 3.  **Agent Orchestrator:** Parses intent, validates physics bounds.
 4.  **Surrogate Model:** Runs inference in <50ms (predicting CH4 Conversion, Syngas Yield).
 5.  **TEA Engine:** Calculates the financial ROI based on current gas prices and carbon credit values.
-6.  **Output:** A dashboard with the optimal operating parameters, risk warnings, and an ESG report proving the **Economic Solution** to the NOGIET-detected problem.
+6.  **Output:** A dashboard with the optimal operating parameters, risk warnings, and an ESG report proving the **Economic Solution** to the detected emission.
 
 ---
 
@@ -29,18 +29,22 @@
 We sell the "picks" (software optimization) to the "miners" (plant operators). We do not own the physical reactors; we own the intelligence that makes them profitable. 
 
 ### The 3-Phase Commercial Strategy
-Valoris is not a standalone SaaS. It is a strategic national partnership model.
+Valoris is not a standalone SaaS. It is a regulatory-alignment strategy designed for national-scale use cases.
+
+**Status note:** Valoris has no signed agreement with NUPR, NOGIET, or any NGFCP (Nigerian Gas Flare Commercialisation Programme) operator at this writing. References to NUPRC, NOGIET, and the 28 NGFCP PAFG (Permits to Access Flare Gas) holders describe public programs and target use cases.
 
 *   **Phase 1: The Pilot Integration Mandate (Current)**
-    *   *Target:* NUPRC and 3 selected NGFCP operators.
+    *   *Target use case:* NGFCP permit holders and a regulatory dashboard aligned with NOGIET's mission.
     *   *Offer:* Train our AI on their real-world historical data and provide a Regulatory Dashboard to track compliance.
     *   *Revenue:* A Pilot Mandate Grant (non-dilutive funding).
     *   *Purpose:* Prove technical feasibility on real-world "dirty gas" and establish Valoris as the regulatory standard.
+    
 *   **Phase 2: The National Integration (Post-Pilot)**
-    *   *Target:* NUPRC (National Rollout).
-    *   *Offer:* Full integration into the NOGIET platform. Onboarding of all 28 NGFCP operators.
+    *   *Target use case:* National rollout aligned with NOGIET and the 28 PAFG holders issued under NGFCP.
+    *   *Offer:* Designed for integration with a NOGIET-style platform; onboarding of NGFCP operators at scale.
     *   *Revenue:* Annual government licensing fee + B2B SaaS subscriptions from the operators.
-    *   *Purpose:* Deep lock-in. We become the "Regulatory Command Center" for Nigeria.
+    *   *Purpose:* Ecosystem fit. We are positioned to become a candidate "Regulatory Command Center" for Nigeria if and when the regulator elects national rollout. 
+
 *   **Phase 3: Operational Intelligence & Cryptographic ESG (Tokenization)**
     *   *Target:* International ESG Investors & Global South Operators.
     *   *Offer:* Predictive Maintenance and **Tamper-Proof Carbon Credits** (Merkle-tree verified and tokenized on-chain using Stellar's Soroban smart contracts for protocol-level compliance).
@@ -82,8 +86,15 @@ Valoris is not a standalone SaaS. It is a strategic national partnership model.
 ### 🟢 Sprint 8: Multi-Turn Memory & Agent Context (The Conversation)
 *(Update `ChatRequest` to accept `messages[]`, update React state, implement context window management.)*
 
-### 🟡 Sprint 9: Real-World Pilot Integration (Blocked pending NUPRC Data)
+### 🟡 Sprint 9: Real-World Pilot Integration (Awaiting real-world data)
 *(Train on real-world data from 3 NGFCP operators, "Predictive Maintenance" UI output, RBAC security hardening.)*
 
 ### 🟡 Sprint 10: Cryptographic ESG & Carbon Accounting (Blocked pending Pilot)
 *(Implement a Merkle-tree cryptographic hash chain and smart contracts for the tokenization of verified carbon credits.)*
+
+## PART 4: Dual Funding Strategy & Public Good
+Valoris operates a dual-layer architecture that appeals to both non-profit public-good funders and commercial venture accelerators.
+
+*   **Public Goods Grants:** We pursue non-dilutive grants to fund the open-source benchmark, the 10,000-scenario dataset, educational materials, and community workshops. These are permanent public goods for the Global South, ensuring that local researchers and regulators always have free access to the fundamental physics tools.
+*   **Commercial Accelerators:** We pursue commercial funding (SAFE notes, equity) to fund the proprietary SaaS engine, the tokenization roadmap (Stellar/Soroban), and our prospective national regulator's pilot. These are the revenue engines that ensure the company can sustain itself, pay salaries, and scale globally.
+*   *The Synergy:* The open-source foundation acts as a massive "freemium" acquisition funnel. Researchers who learn on the free MIT tool graduate to the proprietary SaaS when they enter the workforce. The commercial engine then funds the continued maintenance of the public good.

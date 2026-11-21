@@ -91,14 +91,18 @@ We sell the "picks" (software optimization) to the "miners" (plant operators, un
 3. Docker Compose setup for easy deployment.
 4. `docs/API_DOCUMENTATION.md` and `docs/USER_GUIDE.md`.
 
-### 🟡 Sprint 8: Real-World Pilot Integration (Blocked pending NUPRC Data)
+### 🟡 Sprint 8: Real-World Pilot Integration (Awaiting real-world data)
 **Goal:** Make the product usable for real-world, dirty gas.
 **Deliverables:**
 1. Update the dataset and model to handle impurities (H2S, N2) and variable feedstocks (Landfill gas vs. Flare gas).
 2. Add a "Predictive Maintenance" output in the UI: If Carbon Risk is >80%, flash a warning to adjust O2 flow.
-3. Train the models on historical data from at least one, and at most three of the 28 flare gas sites (via the NUPRC pilot).
+3. Train the models on historical data from at least one, and at most three of the 28 NGFCP (Nigerian Gas Flare Commercialisation Programme) PAFG (Permits to Access Flare Gas) holders' sites, via a future pilot subject to formal agreement.
 4. **Security Hardening:** Implement Role-Based Access Control (RBAC), Refresh Tokens, and a strict Content Security Policy (CSP).
 5. **UI "Coming Soon" Banner:** Add a visually distinct panel to the dashboard showcasing the upcoming features to drive pilot adoption.
+
+(Nigerian Oil and Gas Industry Emission Tracker)
+28 NGFCP   PAFG 
+
 
 ### 🟡 Sprint 9: Cryptographic ESG & Carbon Accounting (Blocked pending Pilot)
 **Goal:** Provide the immutable audit trail for carbon credits.

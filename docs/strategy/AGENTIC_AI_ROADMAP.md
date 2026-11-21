@@ -17,15 +17,18 @@ A chatbot waits for a prompt and answers. A harness runs the AI in a loop, gives
 
 ---
 
-## 3. Phase 2: NUPRC National Integration (Post-Pilot)
+## 3. Phase 2: National-Scale Integration (Post-Pilot) — Aligned with NOGIET
 **Goal:** The agent must remember users across different days, automate compliance workflows, and integrate with NOGIET.
 
 *   **Resource 1: Mem0 (https://github.com/mem0ai/mem0) - Long-Term Memory**
-    *   *Why:* When NUPRC has hundreds of users, we cannot send a 100-message history array on every request. Mem0 extracts facts and stores them in a vector database.
+    *   *Why:* When a regulator-scale deployment reaches hundreds of users, we cannot send a 100-message history array on every request.
 *   **Resource 2: n8n (https://github.com/n8n-io/n8n) - Workflow Automation**
     *   *Why:* To visually build workflows for automated monthly ESG reports.
 *   **Resource 3: NOGIET Data Integration Tool**
-    *   *Why:* We will build a new LangChain tool called `fetch_nogiet_hotspots`. This will allow the NUPRC auditor to ask the agent: *"Are there any hotspots at Site A, and is it profitable to capture them?"* The agent will call the NOGIET API, cross-reference it with the Valoris TEA engine, and generate the answer.
+    *   *Why:* We plan to build a new LangChain tool called `fetch_nogiet_hotspots`. This will allow a regulatory auditor to ask the agent: *"Are there any hotspots at Site A, and is it profitable to capture them?"* The agent will call a NOGIET-style API, cross-reference it with the Valoris TEA engine, and generate the answer.
+    Resource 3: NOGIET-Style Data Integration Tool
+
+Why: We plan to build a new LangChain tool called fetch_nogiet_hotspots. This will allow a regulatory auditor to ask the agent… The agent would call a NOGIET-style API…
 
 ---
 

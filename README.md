@@ -19,19 +19,22 @@ Here is exactly how the platform works, from input to output:
 4.  **The TEA Engine:** The Techno-Economic Analysis (TEA) engine takes the AI's chemical predictions and instantly calculates financial ROI and payback period based on the gas prices, operational costs, and carbon credit values supplied by the operator.
 5.  **The ESG Dashboard:** The operator receives a clear, actionable dashboard. It highlights the optimal operating parameters, flags economic risks, and generates a downloadable, cryptographically hashed ESG report for investors and regulators.
 
-### 🤝 Flagship Synergy: NOGIET & NUPRC
-While Valoris is a globally applicable SaaS platform for emerging markets, our flagship partnership is with the Nigerian Upstream Petroleum Regulatory Commission (NUPRC). 
-*   **NOGIET (The Eyes):** Detects methane plumes via satellite.
-*   **Valoris (The Hands):** Proves the economic solution. 
+### 🤝 Designed for NOGIET-Style Integration
+NOGIET is a public methane tracking platform developed by the Stakeholder Democracy Network (SDN) with Global Methane Hub support and transferred to NUPRC and NMDPRA at no cost. Valoris has no role in NOGIET's development or operation.
 
-By integrating with NOGIET, Valoris closes the gap between detection and remediation. We turn a regulatory warning into a profitable business case for the 28 NGFCP permit holders.
+**NOGIET-style detection (The Eyes):** Surfaces methane plumes via satellite.
+**Valoris (The Hands):** Proves the economic solution.
+
+Valoris is designed to interoperate with NOGIET-style detection to close the gap between detection and remediation — turning a regulatory warning into a profitable business case for NGFCP permit holders as a target market.
+
+Status: Valoris has no signed agreement with NUPRC (Nigerian Upstream Petroleum Regulatory Commission), NOGIET (Nigerian Oil and Gas Industry Emission Tracker), or any NGFCP (Nigerian Gas Flare Commercialisation Programme) permit holder at this writing. The 28 NGFCP PAFG PAFG (Permits to Access Flare Gas) holders are a target market, not current partners.
 
 ## 🌊 The Commercial Strategy (Global SaaS + National Pilots)
 We are not building physical reactors; we are building the software intelligence that makes them profitable. Hardware capture is becoming a commodity. 
 
 Valoris is the **"Shovel and Picks"** software layer. Our 3-phase go-to-market strategy is:
 
-1.  **The Pilot (e.g., NUPRC):** Partner with national regulators to train our AI on anonymized historical data, proving the system's accuracy on real-world "dirty gas."
+1.  **The Pilot (target: NGFCP/NOGIET-aligned):** Work with national regulators under a formal agreement, subject to negotiation, to train our AI on anonymized historical data, proving the system's accuracy on real-world "dirty gas."   
 2.  **The Operator Subscription (Global):** Mid-sized operators pay a monthly SaaS fee to access the dashboard, calculate ROI, and automatically generate ESG compliance reports.
 3.  **The Regulatory Dashboard (Government):** Regulators receive high-level access for free to monitor national progress and attract international ESG investment.
 
@@ -174,6 +177,11 @@ ODRM_LLM_BASE_URL=http://localhost:11434/v1
 *   **[x] Sprints 1-8:** Data Engineering, ML Surrogate, TEA Engine, UI/Market Data, Agentic Orchestrator (with Multi-Turn Memory), ESG Export, and Dockerized Beta Hardening.
 *   **[ ] Sprint 9 (Pilot):** Integration with satellite tracking APIs (NOGIET) and Predictive Maintenance.
 *   **[ ] Sprint 10 (Pilot):** **Cryptographic Carbon Credits & RWA Tokenization** Implementation of a Merkle-tree audit trail and on-chain verification on Stellar (Soroban) for compliant, bankable and tradeable carbon credits to ESG investors.
+
+## 🌱 The Open-Source Public Good
+Valoris is built as a dual-layer system to ensure both rapid innovation and long-term sustainability:
+*   **The Open-Source Foundation (Public Good):** The synthetic data generator, the schema validator, and the baseline ODRM simulation benchmark are MIT-licensed. This foundation is permanently free for researchers, regulators, and operators in the Global South to use, audit, and build upon.
+*   **The Commercial Application (Proprietary):** The trained ML surrogate models, the TEA financial engine, the LangChain agent, and the production SaaS dashboard are proprietary and funded by operator subscriptions.
 
 ## 📄 License
 
