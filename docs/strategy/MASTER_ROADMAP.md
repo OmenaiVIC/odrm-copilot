@@ -31,7 +31,7 @@ We sell the "picks" (software optimization) to the "miners" (plant operators). W
 ### The 3-Phase Commercial Strategy
 Valoris is not a standalone SaaS. It is a regulatory-alignment strategy designed for national-scale use cases.
 
-**Status note:** Valoris has no signed agreement with NUPR, NOGIET, or any NGFCP (Nigerian Gas Flare Commercialisation Programme) operator at this writing. References to NUPRC, NOGIET, and the 28 NGFCP PAFG (Permits to Access Flare Gas) holders describe public programs and target use cases.
+**Status note:** Valoris has no signed agreement with NUPRC, NOGIET, or any NGFCP (Nigerian Gas Flare Commercialisation Programme) operator at this writing. References to NUPRC, NOGIET, and the 28 NGFCP PAFG (Permits to Access Flare Gas) holders describe public programs and target use cases.
 
 *   **Phase 1: The Pilot Integration Mandate (Current)**
     *   *Target use case:* NGFCP permit holders and a regulatory dashboard aligned with NOGIET's mission.

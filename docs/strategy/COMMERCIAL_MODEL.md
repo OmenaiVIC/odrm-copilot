@@ -12,7 +12,7 @@ Valoris is a B2B (Business-to-Business) SaaS (Software-as-a-Service) platform th
 *   **The New Way (Valoris):** A rapid, AI-powered surrogate model backed by a Techno-Economic Analysis (TEA) engine. Fast (milliseconds), cheap (SaaS subscription), and accessible to any plant operator. We don't just detect the problem (like NOGIET); we prove the solution.
 
 ## 3. The 3-Phase Go-To-Market Strategy
-Instead of a standard SaaS launch, we are executing a phased public-private partnership strategy targeting the Nigerian Upstream Petroleum Regulatory Commission (NUPRC) and the Global South.
+Instead of a standard SaaS launch, we are executing a phased regulatory-alignment strategy targeting the Nigerian Upstream Petroleum Regulatory Commission (NUPRC) and the Global South.
 
 ### Phase 1: The Pilot Integration Mandate (Current)
 *   **Target use case:** NGFCP permit holders and a regulatory dashboard aligned with NOGIET's emission-tracking mission.
