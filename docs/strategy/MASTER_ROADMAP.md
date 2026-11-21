@@ -92,6 +92,8 @@ Valoris is not a standalone SaaS. It is a regulatory-alignment strategy designed
 ### 🟡 Sprint 10: Cryptographic ESG & Carbon Accounting (Blocked pending Pilot)
 *(Implement a Merkle-tree cryptographic hash chain and smart contracts for the tokenization of verified carbon credits.)*
 
+---
+
 ## PART 4: Dual Funding Strategy & Public Good
 Valoris operates a dual-layer architecture that appeals to both non-profit public-good funders and commercial venture accelerators.
 
