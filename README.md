@@ -27,7 +27,7 @@ NOGIET is a public methane tracking platform developed by the Stakeholder Democr
 
 Valoris is designed to interoperate with NOGIET-style detection to close the gap between detection and remediation — turning a regulatory warning into a profitable business case for NGFCP permit holders as a target market.
 
-Status: Valoris has no signed agreement with NUPRC (Nigerian Upstream Petroleum Regulatory Commission), NOGIET (Nigerian Oil and Gas Industry Emission Tracker), or any NGFCP (Nigerian Gas Flare Commercialisation Programme) permit holder at this writing. The 28 NGFCP PAFG PAFG (Permits to Access Flare Gas) holders are a target market, not current partners.
+Status: Valoris has no signed agreement with NUPRC (Nigerian Upstream Petroleum Regulatory Commission), NOGIET (Nigerian Oil and Gas Industry Emission Tracker), or any NGFCP (Nigerian Gas Flare Commercialisation Programme) permit holder at this writing. The 28 NGFCP PAFG (Permits to Access Flare Gas) holders are a target market, not current partners.
 
 ## 🌊 The Commercial Strategy (Global SaaS + National Pilots)
 We are not building physical reactors; we are building the software intelligence that makes them profitable. Hardware capture is becoming a commodity. 
