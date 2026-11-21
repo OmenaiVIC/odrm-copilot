@@ -12,7 +12,7 @@ Valoris is a B2B (Business-to-Business) SaaS (Software-as-a-Service) platform th
 *   **The New Way (Valoris):** A rapid, AI-powered surrogate model backed by a Techno-Economic Analysis (TEA) engine. Fast (milliseconds), cheap (SaaS subscription), and accessible to any plant operator. We don't just detect the problem (like NOGIET); we prove the solution.
 
 ## 3. The 3-Phase Go-To-Market Strategy
-Instead of a standard SaaS launch, we are executing a phased regulatory-alignment strategy targeting the Nigerian Upstream Petroleum Regulatory Commission (NUPRC) and the Global South.
+Instead of a standard SaaS launch, we are executing a phased regulatory-alignment strategy designed for NGFCP/NOGIET-style use cases and the wider Global South. The strategy does not depend on a single regulator's adoption; it is built around a self-service public-good tier that any NGFCP permit holder, accredited researcher, NGO, or regulator can join.
 
 ### Phase 1: The Pilot Integration Mandate (Current)
 *   **Target use case:** NGFCP permit holders and a regulatory dashboard aligned with NOGIET's emission-tracking mission.
@@ -32,6 +32,10 @@ Instead of a standard SaaS launch, we are executing a phased regulatory-alignmen
 *   **Revenue:** Premium SaaS tier + basis-point transaction fees on every verified carbon credit minted or traded on-chain.
 *   **Purpose:** Global expansion. This transforms Valoris from a simple SaaS tool into a **Climate Fintech infrastructure layer**.
 
+### The Public-Good Tier (Whitelist)
+Valoris operates a self-service whitelist that grants free access to the dashboard and ESG export for **(a) NGFCP PAFG permit holders who prove their permit,** **(b) accredited university researchers,** **(c) NGOs,** and **(d) regulators.** 
+No bilateral agreement required. The whitelist is the critical-mass early-adopter audience targeted in our public-good proposal, and it is the mechanism by which Valoris serves the public good without claiming a regulator partnership. Mid-sized operators outside these criteria pay a SaaS subscription (commercial tier).
+
 **The RWA Tokenization Engine (Global Revenue):**
 While Phases 1 and 2 focus on the Nigerian regulatory pilot, Phase 3 unlocks our global revenue engine. Valoris will not just generate ESG reports; we will cryptographically verify the carbon credits. By utilizing a **Merkle-tree audit trail**, every ton of CO2 captured is immutably recorded and mathematically proven to be tamper-proof. 
 
@@ -40,9 +44,9 @@ Once verified, we mint these "Proof of Impact" RWA (Real-World Asset) tokens usi
 **Liquidity Unlock:** This compliant RWA approach allows African carbon credits to be traded on international markets, solving the trust deficit that currently discounts Global South credits and unlocking deep liquidity.
 
 ### The "Freemium" Public Good Funnel
-While our core benchmark is MIT-licensed and free for public good, this is a deliberate commercial strategy. By positioning the Valoris benchmark as a candidate standard in Nigerian universities and regulatory bodies, we build brand trust. When those researchers become operators, or when those regulators demand compliance reports, they can upgrade to our proprietary SaaS dashboard and TEA engine.
+The open benchmark is MIT-licensed and free for public good. This is a deliberate commercial strategy: by positioning the Valoris benchmark as a candidate standard in Nigerian universities and regulatory bodies, we build brand trust. When those researchers become operators, or when those regulators demand compliance reports, they can upgrade to our proprietary SaaS dashboard and TEA engine. 
 
-By establishing the Valoris benchmark as the standard in Nigerian universities and regulatory bodies, we build immense brand trust. When those researchers become operators, or when those regulators demand compliance reports, they naturally upgrade to our proprietary SaaS dashboard and TEA engine. The free public good is our most powerful customer acquisition channel.
+The free public good is our most powerful customer-acquisition channel.
 
 
 

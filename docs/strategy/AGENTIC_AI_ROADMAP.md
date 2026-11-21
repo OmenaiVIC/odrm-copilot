@@ -17,15 +17,18 @@ A chatbot waits for a prompt and answers. A harness runs the AI in a loop, gives
 
 ---
 
-## 3. Phase 2: National-Scale Integration (Post-Pilot) — Aligned with NOGIET
-**Goal:** The agent must remember users across different days, automate compliance workflows, and integrate with NOGIET.
+## 3. Phase 2: National-Scale Integration (Post-Pilot) — Regulator-Agnostic Detection
+**Goal:** The agent must remember users across different days, automate compliance workflows, and support pluggable detection-source adapters.   
 
 *   **Resource 1: Mem0 (https://github.com/mem0ai/mem0) - Long-Term Memory**
     *   *Why:* When a regulator-scale deployment reaches hundreds of users, we cannot send a 100-message history array on every request.
 *   **Resource 2: n8n (https://github.com/n8n-io/n8n) - Workflow Automation**
     *   *Why:* To visually build workflows for automated monthly ESG reports.
-*   **Resource 3: NOGIET-Style Data Integration Tool**
-    *   *Why:* We plan to build a new LangChain tool called `fetch_nogiet_hotspots`. This will allow a regulatory auditor to ask the agent: *"Are there any hotspots at Site A, and is it profitable to capture them?"* The agent will call a NOGIET-style API, cross-reference it with the Valoris TEA engine, and generate the answer.
+*   **Resource 3: Detection-Source Adapter Tool**
+    *   *Why:* We plan to build a LangChain tool called `fetch_detection_hotspots` that accepts any `DetectionSource` implementation. This will allow an operator, researcher, or auditor to ask the agent: "Are there any hotspots at Site A, and is it profitable to capture them?" The agent will call the configured adapter (NOGIET-style is one example), cross-reference it with the Valoris TEA engine, and generate the answer.
+
+### Sprint 9 Implementation Note
+    The adapter interface and mock NOGIET-style adapter ship in Sprint 9. Real-data integration is out of scope until a formal data agreement exists. The agent tool is named fetch_detection_hotspots (not fetch_nogiet_hotspots) to reflect that NOGIET is one source among many.
 
 ---
 

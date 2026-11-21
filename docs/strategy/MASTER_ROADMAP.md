@@ -3,7 +3,8 @@
 ## PART 1: CTO Architectural Blueprint
 
 **Product Name:** Valoris (Internal Engineering Codename: *ODRM-Copilot / Syngas Shovel*)
-**Core Value Proposition:** A B2B SaaS platform that uses Surrogate AI and Agentic workflows to predict, optimize, and financially model Oxy-Dry Reforming of Methane (ODRM). Valoris is designed as the **"Action Layer"** for NOGIET-style (Nigerian Oil and Gas Industry Emission Tracker) emission tracking — turning satellite-detected emissions into profitable business cases.
+**Core Value Proposition:** A B2B SaaS platform that uses Surrogate AI and Agentic workflows to predict, optimize, and financially model Oxy-Dry Reforming of Methane (ODRM). 
+Valoris is designed as a regulator-agnostic "Action Layer" that sits on top of any public methane-detection source — turning satellite-detected emissions into profitable business cases. NOGIET-style (Nigerian Oil and Gas Industry Emission Tracker) emission tracking is one example of an upstream detection source, not a required integration.
 
 ### 1. The Tech Stack
 *   **Frontend:** Next.js (React), Tailwind CSS, TanStack Query, React-Markdown.
@@ -14,8 +15,8 @@
 *   **The Evidence Chain:** A Merkle-tree based logging system for immutable ESG/Carbon reports and tokenization.
 
 ### 2. System Flow
-1.  **Detection:** A NOGIET-style satellite system surfaces a methane hotspot at Site A.
-2.  **User Input:** The operator (or NUPRC auditor) opens Valoris and inputs the site's conditions.
+1.  **Detection:** A public satellite system surfaces a methane hotspot at Site A. Valoris accepts any `DetectionSource` that returns schema-compliant hotspot data; NOGIET-style is one example adapter.
+2.  **User Input:** The operator (or an accredited researcher, NGO, or regulator in the public-good tier) opens Valoris and inputs the site's conditions.
 3.  **Agent Orchestrator:** Parses intent, validates physics bounds.
 4.  **Surrogate Model:** Runs inference in <50ms (predicting CH4 Conversion, Syngas Yield).
 5.  **TEA Engine:** Calculates the financial ROI based on current gas prices and carbon credit values.
@@ -30,6 +31,9 @@ We sell the "picks" (software optimization) to the "miners" (plant operators). W
 
 ### The 3-Phase Commercial Strategy
 Valoris is not a standalone SaaS. It is a regulatory-alignment strategy designed for national-scale use cases.
+
+Public-Good Tier (whitelist): Valoris operates a self-service whitelist that grants free access to the dashboard and ESG export for **(a) NGFCP PAFG permit holders who prove their permit,** **(b) accredited university researchers,** **(c) NGOs,** and **(d) regulators.** 
+No bilateral agreement required. The whitelist is the mechanism by which Valoris serves the public good without claiming a regulator partnership.
 
 **Status note:** Valoris has no signed agreement with NUPRC, NOGIET, or any NGFCP (Nigerian Gas Flare Commercialisation Programme) operator at this writing. References to NUPRC, NOGIET, and the 28 NGFCP PAFG (Permits to Access Flare Gas) holders describe public programs and target use cases.
 
@@ -62,35 +66,45 @@ Valoris is not a standalone SaaS. It is a regulatory-alignment strategy designed
 
 ## PART 3: Sprint Execution Roadmap
 
-### 🟢 Sprint 1: Data Engineering (The Foundation)
-*(Generate 10,000 synthetic physics rows, strictly validated.)*
+### 🟢 Sprints 1–7 (Complete)
+Data Engineering, ML Surrogate, TEA Engine, UI/Market Data/Evidence Chain, Agentic Orchestrator, ESG Export, Beta Launch & Hardening. See `docs/SPRINT_*_REPORT.md` for each.
 
-### 🟢 Sprint 2: Surrogate ML Model (The Brain)
-*(Train XGBoost models with R² > 0.95 and expose `/api/v1/predict`.)*
+### 🟢 Sprint 8 (Complete): Multi-Turn Memory & Agent Context
+The `/api/v1/chat` endpoint accepts a `messages[]` array. Backend trims context to prevent token overflow. Report: `docs/SPRINT_8_REPORT.md`.
 
-### 🟢 Sprint 3: TEA Engine (The Money)
-*(Build the pure financial engine to calculate ROI, OPEX, and carbon credits.)*
+### 🟡 Sprint 9 (In progress): Detection-Adapter Foundation & Predictive Maintenance
+**Goal:** Build the regulator-agnostic detection adapter and predictive-maintenance UI. Real-data ingestion remains blocked, but the interface and mock adapter ship.
 
-### 🟢 Sprint 4: Core UI/UX, Market Data & Evidence Chain
-*(Next.js dashboard, Market Data Service, and UI for model provenance.)*
+**Deliverables:**
+1. `DetectionSource` interface (pluggable, async). Unit tests for interface; mock adapter returns fixture data.
+2. Mock NOGIET-style adapter that returns schema-compliant hotspot lists. Documented as example, not integration.
+3. Predictive Maintenance UI panel: Carbon-risk >80% triggers warning banner. Tested in Vitest.
+4. **Security hardening** carried over from legacy SECURITY.md: RBAC, Refresh Tokens, CSP, MFA for admins, Redis-backed JWT revocation.
+5. Real-data adapter: explicitly out of scope, documented as future work requiring a formal data agreement.
 
-### 🟢 Sprint 5: Agentic Orchestrator (The Interface)
-*(LangChain agent to parse natural language and call the TEA tool with strict guardrails.)*
+**Gate:** Sprint 9 complete when interface, mock adapter, UI panel, and security hardening have passing tests. Real-data adapter does not block completion.
 
-### 🟢 Sprint 6: The ESG Export Engine (Automated Compliance)
-*(Generate professional PDFs with a SHA-256 cryptographic hash.)*
+### 🟡 Sprint 10 (Planned): Open Public-Good Dashboard + Verifiable ESG Export
+**Goal:** Ship the Mozilla Q1 "Public Release" milestone deliverables.
 
-### 🟢 Sprint 7: Beta Launch & Hardening (The Production Layer)
-*(JWT Auth, Rate Limiting, Docker Compose stack, UI Rebrand to Valoris.)*
+**Deliverables:**
+1. Whitelist access flow: application, vetting against public-good criteria, dashboard provisioning. Backend endpoints and frontend form. Tested.
+2. Merkle-tree ESG audit trail: each screening produces a hash chain; verifier endpoint. Tested.
+3. Open benchmark publication: dataset, validator, baseline XGBoost model packaged for public release. MIT license. Documented reproduction steps.
+4. Detection adapter wired into dashboard: dashboard shows hotspots from any `DetectionSource`; mock shown by default.
 
-### 🟢 Sprint 8: Multi-Turn Memory & Agent Context (The Conversation)
-*(Update `ChatRequest` to accept `messages[]`, update React state, implement context window management.)*
+**Gate:** Sprint 10 complete when all four deliverables are tested and the open benchmark is published to GitHub with a versioned release tag.
 
-### 🟡 Sprint 9: Real-World Pilot Integration (Awaiting real-world data)
-*(Train on real-world data from 3 NGFCP operators, "Predictive Maintenance" UI output, RBAC security hardening.)*
+### 🟡 Sprint 11 (Planned): Open Educational Layer + RWA Prototype
+**Goal:** Mozilla Q2–Q4 deliverables plus research-stage tokenization prototype.
 
-### 🟡 Sprint 10: Cryptographic ESG & Carbon Accounting (Blocked pending Pilot)
-*(Implement a Merkle-tree cryptographic hash chain and smart contracts for the tokenization of verified carbon credits.)*
+**Deliverables:**
+1. Tutorials and video-guide scripts in `docs/tutorials/`, validated by a new user following them.
+2. Workshop materials: slide deck and facilitator guide for Nigerian universities and regulator training.
+3. Feedback capture pipeline: endpoint and UI that feed the v1.0 backlog.
+4. RWA tokenization prototype on Stellar/Soroban: proof-of-concept contract, documented as research output, not product.
+
+**Gate:** Sprint 11 complete when tutorials are validated, workshops materials are drafted, feedback pipeline is tested, and the tokenization prototype is documented.
 
 ---
 
