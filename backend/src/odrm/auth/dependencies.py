@@ -79,3 +79,16 @@ def get_current_user(
         return auth_service.resolve_access_token(token)
     except AuthenticationError as exc:
         raise _unauthorized() from exc
+
+def require_admin(
+    user: Annotated[User, Depends(get_current_user)],
+) -> User:
+    if user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "code": "FORBIDDEN",
+                "message": "Admin role required.",
+            },
+        )
+    return user

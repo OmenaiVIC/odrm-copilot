@@ -12,6 +12,7 @@ from odrm.api.report import EXPOSED_HEADERS
 from odrm.api.report import router as report_router
 from odrm.api.routes import market_router
 from odrm.api.routes import router as predict_router
+from odrm.api.whitelist import router as whitelist_router
 from odrm.auth.passwords import PasswordHasher
 from odrm.auth.repository import SqlAlchemyUserRepository, UserRepository
 from odrm.auth.router import router as auth_router
@@ -22,6 +23,11 @@ from odrm.db import create_session_factory
 from odrm.ml.features import TARGETS
 from odrm.ml.registry import ModelNotFoundError, load_model
 from odrm.services.market_data import MarketDataService, MockMarketPriceProvider
+from odrm.whitelist.repository import (
+    SqlAlchemyWhitelistRepository,
+    WhitelistRepository,
+)
+from odrm.whitelist.service import WhitelistService
 
 logger = logging.getLogger(__name__)
 
@@ -31,16 +37,25 @@ def create_app(
     *,
     agent_service: AgentService | None = None,
     user_repository: UserRepository | None = None,
+    whitelist_repository: WhitelistRepository | None = None,
 ) -> FastAPI:
     if settings is None:
         settings = Settings(env="dev")
 
     app = FastAPI(title="ODRM-Copilot API")
     app.state.settings = settings
-    repository = user_repository or SqlAlchemyUserRepository(
-        create_session_factory(settings.database_url)
-    )
+    
+    session_factory = create_session_factory(settings.database_url)
+    
+    repository = user_repository or SqlAlchemyUserRepository(session_factory)
     app.state.user_repository = repository
+    
+    whitelist_store: WhitelistRepository = (
+        whitelist_repository or SqlAlchemyWhitelistRepository(session_factory)
+    )
+    app.state.whitelist_repository = whitelist_store
+    app.state.whitelist_service = WhitelistService(whitelist_store)
+    
     token_service = TokenService(settings)
     app.state.token_service = token_service
     app.state.auth_service = AuthService(repository, PasswordHasher(), token_service)
@@ -83,6 +98,7 @@ def create_app(
     )
 
     app.include_router(auth_router, prefix="/api/v1")
+    app.include_router(whitelist_router, prefix="/api/v1")
     app.include_router(predict_router, prefix="/api/v1", tags=["predict"])
     app.include_router(market_router, prefix="/api/v1", tags=["market"])
     app.include_router(chat_router, prefix="/api/v1", tags=["chat"])

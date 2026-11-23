@@ -111,3 +111,20 @@ export interface LoginResponse {
   expires_in: number;
   user: AuthUser;
 }
+
+export type WhitelistStatus = 'pending' | 'approved' | 'rejected';
+
+export interface WhitelistApplication {
+  id: string;
+  user_id: string;
+  user_email: string;
+  status: WhitelistStatus;
+  reason: string;
+  decision_reason: string | null;
+  created_at: string;
+}
+
+export interface WhitelistApplicationList {
+  items: WhitelistApplication[];
+  total: number;
+}

@@ -5,6 +5,9 @@ import type {
   LoginResponse,
   AuthUser,
   ChatMessage,
+  WhitelistApplication,        
+  WhitelistApplicationList,    
+  WhitelistStatus,             
 } from "./types";
 
 const API_BASE_URL =
@@ -163,4 +166,59 @@ export async function postLogout(): Promise<void> {
   return apiFetch<void>("/auth/logout", {
     method: "POST",
   });
+}
+
+export async function getMyWhitelistApplication(): Promise<WhitelistApplication | null> {
+  try {
+    return await apiFetch<WhitelistApplication>("/whitelist/application", {
+      method: "GET",
+    });
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      return null;
+    }
+    throw error;
+  }
+}
+
+export async function postWhitelistApplication(
+  reason: string,
+): Promise<WhitelistApplication> {
+  return apiFetch<WhitelistApplication>("/whitelist/apply", {
+    method: "POST",
+    body: JSON.stringify({ reason }),
+  });
+}
+
+export async function getWhitelistApplications(
+  status?: WhitelistStatus,
+): Promise<WhitelistApplicationList> {
+  const query = status ? `?status=${encodeURIComponent(status)}` : "";
+  return apiFetch<WhitelistApplicationList>(`/whitelist/applications${query}`, {
+    method: "GET",
+  });
+}
+
+export async function postWhitelistApplicationApproval(
+  applicationId: string,
+): Promise<WhitelistApplication> {
+  return apiFetch<WhitelistApplication>(
+    `/whitelist/applications/${encodeURIComponent(applicationId)}/approve`,
+    {
+      method: "POST",
+    },
+  );
+}
+
+export async function postWhitelistApplicationRejection(
+  applicationId: string,
+  reason: string,
+): Promise<WhitelistApplication> {
+  return apiFetch<WhitelistApplication>(
+    `/whitelist/applications/${encodeURIComponent(applicationId)}/reject`,
+    {
+      method: "POST",
+      body: JSON.stringify({ reason }),
+    },
+  );
 }
