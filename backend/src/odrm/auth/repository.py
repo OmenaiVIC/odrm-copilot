@@ -23,7 +23,7 @@ class UserRepository(Protocol):
         *,
         email: str,
         password_hash: str,
-        role: str = "engineer",
+        role: str = "commercial",
         is_active: bool = True,
     ) -> User: ...
 
@@ -55,7 +55,7 @@ class SqlAlchemyUserRepository:
         *,
         email: str,
         password_hash: str,
-        role: str = "engineer",
+        role: str = "commercial",
         is_active: bool = True,
     ) -> User:
         normalized_email = normalize_email(email)

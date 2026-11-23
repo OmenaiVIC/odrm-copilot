@@ -35,7 +35,7 @@ def user(password_hasher: PasswordHasher) -> User:
         id="11111111-1111-1111-1111-111111111111",
         email="engineer@example.com",
         password_hash=password_hasher.hash(_PASSWORD),
-        role="engineer",
+        role="commercial",
         is_active=True,
     )
 
@@ -78,7 +78,7 @@ def test_login_returns_token_user_and_http_only_cookie(
     assert body["user"] == {
         "id": user.id,
         "email": "engineer@example.com",
-        "role": "engineer",
+        "role": "commercial",
     }
     assert "password" not in body
     assert "password_hash" not in response.text
@@ -144,7 +144,7 @@ def test_me_returns_current_user_with_bearer(client: TestClient) -> None:
     assert response.json() == {
         "id": "11111111-1111-1111-1111-111111111111",
         "email": "engineer@example.com",
-        "role": "engineer",
+        "role": "commercial",
     }
     assert response.headers["cache-control"] == "no-store"
 

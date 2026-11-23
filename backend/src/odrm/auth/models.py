@@ -7,8 +7,8 @@ from uuid import uuid4
 from sqlalchemy import Boolean, DateTime, String, func, true
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, validates
 
-UserRole = Literal["admin", "engineer", "viewer"]
-USER_ROLES: frozenset[str] = frozenset({"admin", "engineer", "viewer"})
+UserRole = Literal["admin", "commercial", "viewer"]
+USER_ROLES: frozenset[str] = frozenset({"admin", "commercial", "viewer"})
 
 
 class Base(DeclarativeBase):
@@ -27,8 +27,8 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(String(255))
     role: Mapped[str] = mapped_column(
         String(32),
-        default="engineer",
-        server_default="engineer",
+        default="commercial",
+        server_default="commercial",
     )
     is_active: Mapped[bool] = mapped_column(
         Boolean,

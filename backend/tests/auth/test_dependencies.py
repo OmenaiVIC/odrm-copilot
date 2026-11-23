@@ -24,7 +24,7 @@ def make_user(*, is_active: bool = True) -> User:
         id="11111111-1111-1111-1111-111111111111",
         email="engineer@example.com",
         password_hash="argon2-hash",
-        role="engineer",
+        role="commercial",
         is_active=is_active,
     )
 

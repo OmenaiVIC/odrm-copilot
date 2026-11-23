@@ -43,7 +43,7 @@ def test_create_user_from_stdin(
             "--email",
             "Engineer@Example.com",
             "--role",
-            "engineer",
+            "commercial",
             "--password-stdin",
         ],
         stdin="a-long-enough-password\n",
@@ -55,9 +55,33 @@ def test_create_user_from_stdin(
         user = session.scalar(select(User))
     assert user is not None
     assert user.email == "engineer@example.com"
-    assert user.role == "engineer"
+    assert user.role == "commercial"
     assert user.password_hash != "a-long-enough-password"
     assert "a-long-enough-password" not in capsys.readouterr().out
+
+
+def test_create_user_rejects_removed_engineer_role(
+    settings: Settings,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    with pytest.raises(SystemExit) as exc_info:
+        run_cli(
+            settings,
+            [
+                "create-user",
+                "--email",
+                "engineer@example.com",
+                "--role",
+                "engineer",
+                "--password-stdin",
+            ],
+            stdin="a-long-enough-password\n",
+            monkeypatch=monkeypatch,
+        )
+
+    assert exc_info.value.code == 2
+    with create_session_factory(settings.database_url)() as session:
+        assert session.scalar(select(User)) is None
 
 
 def test_create_user_rejects_duplicate_email(

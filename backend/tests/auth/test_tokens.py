@@ -45,7 +45,7 @@ def issue(service: TokenService) -> str:
     return service.issue_access_token(
         user_id="00000000-0000-0000-0000-000000000001",
         email="engineer@example.com",
-        role="engineer",
+        role="commercial",
     )
 
 
@@ -63,7 +63,7 @@ def test_issued_token_has_expected_claims_and_expiry(service: TokenService, cloc
     assert payload["aud"] == "odrm-test-api"
     assert payload["sub"] == "00000000-0000-0000-0000-000000000001"
     assert payload["email"] == "engineer@example.com"
-    assert payload["role"] == "engineer"
+    assert payload["role"] == "commercial"
     assert payload["iat"] == int(clock.now)
     assert payload["exp"] == int(clock.now) + 3_600
     assert payload["jti"]
@@ -74,6 +74,18 @@ def test_valid_token_round_trips_to_claims(service: TokenService) -> None:
 
     assert claims.sub == "00000000-0000-0000-0000-000000000001"
     assert claims.email == "engineer@example.com"
+    assert claims.role == "commercial"
+
+
+def test_legacy_engineer_role_claim_still_decodes(service: TokenService) -> None:
+    token = service.issue_access_token(
+        user_id="00000000-0000-0000-0000-000000000001",
+        email="engineer@example.com",
+        role="engineer",
+    )
+
+    claims = service.decode_access_token(token)
+
     assert claims.role == "engineer"
 
 
@@ -149,7 +161,7 @@ def test_alg_none_token_fails(service: TokenService, clock: Clock) -> None:
             "jti": "jti",
             "sub": "user",
             "email": "engineer@example.com",
-            "role": "engineer",
+            "role": "commercial",
         },
         key="",
         algorithm="none",
@@ -179,7 +191,7 @@ def test_expiry_uses_the_injected_clock(settings: Settings) -> None:
     token = service.issue_access_token(
         user_id="00000000-0000-0000-0000-000000000001",
         email="engineer@example.com",
-        role="engineer",
+        role="commercial",
     )
 
     clock.advance(3_600)

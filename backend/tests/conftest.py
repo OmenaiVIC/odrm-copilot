@@ -99,7 +99,7 @@ def test_user() -> User:
         id="11111111-1111-1111-1111-111111111111",
         email="engineer@example.com",
         password_hash=PasswordHasher().hash("correct horse battery staple"),
-        role="engineer",
+        role="commercial",
         is_active=True,
     )
 

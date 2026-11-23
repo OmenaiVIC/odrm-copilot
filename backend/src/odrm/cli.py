@@ -25,8 +25,8 @@ def build_parser() -> argparse.ArgumentParser:
     create_user.add_argument("--email", required=True)
     create_user.add_argument(
         "--role",
-        choices=("admin", "engineer", "viewer"),
-        default="engineer",
+        choices=("admin", "commercial", "viewer"),
+        default="commercial",
     )
     create_user.add_argument(
         "--password-stdin",

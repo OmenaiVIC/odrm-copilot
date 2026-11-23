@@ -29,7 +29,7 @@ const mockAuth = () => {
         json: async () => ({
           id: '1',
           email: 'test@example.com',
-          role: 'engineer',
+          role: 'commercial',
         }),
       } as Response);
     }
@@ -89,7 +89,7 @@ describe('Dashboard', () => {
           json: async () => ({
             id: '1',
             email: 'test@example.com',
-            role: 'engineer',
+            role: 'commercial',
           }),
         } as Response);
       }

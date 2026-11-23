@@ -26,7 +26,7 @@ class InMemoryUserRepository:
         *,
         email: str,
         password_hash: str,
-        role: str = "engineer",
+        role: str = "commercial",
         is_active: bool = True,
     ) -> User:
         user = User(

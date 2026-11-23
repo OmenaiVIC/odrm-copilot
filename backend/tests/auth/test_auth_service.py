@@ -20,7 +20,7 @@ def make_user(
     user_id: str = "11111111-1111-1111-1111-111111111111",
     email: str = "engineer@example.com",
     password_hash: str = "argon2-hash",
-    role: str = "engineer",
+    role: str = "commercial",
     is_active: bool = True,
 ) -> User:
     return User(
@@ -138,6 +138,23 @@ def test_resolve_token_returns_current_active_user(
     assert resolved.id == user.id
 
 
+def test_legacy_engineer_token_resolves_to_renamed_user(
+    repository: InMemoryUserRepository,
+    service: AuthService,
+    tokens: TokenService,
+) -> None:
+    user = repository.add(make_user())
+    token = tokens.issue_access_token(
+        user_id=user.id,
+        email=user.email,
+        role="engineer",
+    )
+
+    resolved = service.resolve_access_token(token)
+
+    assert resolved.id == user.id
+
+
 def test_resolve_token_rejects_unknown_user(
     repository: InMemoryUserRepository,
     service: AuthService,
@@ -146,7 +163,7 @@ def test_resolve_token_rejects_unknown_user(
     token = tokens.issue_access_token(
         user_id="22222222-2222-2222-2222-222222222222",
         email="missing@example.com",
-        role="engineer",
+        role="commercial",
     )
 
     with pytest.raises(AuthenticationError, match=r"Authentication required\."):

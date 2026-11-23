@@ -35,7 +35,7 @@ def test_create_and_fetch_by_id_and_lowercase_email(
 
     assert created.id
     assert created.email == "engineer@example.com"
-    assert created.role == "engineer"
+    assert created.role == "commercial"
     assert created.is_active is True
     assert created.created_at is not None
 
@@ -96,9 +96,17 @@ def test_ping_reports_a_working_database(repository: SqlAlchemyUserRepository) -
     assert repository.ping() is True
 
 
-def test_invalid_role_is_rejected(repository: SqlAlchemyUserRepository) -> None:
+@pytest.mark.parametrize("role", ["owner", "engineer"])
+def test_invalid_role_is_rejected(
+    repository: SqlAlchemyUserRepository,
+    role: str,
+) -> None:
     with pytest.raises(ValueError):
-        repository.create(email="engineer@example.com", password_hash="hash", role="owner")
+        repository.create(
+            email="engineer@example.com",
+            password_hash="hash",
+            role=role,
+        )
 
 
 def test_model_repr_does_not_expose_password_hash() -> None:
@@ -106,7 +114,7 @@ def test_model_repr_does_not_expose_password_hash() -> None:
         id="00000000-0000-0000-0000-000000000001",
         email="engineer@example.com",
         password_hash="super-secret-hash",
-        role="engineer",
+        role="commercial",
         is_active=True,
     )
 
