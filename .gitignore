@@ -47,3 +47,6 @@ models/**/*.joblib
 *.sqlite
 *.sqlite3
 
+
+# OpenCode local config
+opencode.json
