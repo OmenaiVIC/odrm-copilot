@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+import logging
+
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 
 from odrm.api.schemas import (
     MarketPricesResponse,
@@ -18,6 +20,8 @@ from odrm.services.prediction import (
     predict_surrogates,
 )
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(dependencies=[Depends(get_current_user)])
 market_router = APIRouter(dependencies=[Depends(get_current_user)])
 
@@ -35,9 +39,9 @@ def predict(request: PredictRequest, req: Request) -> PredictResponse:
 
 
 @router.post("/tea", response_model=TeaResponse)
-def tea(request: TeaRequest, req: Request) -> TeaResponse:
+def tea(request: TeaRequest, req: Request, response: Response) -> TeaResponse:
     try:
-        return run_screening(request, req.app.state.models)
+        screening = run_screening(request, req.app.state.models)
     except ModelUnavailableError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     except PredictionError as exc:
@@ -46,6 +50,15 @@ def tea(request: TeaRequest, req: Request) -> TeaResponse:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except TeaCalculationError as exc:
         raise HTTPException(status_code=500, detail="TEA calculation failed.") from exc
+
+    try:
+        req.app.state.evidence_service.record_screening(request, screening)
+        response.headers["X-Evidence-Status"] = "recorded"
+    except Exception:
+        logger.warning("Evidence recording failed; returning screening result.")
+        response.headers["X-Evidence-Status"] = "failed"
+
+    return screening
 
 
 @market_router.get("/market-prices", response_model=MarketPricesResponse)

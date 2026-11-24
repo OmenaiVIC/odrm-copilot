@@ -8,6 +8,7 @@ from sqlalchemy import engine_from_config, pool
 from odrm.auth.models import Base
 from odrm.core.config import get_settings
 
+import odrm.evidence.models  # noqa: F401
 import odrm.whitelist.models  # noqa: F401
 
 config = context.config

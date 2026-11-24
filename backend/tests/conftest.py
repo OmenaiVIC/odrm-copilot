@@ -12,9 +12,10 @@ import pytest
 from fastapi.testclient import TestClient
 from langchain_core.language_models.fake_chat_models import FakeListChatModel
 
-from odrm.auth.models import User
+from odrm.auth.models import Base, User
 from odrm.auth.passwords import PasswordHasher
 from odrm.core.config import Settings, get_settings
+from odrm.db import create_db_engine
 from odrm.main import create_app
 from tests.auth.fakes import InMemoryUserRepository
 
@@ -82,6 +83,7 @@ def block_outbound_network() -> Iterator[None]:
 @pytest.fixture(scope="session")
 def test_settings(tmp_path_factory: pytest.TempPathFactory) -> Settings:
     get_settings.cache_clear()
+    database_path = tmp_path_factory.mktemp("database") / "odrm-test.db"
     return Settings(
         env="test",
         log_level="DEBUG",
@@ -89,8 +91,21 @@ def test_settings(tmp_path_factory: pytest.TempPathFactory) -> Settings:
         cors_origins="http://localhost:3000",
         model_dir=str(tmp_path_factory.mktemp("models")),
         data_dir=str(tmp_path_factory.mktemp("data")),
+        database_url=f"sqlite:///{database_path}",
         rate_limit_enabled=False,
     )
+
+
+@pytest.fixture(scope="session", autouse=True)
+def create_test_database_schema(test_settings: Settings) -> Iterator[None]:
+    import odrm.evidence.models  # noqa: F401
+
+    engine = create_db_engine(test_settings.database_url)
+    Base.metadata.create_all(engine)
+    try:
+        yield
+    finally:
+        engine.dispose()
 
 
 @pytest.fixture(scope="session")

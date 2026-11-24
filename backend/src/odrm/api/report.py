@@ -27,6 +27,7 @@ EXPOSED_HEADERS = (
     "X-Report-Id",
     "X-Report-SHA256",
     "X-Report-Generated-At",
+    "X-Evidence-Status",
 )
 
 
@@ -52,6 +53,13 @@ def report(request: TeaRequest, req: Request) -> Response:
     except TeaCalculationError as exc:
         raise HTTPException(status_code=500, detail="TEA calculation failed.") from exc
 
+    evidence_status = "failed"
+    try:
+        req.app.state.evidence_service.record_screening(request, screening)
+        evidence_status = "recorded"
+    except Exception:
+        logger.warning("Evidence recording failed; returning report without evidence.")
+
     generated_at = datetime.now(UTC).replace(microsecond=0)
     try:
         report_data = build_report_data(
@@ -72,6 +80,7 @@ def report(request: TeaRequest, req: Request) -> Response:
         "X-Report-Id": report_data.report_id,
         "X-Report-SHA256": report_data.sha256,
         "X-Report-Generated-At": report_data.generated_at,
+        "X-Evidence-Status": evidence_status,
     }
     return Response(
         content=pdf_bytes,
