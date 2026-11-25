@@ -106,6 +106,21 @@ The `/api/v1/chat` endpoint accepts a `messages[]` array. Backend trims context 
 
 **Gate:** Sprint 11 complete when tutorials are validated, workshops materials are drafted, feedback pipeline is tested, and the tokenization prototype is documented.
 
+### 🟡 Sprint 12 (Planned): Security & Audit Readiness Sprint
+
+**Goal:** Produce all mandatory and bonus evidence required by the Audit Readiness Checklist across the entire codebase (Sprints 1–11). This sprint audits retroactively, not incrementally — every past deliverable is evaluated against the current standard.
+
+**Deliverables:**
+
+1. `docs/THREAT_MODEL.md` — full threat model covering LLM prompt path, evidence chain, auth flow, whitelist verification, API surface, Soroban contract (D5), and detection adapter boundary. Enumerated threats with severity, mitigation, residual risk, and remediation plan.
+2. `docs/DATAFLOW.md` — dataflow diagram with trust boundaries (browser/server, server/DB, server/LLM provider, server/Soroban, external detection source) and data entities (user, screening, evidence leaf, batch, hotspot, permit, whitelist record).
+3. `docs/SECURITY_SCANS/` — outputs from `pip-audit`, `npm audit`, `cargo-audit`, `bandit`, dated within 30 days of release, with remediation notes.
+4. Repo hygiene pass — CONTRIBUTING.md, CODE_OF_CONDUCT.md, root README navigation, dead-code removal, naming consistency.
+5. `docs/INTEGRATION_TESTS.md` — inventory of every integration test, coverage area, and execution evidence.
+6. `docs/AUDIT_READINESS.md` — self-assessment mapping all 11 checklist items to repo evidence.
+
+**Gate:** Sprint 12 complete when all 11 items have evidence, tooling scans are current, and the self-assessment confirms compliance. **External release or tag is blocked until Sprint 12 closes.**
+
 ---
 
 ## PART 4: Dual Funding Strategy & Public Good
