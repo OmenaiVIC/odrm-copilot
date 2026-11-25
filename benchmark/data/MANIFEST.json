@@ -1,0 +1,25 @@
+{
+  "benchmark_version": "v1.0-benchmark",
+  "license": "MIT",
+  "schema_reference": "backend/src/odrm/data/schema.py",
+  "generator": {
+    "path": "scripts/generate_odrm_data.py",
+    "seed": 7
+  },
+  "generated_at_utc": "PENDING_PHASE_4",
+  "files": {
+    "odrm_sample_500": {
+      "path": "benchmark/data/odrm_sample_500.parquet",
+      "location": "committed to repository",
+      "row_count": 500,
+      "sha256": "PENDING_PHASE_4"
+    },
+    "odrm_benchmark_10k": {
+      "path": "odrm_benchmark_10k.parquet",
+      "location": "GitHub Release v1.0-benchmark asset",
+      "row_count": 10000,
+      "sha256": "PENDING_PHASE_4"
+    }
+  },
+  "notes": "The 500-row sample is committed to the repository for convenience and CI use. The full 10,000-row dataset is published as a GitHub Release asset under the v1.0-benchmark tag. Both files are produced by the same generator with the same seed (7). The sample is the first 500 rows of the full dataset. Byte-for-byte reproducibility is documented in docs/BENCHMARK_REPRODUCTION.md."
+}

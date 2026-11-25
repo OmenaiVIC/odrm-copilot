@@ -183,6 +183,19 @@ Valoris is built as a dual-layer system to ensure both rapid innovation and long
 *   **The Open-Source Foundation (Public Good):** The synthetic data generator, the schema validator, and the baseline ODRM simulation benchmark are MIT-licensed. This foundation is permanently free for researchers, regulators, and operators in the Global South to use, audit, and build upon.
 *   **The Commercial Application (Proprietary):** The trained ML surrogate models, the TEA financial engine, the LangChain agent, and the production SaaS dashboard are proprietary and funded by operator subscriptions.
 
+## 🌱 Open Benchmark (v1.0-benchmark)
+
+An MIT-licensed, reproducible benchmark for Oxy-Dry Reforming of Methane (ODRM).
+
+* [Reproduction guide](docs/BENCHMARK_REPRODUCTION.md)
+* [GitHub Release: v1.0-benchmark](https://github.com/OmenaiVIC/odrm-copilot/releases/tag/v1.0-benchmark)
+* Sample data: `benchmark/data/odrm_sample_500.parquet`
+* Full dataset: `odrm_benchmark_10k.parquet` (GitHub Release asset)
+* Validator CLI: `scripts/validate_benchmark.py`
+* Baseline trainer: `benchmark/train_baseline.py`
+
+The proprietary surrogate model, TEA engine, agent, and SaaS dashboard remain under commercial terms — see [LICENSE](LICENSE).
+
 ## 📄 License
 
 The synthetic data generator, schema validator, and developer tooling in this repository are open-source under the [MIT License](LICENSE). 
