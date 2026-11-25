@@ -31,6 +31,7 @@ data/processed/odrm/
 data/odrm_dataset.parquet
 models/*.joblib
 *.csv
+exports/*.xlsx
 
 # System
 .DS_Store

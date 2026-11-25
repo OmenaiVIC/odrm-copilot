@@ -33,6 +33,7 @@ dependencies = [
   "scikit-learn>=1.5",
   "joblib>=1.4",
   # Reporting
+  "openpyxl>=3.1,<4",
   "reportlab>=4.2,<5",
   # Agent layer
   "langchain>=1.4,<2",
@@ -98,7 +99,7 @@ warn_unused_ignores = true
 disallow_untyped_defs = true
 
 [[tool.mypy.overrides]]
-module = ["reportlab.*"]
+module = ["reportlab.*", "openpyxl.*"]
 ignore_missing_imports = true
 
 [tool.coverage.run]
