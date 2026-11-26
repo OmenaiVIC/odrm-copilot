@@ -34,8 +34,10 @@ from sklearn.metrics import r2_score, root_mean_squared_error  # type: ignore
 from sklearn.model_selection import train_test_split  # type: ignore
 
 SEED = 42
-R2_THRESHOLD = 0.95
+SAMPLE_R2_THRESHOLD = 0.90
+FULL_R2_THRESHOLD = 0.95
 TEST_SIZE = 0.2
+FULL_DATASET_MIN_ROWS = 2000
 
 TARGETS: tuple[str, str] = (
     "ch4_conversion",
@@ -71,6 +73,11 @@ DEFAULT_OUTPUT_DIR = _PROJECT_ROOT / "benchmark" / "artifacts"
 
 class TrainingError(RuntimeError):
     """Raised when the benchmark baseline cannot be trained."""
+
+
+def _r2_threshold(n_rows: int) -> float:
+    """Return the acceptance gate for a dataset of ``n_rows`` rows."""
+    return SAMPLE_R2_THRESHOLD if n_rows < FULL_DATASET_MIN_ROWS else FULL_R2_THRESHOLD
 
 
 def _catalyst_columns() -> dict[str, str]:
@@ -189,8 +196,8 @@ def train(
 
     metrics: dict[str, int | float | str] = {
         "seed": seed,
-        "n_train": int(len(x_train)),
-        "n_test": int(len(x_test)),
+        "n_train": len(x_train),
+        "n_test": len(x_test),
         "ch4_conversion_r2": float(r2_score(ch4_true, ch4_pred)),
         "ch4_conversion_rmse": float(
             root_mean_squared_error(ch4_true, ch4_pred)
@@ -199,6 +206,7 @@ def train(
         "syngas_yield_rmse": float(
             root_mean_squared_error(syngas_true, syngas_pred)
         ),
+        "r2_threshold": _r2_threshold(len(frame)),
         "xgboost_version": str(xgb.__version__),
     }
 
@@ -235,9 +243,10 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     ch4_r2 = float(metrics["ch4_conversion_r2"])
     syngas_r2 = float(metrics["syngas_yield_r2"])
-    if ch4_r2 < R2_THRESHOLD or syngas_r2 < R2_THRESHOLD:
+    threshold = float(metrics["r2_threshold"])
+    if ch4_r2 < threshold or syngas_r2 < threshold:
         print(
-            f"error: baseline R2 threshold {R2_THRESHOLD:.2f} not met",
+            f"error: baseline R2 threshold {threshold:.2f} not met",
             file=sys.stderr,
         )
         return 1

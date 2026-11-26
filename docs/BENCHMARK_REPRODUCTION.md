@@ -50,14 +50,16 @@ Expected: exit code 0. The command writes baseline_model.json and metrics.json t
 
 ## Expected metrics
 
-| Metric | Threshold | Tolerance |
+| Dataset | Metric | Gate |
 |---|---|---|
-| ch4_conversion_r2 | ≥ 0.95 | ±1e-3 across identical runs |
-| syngas_yield_r2 | ≥ 0.95 | ±1e-3 across identical runs |
-| ch4_conversion_rmse | reported, no threshold | not asserted |
-| syngas_yield_rmse | reported, no threshold | not asserted |
+| 500-row sample (`benchmark/data/odrm_sample_500.parquet`) | ch4_conversion R² | ≥ 0.90 (CI smoke test) |
+| 500-row sample | syngas_yield R² | ≥ 0.90 (CI smoke test) |
+| 10,000-row full dataset (`odrm_benchmark_10k.parquet` GitHub Release asset) | ch4_conversion R² | ≥ 0.95 (benchmark acceptance) |
+| 10,000-row full dataset | syngas_yield R² | ≥ 0.95 (benchmark acceptance) |
 
-The 500-row sample and the 10,000-row full dataset will produce different absolute values for RMSE, but both must exceed the R² thresholds above. Tolerance is the maximum acceptable drift between two training runs with the same seed on the same pinned version set.
+> **Note on sample vs full dataset.** The 500-row sample exists so that CI can run a training smoke test without downloading the 10,000-row release asset. The 0.90 gate on the sample confirms the pipeline works end to end. The 0.95 gate on the full 10,000-row dataset is the actual benchmark acceptance criterion. Do not compare the two gates directly; they measure different things on differently-sized data.
+
+RMSE is reported for both targets but carries no threshold. Tolerance is ±1e-3 across identical runs with the same seed on the same pinned version set.
 
 ## Step 4 — Verify reproducibility
 

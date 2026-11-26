@@ -33,6 +33,11 @@ models/*.joblib
 *.csv
 exports/*.xlsx
 
+# Benchmark generated artifacts
+benchmark/artifacts/
+data/benchmark_10k.parquet
+data/benchmark_10k/
+
 # System
 .DS_Store
 Thumbs.db
