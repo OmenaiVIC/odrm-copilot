@@ -8,6 +8,7 @@ from odrm.agents.orchestrator import AgentService
 from odrm.agents.providers import build_chat_model
 from odrm.agents.tea_client import InProcessTeaClient
 from odrm.api.chat import router as chat_router
+from odrm.api.detection import router as detection_router
 from odrm.api.evidence import router as evidence_router
 from odrm.api.report import EXPOSED_HEADERS
 from odrm.api.report import router as report_router
@@ -21,6 +22,8 @@ from odrm.auth.service import AuthService
 from odrm.auth.tokens import TokenService
 from odrm.core.config import Settings
 from odrm.db import create_session_factory
+from odrm.detection.base import DetectionSource
+from odrm.detection.mock_nogiet import MockNogietAdapter
 from odrm.evidence.repository import (
     EvidenceRepository,
     SqlAlchemyEvidenceRepository,
@@ -45,6 +48,7 @@ def create_app(
     user_repository: UserRepository | None = None,
     whitelist_repository: WhitelistRepository | None = None,
     evidence_repository: EvidenceRepository | None = None,
+    detection_source: DetectionSource | None = None,
 ) -> FastAPI:
     if settings is None:
         settings = Settings(env="dev")
@@ -69,6 +73,7 @@ def create_app(
     )
     app.state.evidence_repository = evidence_store
     app.state.evidence_service = EvidenceService(evidence_store)
+    app.state.detection_source = detection_source or MockNogietAdapter()
 
     token_service = TokenService(settings)
     app.state.token_service = token_service
@@ -118,6 +123,7 @@ def create_app(
     app.include_router(chat_router, prefix="/api/v1", tags=["chat"])
     app.include_router(report_router, prefix="/api/v1", tags=["report"])
     app.include_router(evidence_router, prefix="/api/v1", tags=["evidence"])
+    app.include_router(detection_router, prefix="/api/v1", tags=["detection"])
 
     @app.get("/health")
     def health() -> dict[str, str]:

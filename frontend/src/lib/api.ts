@@ -5,6 +5,7 @@ import type {
   LoginResponse,
   AuthUser,
   ChatMessage,
+  Hotspot,
   WhitelistApplication,        
   WhitelistApplicationList,    
   WhitelistStatus,             
@@ -83,6 +84,12 @@ export async function apiFetch<T>(
 
 export async function getMarketPrices(): Promise<MarketPricesResponse> {
   return apiFetch<MarketPricesResponse>("/market-prices", {
+    method: "GET",
+  });
+}
+
+export async function getDetectionHotspots(): Promise<Hotspot[]> {
+  return apiFetch<Hotspot[]>("/detection/hotspots", {
     method: "GET",
   });
 }

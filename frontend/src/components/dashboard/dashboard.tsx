@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useMarketPrices } from '@/hooks/use-market-prices';
 import { postTea } from '@/lib/api';
+import { DetectionPanel } from '@/components/detection/detection-panel';
 import { ConditionsFields, ConditionsState } from './conditions-fields';
 import { FinancialFields, FinancialState } from './financial-fields';
 import { MarketPricePanel } from './market-price-panel';
@@ -160,6 +161,8 @@ export function Dashboard() {
           </button>
         </div>
       </header>
+
+      <DetectionPanel />
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         

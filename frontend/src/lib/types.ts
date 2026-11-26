@@ -128,3 +128,12 @@ export interface WhitelistApplicationList {
   items: WhitelistApplication[];
   total: number;
 }
+
+export interface Hotspot {
+  id: string;
+  latitude: number;
+  longitude: number;
+  intensity_ppb: number;
+  detected_at: string;
+  source: string;
+}
