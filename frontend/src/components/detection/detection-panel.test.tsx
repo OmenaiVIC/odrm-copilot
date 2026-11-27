@@ -1,7 +1,31 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { ReactNode } from 'react';
 import { DetectionPanel } from './detection-panel';
+
+vi.mock('react-leaflet', () => ({
+  MapContainer: ({ children }: { children: ReactNode }) => (
+    <div data-testid="map-container">{children}</div>
+  ),
+  TileLayer: () => <div data-testid="tile-layer" />,
+  Marker: ({
+    children,
+    position,
+  }: {
+    children: ReactNode;
+    position: [number, number];
+  }) => (
+    <div data-testid="map-marker" data-lat={position[0]} data-lng={position[1]}>
+      {children}
+    </div>
+  ),
+  Popup: ({ children }: { children: ReactNode }) => (
+    <div data-testid="map-popup">{children}</div>
+  ),
+}));
+
+vi.mock('leaflet/dist/leaflet.css', () => ({}));
 
 const HOTSPOTS = [
   {
@@ -58,7 +82,7 @@ describe('DetectionPanel', () => {
   it('renders hotspot rows from the detection endpoint', async () => {
     renderPanel();
 
-    expect(await screen.findByText('mock-nogiet-001')).toBeInTheDocument();
+    expect((await screen.findAllByText('mock-nogiet-001')).length).toBeGreaterThan(0);
     expect(screen.getByText('mock-nogiet-005')).toBeInTheDocument();
     expect(screen.getByText('SYNTHETIC DATA')).toBeInTheDocument();
     expect(screen.getByText('4.8156, 7.0498')).toBeInTheDocument();
@@ -85,5 +109,26 @@ describe('DetectionPanel', () => {
       ),
     );
     expect(await screen.findByText('Copied')).toBeInTheDocument();
+  });
+
+  it('renders the map when hotspots are loaded', async () => {
+    renderPanel();
+
+    await screen.findAllByText('mock-nogiet-001');
+    await waitFor(() =>
+      expect(screen.getByTestId('map-container')).toBeInTheDocument(),
+    );
+  });
+
+  it('renders one marker per hotspot at the correct coordinates', async () => {
+    renderPanel();
+
+    await screen.findAllByText('mock-nogiet-001');
+    const markers = await waitFor(() => screen.getAllByTestId('map-marker'));
+    expect(markers).toHaveLength(2);
+    expect(markers[0]).toHaveAttribute('data-lat', '4.8156');
+    expect(markers[0]).toHaveAttribute('data-lng', '7.0498');
+    expect(markers[1]).toHaveAttribute('data-lat', '4.8167');
+    expect(markers[1]).toHaveAttribute('data-lng', '7.0333');
   });
 });

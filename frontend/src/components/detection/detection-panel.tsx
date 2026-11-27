@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useDetectionHotspots } from '@/hooks/use-detection';
 import type { Hotspot } from '@/lib/types';
 
@@ -20,6 +21,15 @@ function formatUtc(value: string): string {
   }
   return `${date.toISOString().slice(0, 16).replace('T', ' ')} UTC`;
 }
+
+const HotspotMap = dynamic(() => import('./hotspot-map'), {
+  ssr: false,
+  loading: () => (
+    <div className="p-4 text-sm text-gray-500 dark:text-gray-400">
+      Loading map...
+    </div>
+  ),
+});
 
 export function DetectionPanel() {
   const { data, isLoading, isError, refetch } = useDetectionHotspots();
@@ -125,6 +135,9 @@ export function DetectionPanel() {
           <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">
             {data.length} hotspot{data.length === 1 ? '' : 's'}
           </p>
+          <div className="mb-4">
+            <HotspotMap hotspots={data} />
+          </div>
           <div className="overflow-x-auto">
             <table className="min-w-full text-left text-sm">
               <thead>
