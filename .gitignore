@@ -53,6 +53,10 @@ models/**/*.joblib
 *.sqlite
 *.sqlite3
 
+# Rust / Soroban
+contracts/**/target/
+contracts/**/test_snapshots/
+
 
 # OpenCode local config
 opencode.json
