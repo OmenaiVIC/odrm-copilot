@@ -44,10 +44,12 @@ Successfully implemented, audited, and deployed the `valoris-evidence` Soroban c
 - **Findings:** 1 vulnerability (`RUSTSEC-2026-0387` in `crypto-bigint`) and 2 unmaintained warnings (`chrono`, `paste`).
 - **Assessment:** All findings are in transitive dependencies of `soroban-sdk 30.0.0`. No direct dependency vulnerabilities. Risk accepted for prototype phase; resolution requires upstream SDK update.
 
-### 3.5 Source Verification Note
-- **Status:** Stellar Lab reports "Unverified Build".
-- **Context:** This is expected for a prototype. The source code is publicly available in this repository at commit `a6fd73d`.
-- **Remediation:** To achieve "Verified" status on explorers, run `stellar contract verify` against the public repo URL in a future hardening sprint.
+### 3.5 Source Verification (SEP-0055) — Status: Deferred / Documented
+- **Standard:** SEP-0055 (Smart Contract Source Verification) — https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0055.md
+- **Current state:** Contract deployed; Stellar Lab reports "Unverified Build" (expected — source not yet anchored via an on-chain SEP-0055 attestation).
+- **Tooling evidence:** Installed stellar-cli is v30.0.1. `stellar contract --help` lists subcommands `asset, alias, bindings, build, extend, deploy, fetch, id, info, init, upload, invoke, optimize, read, restore, inspect` — there is NO `verify` subcommand in this version. (Note: stellar-cli is a Rust binary distributed via GitHub releases / cargo install; it is not an npm package.)
+- **Remediation (scheduled for the comprehensive hardening sprint covering Sprints 1–11):** Upgrade stellar-cli to a release exposing SEP-0055 verification (or use the Stellar Lab source-upload flow), then anchor source to repo `https://github.com/OmenaiVIC/odrm-copilot`, commit `7119a78`, path `contracts/valoris-evidence`.
+- **Interim audit position:** The deployed WASM hash `7f56b74dbf59de3e969af9988311d80d58f0e5d05cec0856d121834792b7f730` matches the local build at the pinned commit, and the source is public. This provides equivalent source↔bytecode assurance (any auditor can rebuild and compare) pending the on-chain attestation.
 
 ### 3.6 Explorer Rendering Note
 - Stellar Lab Contract Spec renders `data_format = "single-value"` for the `EvidenceRegistered` event, while the source code specifies `data_format = "vec"`. This is a cosmetic rendering difference in the explorer's XDR parsing; functional parity and event emission were confirmed via the smoke test transaction logs.
