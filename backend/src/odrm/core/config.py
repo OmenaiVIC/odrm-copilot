@@ -1,4 +1,4 @@
-﻿from functools import lru_cache
+from functools import lru_cache
 from typing import Literal
 
 from pydantic import Field, SecretStr, model_validator
@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     env: str = "local"
     log_level: str = "INFO"
     api_prefix: str = "/api/v1"
-    cors_origins: str = "http://localhost:3000"
+    cors_origins: str = "http://localhost:3000,http://localhost:3001"
     model_dir: str = "./models"
     data_dir: str = "./data"
     max_temperature_c: float = 1000.0

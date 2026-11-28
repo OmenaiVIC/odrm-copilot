@@ -25,7 +25,7 @@ export default function HotspotMap({ hotspots }: HotspotMapProps): ReactElement 
       )}
       <MapContainer center={MAP_CENTER} zoom={MAP_ZOOM} style={MAP_STYLE}>
         <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
           attribution="© OpenStreetMap contributors"
         />
         {hotspots.map((hotspot) => (
