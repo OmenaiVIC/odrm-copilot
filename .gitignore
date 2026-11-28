@@ -44,6 +44,8 @@ Thumbs.db
 *.log
 
 models/**/*.joblib
+# Sprint 12A: runtime model artifacts required by the Render image
+!models/odrm/**/*.joblib
 
 .vscode/
 

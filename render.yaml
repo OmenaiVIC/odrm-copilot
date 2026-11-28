@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: valoris-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: ODRM_ENV
+        value: production
+      - key: ODRM_LOG_LEVEL
+        value: INFO
+      - key: ODRM_DATABASE_URL
+        sync: false
+      - key: ODRM_JWT_SECRET
+        sync: false
+      - key: ODRM_CORS_ORIGINS
+        sync: false
+      - key: ODRM_AUTH_COOKIE_SECURE
+        value: "true"
+      - key: ODRM_AUTH_COOKIE_SAMESITE
+        value: "none"
+      - key: ODRM_MODEL_DIR
+        value: /app/models
+      - key: ODRM_LLM_PROVIDER
+        value: gemini
+      - key: ODRM_LLM_MODEL
+        value: gemini-3.5-flash
+      - key: ODRM_LLM_API_KEY
+        sync: false

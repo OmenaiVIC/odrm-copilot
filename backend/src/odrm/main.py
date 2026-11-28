@@ -51,7 +51,7 @@ def create_app(
     detection_source: DetectionSource | None = None,
 ) -> FastAPI:
     if settings is None:
-        settings = Settings(env="dev")
+        settings = Settings()
 
     app = FastAPI(title="ODRM-Copilot API")
     app.state.settings = settings

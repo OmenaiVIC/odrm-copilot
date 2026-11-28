@@ -73,6 +73,10 @@ docker compose --env-file .env.docker exec api python -m odrm.cli create-user --
 **4. Access the Dashboard:**
 Open `http://localhost:3000` in your browser and log in with the credentials you just created.
 
+## Deployment
+
+See `docs/DEPLOYMENT.md` for the zero-cost Neon -> Render -> Vercel runbook. Record the
+public frontend and API URLs in the deployment log after they are created.
 
 ### Option B: Local Python (For Developers)
 If you prefer to run the backend locally without Docker:
